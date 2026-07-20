@@ -13,6 +13,7 @@ Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale compl
 
 - Installateur : `OptiSetup.exe`
 - Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
+- Clé USB / `E:\Mr-Aurevo-X Dev\Opti\` : `tools\sync_portable_e.bat` (Lancer.cmd + prérequis WebView2/VC++).
 
 Dev :
 

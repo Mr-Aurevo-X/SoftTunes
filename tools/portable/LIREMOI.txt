@@ -1,0 +1,53 @@
+Opti Mr-Aurevo-X — paquet portable
+==================================
+
+Version
+-------
+  Voir version.json (cible : 1.3.1+)
+
+Contenu
+-------
+  Opti.exe              Application (NE PAS deplacer seul)
+  _internal\            Runtime embarque (obligatoire a cote de l'exe)
+  api\  modules\  lists\  ui\   Logique PowerShell + interface
+  Lancer.cmd            Lance Opti depuis ce dossier (USB / portable)
+  Installer.cmd         Installe sur CE PC (LocalAppData + raccourcis)
+  Uninstall.cmd         Retire l'installation LocalAppData + raccourcis
+  OptiSetup.exe         Setup officiel alternatif (si present)
+  Install-Prereqs.cmd   WebView2 + VC++ (dossier prereqs\)
+  prereqs\              Installateurs Microsoft hors-ligne
+  LIREMOI.txt           Ce fichier
+  README.md             Doc technique
+
+Utilisation portable (cle USB / ce dossier E:)
+---------------------------------------------
+  1. Ouvrir ce dossier Opti\
+  2. Double-cliquer Opti.exe ou Lancer.cmd
+  3. Garder TOUT le dossier ensemble (_internal obligatoire)
+
+Sur un autre PC
+---------------
+  1. Copier tout le dossier Opti\ (ou brancher cette cle)
+  2. Si la fenetre ne s'ouvre pas : lancer Install-Prereqs.cmd
+     (WebView2 Runtime + VC++ x64)
+  3. Relancer Opti.exe / Lancer.cmd
+  4. Option : Installer.cmd pour raccourcis Bureau
+
+Prérequis Windows
+-----------------
+  - Windows 10/11 64-bit
+  - PowerShell 5.1 (inclus)
+  - Microsoft Edge WebView2 Runtime
+  - VC++ Redistributable x64 (souvent deja present)
+
+Important
+---------
+  - Opti traite tout en local (pas de telemetrie editeur).
+  - Soft OC / services / debloat peuvent demander UAC (bouton Elever).
+  - Soft OC NVIDIA != undervolt ; UV reel = MSI Afterburner.
+  - Monitor FPS necessite Afterburner + RTSS.
+
+Support
+-------
+  Logiciel independant Mr-Aurevo-X — 100 % gratuit — version finale
+  Ne fait pas partie du Launcher suite.
