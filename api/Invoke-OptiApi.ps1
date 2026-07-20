@@ -38,6 +38,7 @@ foreach ($modName in @(
         'Priority.ps1'
         'GameProfiles.ps1'
         'SoftPerf.ps1'
+        'SoftOc.ps1'
     )) {
     $modPath = Join-Path $modDir $modName
     if (-not (Test-Path -LiteralPath $modPath)) { throw "Module manquant: $modPath" }
@@ -231,6 +232,23 @@ try {
         'resetSoftPerf' {
             $r = Reset-OptiSoftPerf -LogPath $Global:OptiCurrentLog
             Add-OptiSession -Action 'resetSoftPerf' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
+            Ok $r
+        }
+
+        'getSoftOc' { Ok (Get-OptiSoftOc) }
+        'setNvidiaClocks' {
+            $preset = if ($p.preset) { [string]$p.preset } else { 'stock' }
+            $r = Set-OptiNvidiaClocks -Preset $preset -LogPath $Global:OptiCurrentLog
+            Add-OptiSession -Action 'setNvidiaClocks' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
+            Ok $r
+        }
+        'resetNvidiaClocks' {
+            $r = Reset-OptiNvidiaClocks -LogPath $Global:OptiCurrentLog
+            Add-OptiSession -Action 'resetNvidiaClocks' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
+            Ok $r
+        }
+        'openAfterburner' {
+            $r = Open-OptiAfterburner
             Ok $r
         }
 

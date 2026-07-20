@@ -66,7 +66,14 @@ function Disable-OptiStartupItems {
                 if (Test-Path -LiteralPath $path) {
                     $bak = Join-Path (Get-OptiDataDir) 'startup-disabled'
                     if (-not (Test-Path $bak)) { New-Item -ItemType Directory -Path $bak -Force | Out-Null }
-                    Move-Item -LiteralPath $path -Destination (Join-Path $bak ([IO.Path]::GetFileName($path))) -Force -ErrorAction Stop
+                    $destName = [IO.Path]::GetFileName($path)
+                    $destPath = Join-Path $bak $destName
+                    $null = New-OptiUndoSnapshot -Name ("startup-folder-$name") -Data @{
+                        folderFile = $destPath
+                        folderDest = $path
+                        name       = $name
+                    }
+                    Move-Item -LiteralPath $path -Destination $destPath -Force -ErrorAction Stop
                     $disabled += $name
                 }
             } elseif ($hive -match 'HK') {

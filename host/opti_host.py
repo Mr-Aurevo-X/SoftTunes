@@ -62,6 +62,21 @@ DEFAULT_ACCENT = "#e03545"
 ENV_ACCENT = "MRAUREVOX_ACCENT"
 ENV_LANG = "MRAUREVOX_LANG"
 
+# Actions that need elevation (HKLM, services, AppX, restore, softperf HAGS, clocks, etc.)
+ADMIN_ACTIONS = frozenset({
+    "createRestorePoint",
+    "setServices",
+    "removeBloat",
+    "setMmcs",
+    "setSoftPerfOs",
+    "setNvidiaPowerLimit",
+    "resetSoftPerf",
+    "setNvidiaClocks",
+    "resetNvidiaClocks",
+    "applyGamingPreset",
+    "disableStartup",
+})
+
 
 def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
     env = (os.environ.get(ENV_ACCENT) or "").strip()
@@ -146,6 +161,12 @@ class Api:
     def run(self, action: str, payload: dict | None = None) -> dict:
         if payload is None:
             payload = {}
+        if action in ADMIN_ACTIONS and not is_admin():
+            return {
+                "ok": False,
+                "error": "Admin required. Click Elevate in Opti, then retry.",
+                "data": {"needsAdmin": True},
+            }
         if not self.api_ps1.is_file():
             return {"ok": False, "error": f"API introuvable: {self.api_ps1}", "data": None}
 
@@ -279,6 +300,12 @@ class Api:
     def start_action(self, action: str, payload: dict | None = None) -> dict:
         if payload is None:
             payload = {}
+        if action in ADMIN_ACTIONS and not is_admin():
+            return {
+                "ok": False,
+                "error": "Admin required. Click Elevate in Opti, then retry.",
+                "data": {"needsAdmin": True},
+            }
         with self._job_lock:
             if self._job_running:
                 # Recover stale flag if worker thread died without clearing.
@@ -343,6 +370,50 @@ class Api:
     def is_admin(self) -> bool:
         return is_admin()
 
+    def request_elevation(self) -> dict:
+        """Re-launch elevated (UAC). Current process should exit after True."""
+        if is_admin():
+            return {"ok": True, "alreadyAdmin": True}
+        ok = elevate_self()
+        return {"ok": bool(ok), "elevating": bool(ok), "alreadyAdmin": False}
+
+    def get_fps_sample(self) -> dict:
+        try:
+            from rtss_reader import get_fps_sample as _sample
+
+            return _sample()
+        except Exception as exc:
+            try:
+                import sys as _sys
+                from pathlib import Path as _P
+
+                host_dir = _P(__file__).resolve().parent
+                if str(host_dir) not in _sys.path:
+                    _sys.path.insert(0, str(host_dir))
+                from rtss_reader import get_fps_sample as _sample
+
+                return _sample()
+            except Exception as exc2:
+                return {
+                    "ok": False,
+                    "available": False,
+                    "fps": None,
+                    "frametimeMs": None,
+                    "error": str(exc2 or exc),
+                }
+
+    def open_url(self, url: str) -> dict:
+        import webbrowser
+
+        u = (url or "").strip()
+        if not u.startswith(("https://", "http://")):
+            return {"ok": False, "error": "URL invalide"}
+        try:
+            webbrowser.open(u)
+            return {"ok": True, "url": u}
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
     def open_path(self, path: str) -> dict:
         try:
             os.startfile(path)  # type: ignore[attr-defined]
@@ -350,8 +421,10 @@ class Api:
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
 
+
 def main() -> None:
-    if "--no-elevate" not in sys.argv:
+    # Lazy UAC: do not elevate on every launch. User can request via UI.
+    if "--elevate" in sys.argv:
         if elevate_self():
             sys.exit(0)
 

@@ -16,6 +16,7 @@ if not exist "%ROOT%\.venv\Scripts\python.exe" (
   --version-file "%ROOT%\tools\file_version_info.txt" ^
   --add-data "%ROOT%\build\ui_stage;ui" ^
   --hidden-import "clr" ^
+  --hidden-import "rtss_reader" ^
   --distpath "%ROOT%\dist" ^
   --workpath "%ROOT%\host\build" ^
   --specpath "%ROOT%\host" ^

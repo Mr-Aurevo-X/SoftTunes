@@ -34,11 +34,17 @@ function Get-OptiUndoList {
         ForEach-Object {
             try {
                 $o = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+                $summary = ''
+                if ($null -ne $o.data) {
+                    $keys = @($o.data.PSObject.Properties.Name | Select-Object -First 6)
+                    if ($keys.Count -gt 0) { $summary = ($keys -join ', ') }
+                }
                 $items += @{
                     id        = $o.id
                     name      = $o.name
                     createdAt = $o.createdAt
                     path      = $_.FullName
+                    summary   = $summary
                 }
             } catch { }
         }
@@ -113,17 +119,24 @@ function Invoke-OptiUndo {
             }
         }
         'boost*' {
+            $noted = @()
             foreach ($p in @($data.suspended)) {
                 try {
                     $proc = Get-Process -Id ([int]$p.Id) -ErrorAction SilentlyContinue
-                    if ($proc) {
-                        # Best-effort: cannot truly unsuspend without NtResume; mark only
-                        $restored += "proc:$($p.Name)"
-                    }
+                    if ($proc) { $noted += "seen:$($p.Name)" }
+                    else { $noted += "gone:$($p.Name)" }
                 } catch { }
             }
             if ($data.focusAssist) {
                 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\DefaultAccount' -Name 'OptiFocusPrev' -Value ([string]$data.focusAssist) -ErrorAction SilentlyContinue
+            }
+            Write-OptiLog -Message ("Undo boost partial: {0}" -f ($noted -join ', ')) -LogPath $LogPath -Level WARN
+            return @{
+                Success = $true
+                Partial = $true
+                Message = 'Undo boost partiel: overlays non relances automatiquement'
+                Restored = $noted
+                Id = $Id
             }
         }
         'gamemode*' {
@@ -140,11 +153,52 @@ function Invoke-OptiUndo {
         'softperf*' {
             $restored += @(Restore-OptiSoftPerfFromData -Data $data -LogPath $LogPath)
         }
+        'softoc*' {
+            if (Get-Command Restore-OptiSoftOcFromData -ErrorAction SilentlyContinue) {
+                $restored += @(Restore-OptiSoftOcFromData -Data $data -LogPath $LogPath)
+            }
+        }
+        'startup*' {
+            if ($data.hive -and $data.name -and $null -ne $data.command) {
+                try {
+                    if (-not (Test-Path -LiteralPath ([string]$data.hive))) {
+                        New-Item -Path ([string]$data.hive) -Force -ErrorAction SilentlyContinue | Out-Null
+                    }
+                    Set-ItemProperty -Path ([string]$data.hive) -Name ([string]$data.name) -Value ([string]$data.command) -ErrorAction Stop
+                    $restored += "startup:$($data.name)"
+                } catch {
+                    Write-OptiLog -Message ("Undo startup fail: {0}" -f $_.Exception.Message) -LogPath $LogPath -Level WARN
+                }
+            }
+            if ($data.folderFile -and $data.folderDest) {
+                try {
+                    $src = [string]$data.folderFile
+                    $dest = [string]$data.folderDest
+                    if ((Test-Path -LiteralPath $src) -and -not (Test-Path -LiteralPath $dest)) {
+                        Move-Item -LiteralPath $src -Destination $dest -Force -ErrorAction Stop
+                        $restored += 'startupFolder'
+                    }
+                } catch { }
+            }
+        }
+        'priority-mmcs*' {
+            $path = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile'
+            if ($null -ne $data.SystemResponsiveness) {
+                try {
+                    if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
+                    Set-ItemProperty -Path $path -Name 'SystemResponsiveness' -Value ([int]$data.SystemResponsiveness) -Type DWord -ErrorAction Stop
+                    $restored += 'SystemResponsiveness'
+                } catch {
+                    Write-OptiLog -Message ("Undo MMCS fail: {0}" -f $_.Exception.Message) -LogPath $LogPath -Level WARN
+                }
+            }
+        }
         default {
-            Write-OptiLog -Message "Undo kind non géré: $kind" -LogPath $LogPath -Level WARN
+            Write-OptiLog -Message "Undo kind non gere: $kind" -LogPath $LogPath -Level WARN
+            return @{ Success = $false; Message = "Undo non gere pour: $kind"; Restored = @(); Id = $Id }
         }
     }
 
     Write-OptiLog -Message ("Undo ${Id}: {0}" -f ($restored -join ', ')) -LogPath $LogPath -Level OK
-    return @{ Success = $true; Message = "Annulation appliquée"; Restored = $restored; Id = $Id }
+    return @{ Success = $true; Message = "Annulation appliquee"; Restored = $restored; Id = $Id }
 }

@@ -11,9 +11,24 @@
       "body": "Souvent liés à overlays, captures Game Bar, disque plein, ou plan d’alimentation économe. Essayez Cleanup shaders, Boost overlays, et Hautes perfs avant d’activer le timer (avancé)."
     },
     {
-      "id": "cpu-bound",
-      "title": "Goulot CPU",
-      "body": "Si le CPU est saturé pendant que le GPU ne l’est pas, réduisez effets Windows et overlays. Opti ne remplace pas un upgrade CPU ni les réglages graphiques in-game."
+      "id": "fps-frametime",
+      "title": "FPS vs frametime",
+      "body": "Le FPS moyen cache les à-coups. Le frametime (ms entre frames) montre la régularité : 16,7 ms ≈ 60 FPS stables. Surveillez les pics (Monitor FPS via RTSS) plutôt qu’un seul chiffre moyen."
+    },
+    {
+      "id": "bottleneck",
+      "title": "Goulot CPU / GPU",
+      "body": "CPU saturé + GPU bas = bottleneck CPU (réduisez overlays / effets). GPU à 99 % = limite carte (baissez les réglages in-game). Opti prépare Windows ; il ne remplace pas un upgrade."
+    },
+    {
+      "id": "vram",
+      "title": "VRAM saturée",
+      "body": "Textures trop hautes / mods peuvent saturer la VRAM et provoquer stutter. Baissez les textures avant de toucher Soft OC ou Timer."
+    },
+    {
+      "id": "thermals",
+      "title": "Chauffe / thermal throttle",
+      "body": "Si le GPU/CPU downgrade sous charge, le Soft OC ne aidera pas. Nettoyez les poussières, vérifiez la pâte, limitez PL (Eco soft) pour baisser chaleur."
     },
     {
       "id": "overlays",
@@ -27,13 +42,13 @@
     },
     {
       "id": "softperf",
-      "title": "Perf soft vs undervolt",
-      "body": "Perf soft (mode Avancé) ajuste powercfg, HAGS et éventuellement le Power Limit NVIDIA (± soft, borné). Opti ne touche jamais aux voltages ni aux clocks. Pour un vrai undervolt : Adrenalin (AMD) ou MSI Afterburner (NVIDIA), avec prudence et tests de stabilité."
+      "title": "Power Limit / Soft vs undervolt",
+      "body": "Mode Avancé → Power Limit / Soft : powercfg + PL NVIDIA soft. Soft OC : locks clocks bornés. Opti ne touche jamais aux voltages. Undervolt réel : Afterburner (NVIDIA) ou Adrenalin (AMD)."
     },
     {
-      "id": "undervolt-tools",
-      "title": "Undervolt matériel (externe)",
-      "body": "Un undervolt bien fait peut baisser chaleur et bruit à FPS proche du stock. Mauvaise courbe = crashs / artifacts. Sauvegardez un profil stock, testez une session longue, et n’utilisez pas Opti pour ça — l’outil ne fait que du soft OS / PL."
+      "id": "soft-vs-ab",
+      "title": "Soft OC Opti vs Afterburner",
+      "body": "Opti Soft OC = petits locks nvidia-smi (+50/+100). Afterburner = courbes voltage, fans, profiles par jeu. Pour UV sérieux, ouvrez Afterburner depuis Soft OC ; testez la stabilité longtemps."
     }
   ],
   "en": [
@@ -48,9 +63,24 @@
       "body": "Often overlays, Game Bar capture, full disk, or power-saving plans. Try shader cleanup, overlay Boost, and High performance before enabling the timer (advanced)."
     },
     {
-      "id": "cpu-bound",
-      "title": "CPU bottleneck",
-      "body": "If CPU is pegged while GPU is not, reduce Windows effects and overlays. Opti does not replace a CPU upgrade or in-game graphics settings."
+      "id": "fps-frametime",
+      "title": "FPS vs frametime",
+      "body": "Average FPS hides hitching. Frametime (ms between frames) shows smoothness: 16.7 ms ≈ steady 60 FPS. Watch spikes (Monitor FPS via RTSS) instead of one average number."
+    },
+    {
+      "id": "bottleneck",
+      "title": "CPU / GPU bottleneck",
+      "body": "Pegged CPU + low GPU = CPU bottleneck (cut overlays/effects). GPU at 99% = GPU limit (lower in-game settings). Opti prepares Windows; it is not an upgrade."
+    },
+    {
+      "id": "vram",
+      "title": "VRAM saturated",
+      "body": "High textures/mods can fill VRAM and cause stutter. Lower textures before Soft OC or Timer."
+    },
+    {
+      "id": "thermals",
+      "title": "Heat / thermal throttle",
+      "body": "If GPU/CPU clocks drop under load, Soft OC will not help. Clean dust, check paste, use Eco soft PL to cut heat."
     },
     {
       "id": "overlays",
@@ -64,13 +94,13 @@
     },
     {
       "id": "softperf",
-      "title": "Soft perf vs undervolt",
-      "body": "Soft Perf (Advanced) tweaks powercfg, HAGS, and optionally NVIDIA Power Limit (bounded soft ±). Opti never touches voltages or clocks. For real undervolt: Adrenalin (AMD) or MSI Afterburner (NVIDIA), carefully, with stability testing."
+      "title": "Power Limit / Soft vs undervolt",
+      "body": "Advanced → Power Limit / Soft: powercfg + soft NVIDIA PL. Soft OC: bounded clock locks. Opti never touches voltages. Real UV: Afterburner (NVIDIA) or Adrenalin (AMD)."
     },
     {
-      "id": "undervolt-tools",
-      "title": "Hardware undervolt (external)",
-      "body": "A good undervolt can cut heat/noise near stock FPS. A bad curve means crashes/artifacts. Keep a stock profile, run a long test session, and don’t use Opti for UV — it only does soft OS / PL."
+      "id": "soft-vs-ab",
+      "title": "Opti Soft OC vs Afterburner",
+      "body": "Opti Soft OC = small nvidia-smi locks (+50/+100). Afterburner = voltage curves, fans, per-game profiles. For serious UV, open Afterburner from Soft OC and stability-test for a long session."
     }
   ]
 }

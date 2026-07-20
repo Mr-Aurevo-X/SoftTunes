@@ -20,33 +20,40 @@
           <p data-i18n="tagline">Performances gaming</p>
         </div>
       </div>
-      <span id="adminBadge" class="badge warn" data-i18n="elevating">Élévation…</span>
+      <span id="adminBadge" class="badge warn" data-i18n="elevating">…</span>
       <p class="privacy-note" id="privacyNote">100 % gratuit · local · version finale</p>
-      <label class="mode-toggle"><input type="checkbox" id="chkAdvanced" /><span data-i18n="modeAdvanced">Mode avancé</span></label>
+      <label class="mode-toggle" title="">
+        <input type="checkbox" id="chkAdvanced" />
+        <span data-i18n="modeAdvanced">Mode avancé</span>
+      </label>
+      <p class="mode-hint muted" data-i18n="modeAdvancedHint">Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat</p>
+      <button type="button" class="btn" id="btnElevate" data-i18n="btnElevate" style="width:100%;margin:6px 0 10px">Élever (admin)</button>
 
       <nav class="nav" id="nav">
         <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupPerf">Performances</div>
+          <div class="nav-label" data-i18n="navGroupEssentials">Essentiels</div>
           <button type="button" class="nav-btn active" data-page="dash" data-i18n="navDash">Dashboard</button>
           <button type="button" class="nav-btn" data-page="power" data-i18n="navPower">Power</button>
           <button type="button" class="nav-btn" data-page="gamemode" data-i18n="navGameMode">Game Mode</button>
           <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Boost</button>
-          <button type="button" class="nav-btn" data-page="softperf" data-page-mode="adv" data-i18n="navSoftPerf">Perf soft</button>
-          <button type="button" class="nav-btn" data-page="timer" data-page-mode="adv" data-i18n="navTimer">Timer / Prio</button>
         </div>
         <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupSys">Système</div>
+          <div class="nav-label" data-i18n="navGroupTools">Outils</div>
           <button type="button" class="nav-btn" data-page="clean" data-i18n="navClean">Cleanup</button>
           <button type="button" class="nav-btn" data-page="net" data-i18n="navNet">Réseau</button>
           <button type="button" class="nav-btn" data-page="visual" data-i18n="navVisual">Visuel</button>
-          <button type="button" class="nav-btn" data-page="services" data-page-mode="adv" data-i18n="navServices">Services</button>
           <button type="button" class="nav-btn" data-page="startup" data-i18n="navStartup">Démarrage</button>
-          <button type="button" class="nav-btn" data-page="debloat" data-page-mode="adv" data-i18n="navDebloat">Debloat</button>
-        </div>
-        <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupGames">Jeux</div>
           <button type="button" class="nav-btn" data-page="profiles" data-i18n="navProfiles">Profils</button>
           <button type="button" class="nav-btn" data-page="tips" data-i18n="navTips">Conseils</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label" data-i18n="navGroupAdvanced">Avancé</div>
+          <button type="button" class="nav-btn" data-page="softperf" data-page-mode="adv" data-i18n="navSoftPerf">Power Limit / Soft</button>
+          <button type="button" class="nav-btn" data-page="softoc" data-page-mode="adv" data-i18n="navSoftOc">Soft OC</button>
+          <button type="button" class="nav-btn" data-page="monitor" data-page-mode="adv" data-i18n="navMonitor">Monitor FPS</button>
+          <button type="button" class="nav-btn" data-page="timer" data-page-mode="adv" data-i18n="navTimer">Timer / Prio</button>
+          <button type="button" class="nav-btn" data-page="services" data-page-mode="adv" data-i18n="navServices">Services</button>
+          <button type="button" class="nav-btn" data-page="debloat" data-page-mode="adv" data-i18n="navDebloat">Debloat</button>
         </div>
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupHistory">Historique</div>
@@ -83,6 +90,15 @@
               <div class="btn-row">
                 <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Optimiser pour jouer</button>
                 <button type="button" class="btn" id="btnHealthRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+              </div>
+              <p class="help-text" id="dashSoftHint">
+                <button type="button" class="linkish" id="btnGotoSoftPerf" data-i18n="dashSoftHint">Power Limit NVIDIA &amp; anti-parking → Mode avancé</button>
+              </p>
+              <div class="fps-mini muted" id="dashFpsMini" hidden>—</div>
+              <div class="legend" id="dashLegend">
+                <span class="risk ok" data-i18n="badgeRec">Recommandé</span>
+                <span class="risk warn" data-i18n="badgeOptin">Opt-in</span>
+                <span class="risk adv" data-i18n="badgeAdv">Avancé</span>
               </div>
             </div>
           </div>
@@ -248,7 +264,7 @@
           <p class="help-text" data-i18n="softPerfHelp">Réglages soft réversibles : anti-parking CPU, PCIe ASPM, HAGS, Power Limit NVIDIA. Pas d’undervolt/OC matériel.</p>
           <div class="guard" data-i18n="guardSoftPerf">Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.</div>
           <div class="panel">
-            <div class="panel-head"><h3 data-i18n="softPerfTitle">Perf soft</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
+            <div class="panel-head"><h3 data-i18n="softPerfTitle">Power Limit / Soft</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
             <div id="softPerfStatus" class="muted">—</div>
             <div class="btn-row" style="margin-top:12px">
               <button type="button" class="btn accent" id="btnSoftPerfOs" data-i18n="btnSoftPerfOs">Appliquer OS soft</button>
@@ -272,6 +288,48 @@
               <button type="button" class="btn" id="btnPlEco" data-i18n="btnPlEco">Eco soft</button>
               <button type="button" class="btn" id="btnPlStock" data-i18n="btnPlStock">Stock</button>
               <button type="button" class="btn accent" id="btnPlPerf" data-i18n="btnPlPerf">Perf soft</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-softoc">
+          <p class="help-text" data-i18n="softOcHelp">Soft OC NVIDIA : verrouillage clocks borné (+0 / +50 / +100 MHz). Pas d’undervolt. Afterburner pour les courbes UV.</p>
+          <div class="guard" data-i18n="guardSoftOc">Soft OC ≠ undervolt. Jamais au-delà des limites nvidia-smi. Stabilité = responsabilité utilisateur.</div>
+          <div class="panel">
+            <div class="panel-head"><h3 data-i18n="softOcTitle">Soft OC NVIDIA</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
+            <div id="softOcStatus" class="muted">—</div>
+            <div class="btn-row" style="margin-top:12px">
+              <button type="button" class="btn" id="btnOcStock" data-i18n="btnOcStock">Reset clocks</button>
+              <button type="button" class="btn" id="btnOc50" data-i18n="btnOc50">+50 MHz</button>
+              <button type="button" class="btn accent" id="btnOc100" data-i18n="btnOc100">+100 MHz</button>
+              <button type="button" class="btn" id="btnOcRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:14px">
+            <div class="panel-head"><h3 data-i18n="afterburnerTitle">Undervolt (externe)</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
+            <p class="help-text" data-i18n="afterburnerHelp">Pour un vrai undervolt, utilisez MSI Afterburner. Opti peut seulement l’ouvrir s’il est installé.</p>
+            <div id="afterburnerStatus" class="muted">—</div>
+            <div class="btn-row" style="margin-top:12px">
+              <button type="button" class="btn accent" id="btnOpenAfterburner" data-i18n="btnOpenAfterburner">Ouvrir Afterburner</button>
+              <button type="button" class="btn" id="btnAfterburnerDl" data-i18n="btnAfterburnerDl">Page téléchargement</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-monitor">
+          <p class="help-text" data-i18n="monitorHelp">FPS / frametime via RTSS (MSI Afterburner). Aucune donnée fictive si RTSS est absent.</p>
+          <div class="guard" data-i18n="guardMonitor">Installez Afterburner + RTSS, lancez un jeu avec OSD pour voir des valeurs live.</div>
+          <div class="panel">
+            <div class="panel-head"><h3 data-i18n="monitorTitle">Monitor FPS</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
+            <div class="stats" id="monitorStats">
+              <div class="stat"><div class="label">FPS</div><div class="value" id="monFps">—</div></div>
+              <div class="stat"><div class="label">Frametime</div><div class="value" id="monFt">—</div></div>
+              <div class="stat"><div class="label" data-i18n="monitorApp">App</div><div class="value" id="monApp" style="font-size:0.85rem">—</div></div>
+            </div>
+            <p id="monitorStatus" class="muted">—</p>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+              <button type="button" class="btn" id="btnMonDl" data-i18n="btnAfterburnerDl">Afterburner / RTSS</button>
             </div>
           </div>
         </section>
@@ -314,7 +372,7 @@
             <div>
               <h3>Opti</h3>
               <p data-i18n="tagline">Optimiseur PC gaming · indépendant · 100 % gratuit</p>
-              <p class="muted" id="aboutVersion">v1.2.0 · version finale</p>
+              <p class="muted" id="aboutVersion">v1.3.0 · version finale</p>
             </div>
           </div>
           <div class="about-portrait-wrap">

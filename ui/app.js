@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.2.1";
+  const APP_VERSION = "1.3.0";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -12,6 +12,32 @@
       copyright: "© 2026 Mr-Aurevo-X · indépendant · gratuit",
       privacy: "Opti est un logiciel indépendant 100 % gratuit. Traitement local uniquement. Version finale — pas de mise à jour automatique.",
       modeAdvanced: "Mode avancé",
+      modeAdvancedHint: "Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
+      btnElevate: "Élever (admin)",
+      dashSoftHint: "Power Limit NVIDIA et anti-parking — Mode avancé",
+      navGroupEssentials: "Essentiels",
+      navGroupTools: "Outils",
+      navGroupAdvanced: "Avancé",
+      navSoftOc: "Soft OC",
+      navMonitor: "Monitor FPS",
+      softOcTitle: "Soft OC NVIDIA",
+      softOcHelp: "Soft OC NVIDIA : locks clocks bornés. Pas d undervolt.",
+      guardSoftOc: "Soft OC n est pas un undervolt. Limites nvidia-smi. Stabilite = vous.",
+      btnOcStock: "Reset clocks",
+      btnOc50: "+50 MHz",
+      btnOc100: "+100 MHz",
+      afterburnerTitle: "Undervolt (externe)",
+      afterburnerHelp: "Vrai undervolt via MSI Afterburner.",
+      btnOpenAfterburner: "Ouvrir Afterburner",
+      btnAfterburnerDl: "Page telechargement",
+      monitorTitle: "Monitor FPS",
+      monitorHelp: "FPS / frametime via RTSS (Afterburner).",
+      guardMonitor: "Installez Afterburner + RTSS, lancez un jeu avec OSD.",
+      monitorApp: "App",
+      confirmDanger: "Confirmer cette action ? Elle peut etre difficile a annuler.",
+      emptyBloat: "Aucune app",
+      profileSaveTitle: "Enregistrer un profil",
+      profileApplyTitle: "Appliquer le profil",
       navTips: "Conseils",
       breakdownTitle: "Détail du score",
       deltaTitle: "Avant / après preset",
@@ -23,7 +49,7 @@
       gradePoor: "Faible — machine saturée ou mal réglée",
       aboutCopyright: "© 2026 Mr-Aurevo-X · Logiciel indépendant · 100 % gratuit · version finale · 100 % local",
       aboutDisclaimer: "Logiciel indépendant, 100 % gratuit, version finale. Aucune garantie de FPS. Pas de mise à jour automatique.",
-      smartHelp: "Sans certificat payant, Windows peut afficher un avertissement. « Informations complémentaires » puis « Exécuter quand même ».",
+      smartHelp: "Opti n'est pas encore signé par un éditeur reconnu de Microsoft. Ceci est normal pour un logiciel indépendant : suivez les étapes ci-dessous pour lancer l'application.",
       dashHelp: "Le score mesure si le PC est prêt maintenant (pas un FPS). Preset = power + Game Mode + visuel + boost.",
       elevating: "Élévation…",
       ready: "Prêt",
@@ -40,7 +66,7 @@
       navPower: "Power",
       navGameMode: "Game Mode",
       navBoost: "Boost",
-      navSoftPerf: "Perf soft",
+      navSoftPerf: "Power Limit / Soft",
       navTimer: "Timer / Prio",
       navClean: "Cleanup",
       navNet: "Réseau",
@@ -80,16 +106,13 @@
       btnPlPerf: "Perf soft",
       btnFindGames: "Détecter jeux",
       btnCancel: "Annuler",
-      softPerfTitle: "Perf soft",
+      softPerfTitle: "Power Limit / Soft",
       softPerfHelp: "Réglages soft réversibles : anti-parking CPU, PCIe ASPM, HAGS, Power Limit NVIDIA. Pas d’undervolt/OC matériel.",
       softPerfNvTitle: "Power Limit NVIDIA",
       softPerfNvHelp: "Eco ≈ −10 %, Perf soft ≈ +5 %, toujours dans les limites carte. Stock = valeur mémorisée / défaut.",
       chkHags: "Activer HAGS (peut exiger un redémarrage)",
       chkApplyHags: "Inclure HAGS dans « Appliquer OS soft »",
       guardSoftPerf: "Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.",
-
-      scoreLabel: "Score gaming",
-      dashHelp: "Un clic pour préparer Windows au jeu : alimentation, Game Mode, effets visuels, overlays. Un point de restauration est créé automatiquement.",
 
       powerTitle: "Plan d'alimentation",
       powerHelp: "Bascule le plan d'alimentation Windows actif. Hautes perfs / Ultimate maximisent le CPU au prix de la conso.",
@@ -147,20 +170,43 @@
       emptyGames: "Détecte des jeux Steam/Epic…",
       prioPh: "Nom process (ex. game)",
 
-      aboutCopyright: "© 2026 Mr-Aurevo-X — Tous droits réservés.",
-      aboutDisclaimer: "Opti est fourni « en l'état », sans garantie de gain de performance. Créez un point de restauration avant tout preset groupé et utilisez d'abord les réglages Recommandés.",
       legalTitle: "Mentions légales",
       legalTerms: "CGU / ToS",
       legalPrivacy: "Confidentialité",
       legalDisclaimer: "Disclaimer",
       smartTitle: "Windows a protégé votre PC (SmartScreen)",
-      smartHelp: "Opti n'est pas encore signé par un éditeur reconnu de Microsoft. Ceci est normal pour un logiciel indépendant : suivez les étapes ci-dessous pour lancer l'application.",
     },
     en: {
       tagline: "Standalone · 100% free · final version",
       copyright: "© 2026 Mr-Aurevo-X · standalone · free",
       privacy: "Opti is standalone 100% free software. Local processing only. Final version — no automatic updates.",
       modeAdvanced: "Advanced mode",
+      modeAdvancedHint: "Shows: Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
+      btnElevate: "Elevate (admin)",
+      dashSoftHint: "NVIDIA Power Limit and anti-parking — Advanced mode",
+      navGroupEssentials: "Essentials",
+      navGroupTools: "Tools",
+      navGroupAdvanced: "Advanced",
+      navSoftOc: "Soft OC",
+      navMonitor: "FPS Monitor",
+      softOcTitle: "NVIDIA Soft OC",
+      softOcHelp: "NVIDIA Soft OC: bounded clock locks. Not undervolt.",
+      guardSoftOc: "Soft OC is not undervolt. nvidia-smi limits. Stability is on you.",
+      btnOcStock: "Reset clocks",
+      btnOc50: "+50 MHz",
+      btnOc100: "+100 MHz",
+      afterburnerTitle: "Undervolt (external)",
+      afterburnerHelp: "Real undervolt via MSI Afterburner.",
+      btnOpenAfterburner: "Open Afterburner",
+      btnAfterburnerDl: "Download page",
+      monitorTitle: "FPS Monitor",
+      monitorHelp: "FPS / frametime via RTSS (Afterburner).",
+      guardMonitor: "Install Afterburner + RTSS, run a game with OSD.",
+      monitorApp: "App",
+      confirmDanger: "Confirm this action? It may be hard to undo.",
+      emptyBloat: "No apps",
+      profileSaveTitle: "Save a profile",
+      profileApplyTitle: "Apply profile",
       navTips: "Tips",
       breakdownTitle: "Score breakdown",
       deltaTitle: "Before / after preset",
@@ -172,7 +218,7 @@
       gradePoor: "Poor — machine saturated or misconfigured",
       aboutCopyright: "© 2026 Mr-Aurevo-X · Standalone · 100% free · final version · 100% local",
       aboutDisclaimer: "Standalone, 100% free, final version. No FPS guarantee. No automatic updates.",
-      smartHelp: "Without a paid certificate, Windows may show a warning. “More info” then “Run anyway”.",
+      smartHelp: "Opti isn't yet signed by a Microsoft-recognized publisher. This is normal for independent software: follow the steps below to launch the app.",
       dashHelp: "Score is readiness now (not FPS). Preset = power + Game Mode + visual + boost.",
       elevating: "Elevating…",
       ready: "Ready",
@@ -189,7 +235,7 @@
       navPower: "Power",
       navGameMode: "Game Mode",
       navBoost: "Boost",
-      navSoftPerf: "Soft perf",
+      navSoftPerf: "Power Limit / Soft",
       navTimer: "Timer / Prio",
       navClean: "Cleanup",
       navNet: "Network",
@@ -230,16 +276,13 @@
       btnFindGames: "Find games",
       btnCancel: "Cancel",
 
-      scoreLabel: "Gaming score",
-      dashHelp: "One click to get Windows game-ready: power plan, Game Mode, visual effects, overlays. A restore point is created automatically.",
-
       powerTitle: "Power plan",
       powerHelp: "Switches the active Windows power plan. High perf / Ultimate maximize CPU at the cost of power draw.",
       gmTitle: "Game Mode & Focus",
       gmHelp: "Enables Windows Game Mode, disables Game Bar / DVR (background capture) and Focus Assist while gaming.",
       boostTitle: "Boost session",
       boostHelp: "Closes background overlays to free up RAM/CPU during a gaming session. Reversible via \u201cEnd session\u201d.",
-      softPerfTitle: "Soft perf",
+      softPerfTitle: "Power Limit / Soft",
       softPerfHelp: "Reversible soft tweaks: CPU anti-parking, PCIe ASPM, HAGS, NVIDIA Power Limit. Not hardware undervolt/OC.",
       softPerfNvTitle: "NVIDIA Power Limit",
       softPerfNvHelp: "Eco ≈ −10%, Perf soft ≈ +5%, always within board limits. Stock = remembered / default value.",
@@ -296,14 +339,11 @@
       emptyGames: "Scan Steam/Epic games…",
       prioPh: "Process name (e.g. game)",
 
-      aboutCopyright: "© 2026 Mr-Aurevo-X — All rights reserved.",
-      aboutDisclaimer: "Opti is provided \u201cas is\u201d, with no guaranteed performance gain. Create a restore point before any bulk preset and try Recommended settings first.",
       legalTitle: "Legal notices",
       legalTerms: "Terms",
       legalPrivacy: "Privacy",
       legalDisclaimer: "Disclaimer",
       smartTitle: "Windows protected your PC (SmartScreen)",
-      smartHelp: "Opti isn't yet signed by a Microsoft-recognized publisher. This is normal for independent software: follow the steps below to launch the app.",
     },
   };
 
@@ -313,7 +353,9 @@
       power: ["Power", "Plans d'alimentation"],
       gamemode: ["Game Mode", "Game Mode, Game Bar, Focus"],
       boost: ["Boost", "Session overlays"],
-      softperf: ["Perf soft", "OS soft + Power Limit NVIDIA"],
+      softperf: ["Power Limit / Soft", "OS soft + Power Limit NVIDIA"],
+      softoc: ["Soft OC", "Locks clocks NVIDIA"],
+      monitor: ["Monitor FPS", "FPS / frametime RTSS"],
       clean: ["Cleanup", "Caches GPU et launchers"],
       net: ["Réseau", "DNS et tweaks latence"],
       visual: ["Visuel", "Effets Windows"],
@@ -331,7 +373,9 @@
       power: ["Power", "Power plans"],
       gamemode: ["Game Mode", "Game Mode, Game Bar, Focus"],
       boost: ["Boost", "Overlay session"],
-      softperf: ["Soft perf", "Soft OS + NVIDIA Power Limit"],
+      softperf: ["Power Limit / Soft", "Soft OS + NVIDIA Power Limit"],
+      softoc: ["Soft OC", "Bounded NVIDIA clock locks"],
+      monitor: ["FPS Monitor", "FPS / frametime via RTSS"],
       clean: ["Cleanup", "GPU and launcher caches"],
       net: ["Network", "DNS and latency tweaks"],
       visual: ["Visual", "Windows effects"],
@@ -444,6 +488,8 @@
     }
     if (page === "tips") loadTips().catch(() => {});
     if (page === "softperf") refreshSoftPerf().catch(() => {});
+    if (page === "softoc") refreshSoftOc().catch(() => {});
+    if (page === "monitor") { startMonitorPoll(); refreshMonitor().catch(() => {}); } else { stopMonitorPoll(); }
   }
 
   async function refreshHealth() {
@@ -608,6 +654,65 @@
     }
   }
 
+
+  let monitorTimer = null;
+  function stopMonitorPoll() {
+    if (monitorTimer) { clearInterval(monitorTimer); monitorTimer = null; }
+  }
+  function startMonitorPoll() {
+    stopMonitorPoll();
+    monitorTimer = setInterval(() => { refreshMonitor().catch(() => {}); }, 1000);
+  }
+
+  async function refreshSoftOc() {
+    const d = await run("getSoftOc", {});
+    const nv = d.nvidia || {};
+    const ab = d.afterburner || {};
+    const el = $("#softOcStatus");
+    if (el) {
+      el.textContent = nv.available
+        ? (nv.name || "NVIDIA") + " · core " + nv.coreCurrent + "/" + nv.coreMax + " MHz · mem " + nv.memCurrent + "/" + nv.memMax + " MHz"
+        : (lang === "en" ? ("Clocks unavailable (" + (nv.reason || "n/a") + ")") : ("Clocks indisponibles (" + (nv.reason || "n/a") + ")"));
+    }
+    const abEl = $("#afterburnerStatus");
+    if (abEl) {
+      abEl.textContent = ab.found
+        ? (lang === "en" ? ("Found: " + ab.path) : ("Trouve : " + ab.path))
+        : (lang === "en" ? "Afterburner not installed" : "Afterburner non installe");
+    }
+    ["btnOcStock", "btnOc50", "btnOc100"].forEach((id) => {
+      const b = $("#" + id);
+      if (b) b.disabled = !nv.available;
+    });
+  }
+
+  async function refreshMonitor() {
+    if (!api || !api.get_fps_sample) {
+      const st = $("#monitorStatus");
+      if (st) st.textContent = lang === "en" ? "Host API missing get_fps_sample" : "API host sans get_fps_sample";
+      return;
+    }
+    const d = await api.get_fps_sample();
+    const fpsEl = $("#monFps");
+    const ftEl = $("#monFt");
+    const appEl = $("#monApp");
+    const st = $("#monitorStatus");
+    const mini = $("#dashFpsMini");
+    if (d && d.available && d.fps != null) {
+      if (fpsEl) fpsEl.textContent = String(d.fps);
+      if (ftEl) ftEl.textContent = (d.frametimeMs != null ? d.frametimeMs + " ms" : "—");
+      if (appEl) appEl.textContent = d.app || "—";
+      if (st) st.textContent = "RTSS OK";
+      if (mini) { mini.hidden = false; mini.textContent = "FPS " + d.fps + (d.frametimeMs != null ? (" · " + d.frametimeMs + " ms") : ""); }
+    } else {
+      if (fpsEl) fpsEl.textContent = "—";
+      if (ftEl) ftEl.textContent = "—";
+      if (appEl) appEl.textContent = "—";
+      if (st) st.textContent = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d echantillon RTSS");
+      if (mini) mini.hidden = true;
+    }
+  }
+
   async function scanClean() {
     const d = await runJob("scanCleanup", {});
     const items = d.items || [];
@@ -657,7 +762,7 @@
         (a) => `<label class="check-item"><input type="checkbox" data-pfn="${a.PackageFullName}" checked/>
         <div><div class="t">${a.Name}</div><div class="d">${a.Version}</div></div></label>`
       )
-      .join("") || '<div class="muted">Aucune app</div>';
+      .join("") || `<div class="muted">${(SUITE_I18N[lang] || SUITE_I18N.fr).emptyBloat || "—"}</div>`;
   }
 
   async function refreshProfiles() {
@@ -667,7 +772,7 @@
       ? profiles
           .map(
             (p) =>
-              `<li><button type="button" class="btn accent" style="height:28px;font-size:0.75rem;margin-right:8px" data-apply="${p.name}">▶</button>${p.name} <span class="muted">${p.exePath || ""}</span></li>`
+              `<li><button type="button" class="btn accent" style="height:28px;font-size:0.75rem;margin-right:8px" data-apply="${p.name}" title="${(SUITE_I18N[lang] || SUITE_I18N.fr).profileApplyTitle || "Apply"}">▶</button>${p.name} <span class="muted">${p.exePath || ""}</span></li>`
           )
           .join("")
       : '<li class="muted">—</li>';
@@ -692,14 +797,15 @@
     $("#undoList").innerHTML = (u.items || [])
       .map(
         (it) =>
-          `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-undo="${it.id}">Undo</button>${it.name} — ${it.createdAt || ""}</li>`
+          `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-undo="${it.id}" title="${it.name}">Undo</button><span class="t">${it.name}</span> <span class="muted">${it.createdAt || ""}${it.summary ? " · " + it.summary : ""}</span></li>`
       )
       .join("") || '<li class="muted">—</li>';
     $$("#undoList [data-undo]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         try {
           const r = await runJob("runUndo", { id: btn.dataset.undo });
-          log(r.Message || "Undo OK", "ok");
+          const cls = r.Partial ? "warn" : r.Success === false ? "err" : "ok";
+          log(r.Message || "Undo OK", cls);
           await refreshSessions();
         } catch (e) {
           log(String(e.message || e), "err");
@@ -828,6 +934,8 @@
 
     $("#btnScanClean").addEventListener("click", () => scanClean().catch((e) => log(e.message, "err")));
     $("#btnRunClean").addEventListener("click", async () => {
+      const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+      if (!confirm(pack.confirmDanger || "Confirm?")) return;
       const ids = $$("#cleanCats input:checked").map((i) => i.dataset.id);
       try {
         const r = await runJob("runCleanup", { ids });
@@ -877,6 +985,8 @@
 
     $("#btnScanSvc").addEventListener("click", () => refreshServices().catch((e) => log(e.message, "err")));
     $("#btnApplySvc").addEventListener("click", async () => {
+      const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+      if (!confirm(pack.confirmDanger || "Confirm?")) return;
       const names = $$("#svcList input:checked").map((i) => i.dataset.name);
       try {
         const r = await runJob("setServices", { names });
@@ -889,6 +999,8 @@
 
     $("#btnScanStartup").addEventListener("click", () => refreshStartup().catch((e) => log(e.message, "err")));
     $("#btnDisableStartup").addEventListener("click", async () => {
+      const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+      if (!confirm(pack.confirmDanger || "Confirm?")) return;
       const items = $$("#startupList input:checked").map((i) => ({
         Name: decodeURIComponent(i.dataset.name),
         Hive: decodeURIComponent(i.dataset.hive),
@@ -906,6 +1018,8 @@
 
     $("#btnScanBloat").addEventListener("click", () => scanBloat().catch((e) => log(e.message, "err")));
     $("#btnRemoveBloat").addEventListener("click", async () => {
+      const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+      if (!confirm(pack.confirmDanger || "Confirm?")) return;
       const packageFullNames = $$("#bloatList input:checked").map((i) => i.dataset.pfn);
       try {
         const r = await runJob("removeBloat", { packageFullNames });
@@ -975,6 +1089,56 @@
     };
     wireSoftPerf();
 
+    const btnEl = $("#btnElevate");
+    if (btnEl) {
+      btnEl.addEventListener("click", async () => {
+        try {
+          if (!api.request_elevation) { log("Elevation API missing", "err"); return; }
+          const r = await api.request_elevation();
+          if (r && r.alreadyAdmin) log(lang === "en" ? "Already admin" : "Deja admin", "ok");
+          else if (r && r.elevating) log(lang === "en" ? "UAC prompted — relaunching" : "UAC demande — relance", "warn");
+          else log((r && r.error) || "Elevation failed", "err");
+        } catch (e) { log(String(e.message || e), "err"); }
+      });
+    }
+    const gotoSoft = $("#btnGotoSoftPerf");
+    if (gotoSoft) {
+      gotoSoft.addEventListener("click", () => {
+        const chk = $("#chkAdvanced");
+        if (chk && !chk.checked) { chk.checked = true; applyAdvancedMode(true); }
+        showPage("softperf");
+      });
+    }
+    const setOc = (preset) => async () => {
+      try {
+        const r = await runJob("setNvidiaClocks", { preset });
+        log(r.Message || "OK", r.Success === false ? "err" : "ok");
+        await refreshSoftOc();
+      } catch (e) { log(e.message, "err"); }
+    };
+    if ($("#btnOcStock")) $("#btnOcStock").addEventListener("click", setOc("stock"));
+    if ($("#btnOc50")) $("#btnOc50").addEventListener("click", setOc("plus50"));
+    if ($("#btnOc100")) $("#btnOc100").addEventListener("click", setOc("plus100"));
+    if ($("#btnOcRefresh")) $("#btnOcRefresh").addEventListener("click", () => refreshSoftOc().catch((e) => log(e.message, "err")));
+    if ($("#btnOpenAfterburner")) {
+      $("#btnOpenAfterburner").addEventListener("click", async () => {
+        try {
+          const r = await run("openAfterburner", {});
+          log(r.Message || "OK", r.Success === false ? "warn" : "ok");
+        } catch (e) { log(e.message, "err"); }
+      });
+    }
+    const openDl = async () => {
+      try {
+        if (api.open_url) await api.open_url("https://www.msi.com/Landing/afterburner");
+      } catch (e) { log(e.message, "err"); }
+    };
+    if ($("#btnAfterburnerDl")) $("#btnAfterburnerDl").addEventListener("click", openDl);
+    if ($("#btnMonDl")) $("#btnMonDl").addEventListener("click", openDl);
+    if ($("#btnMonRefresh")) $("#btnMonRefresh").addEventListener("click", () => refreshMonitor().catch((e) => log(e.message, "err")));
+
+
+
     $("#btnPrio").addEventListener("click", async () => {
       try {
         const r = await runJob("setPriority", {
@@ -995,7 +1159,7 @@
           ? games
               .map(
                 (g) =>
-                  `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-save="${encodeURIComponent(g.name)}" data-path="${encodeURIComponent(g.path)}">+</button>${g.name}</li>`
+                  `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-save="${encodeURIComponent(g.name)}" data-path="${encodeURIComponent(g.path)}" title="${(SUITE_I18N[lang] || SUITE_I18N.fr).profileSaveTitle || "Save"}">+</button>${g.name}</li>`
               )
               .join("")
           : `<li class="muted">${lang === "en" ? "No game found" : "Aucun jeu trouvé"}</li>`;
@@ -1052,16 +1216,16 @@
 
     try {
       const ping = await run("ping", {});
+      let admin = !!(ping && ping.admin);
+      try { if (api && api.is_admin) admin = !!(await api.is_admin()); } catch (_) {}
       const badge = $("#adminBadge");
-      if (ping.admin) {
-        badge.textContent = SUITE_I18N[lang].adminOk;
-        badge.className = "badge ok";
-      } else {
-        badge.textContent = SUITE_I18N[lang].adminNo;
-        badge.className = "badge warn";
+      if (badge) {
+        if (admin) { badge.textContent = SUITE_I18N[lang].adminOk; badge.className = "badge ok"; }
+        else { badge.textContent = SUITE_I18N[lang].adminNo; badge.className = "badge warn"; }
       }
       setStatus(SUITE_I18N[lang].ready);
-      log(`Opti v${APP_VERSION} prêt`, "ok");
+      log("Opti v" + APP_VERSION + " ready", "ok");
+      refreshMonitor().catch(() => {});
     } catch (e) {
       log(String(e.message || e), "err");
     }
