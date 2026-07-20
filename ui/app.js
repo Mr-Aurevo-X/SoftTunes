@@ -2,34 +2,41 @@
 (function () {
   "use strict";
 
+  const APP_VERSION = "1.1.0";
+
   const SUITE_I18N = {
     fr: {
-      tagline: "Optimiseur gaming",
+      tagline: "Performance gaming, sans compromis",
       copyright: "© 2026 Mr-Aurevo-X · local · pas de collecte",
-      featuresTitle: "Fonctions",
-      features: "Boost PC gaming : power, Game Mode, caches GPU, réseau, profils par jeu.",
-      privacy: "Mr-Aurevo-X ne collecte aucune donnée. Traitement local sur cette machine.",
       elevating: "Élévation…",
       ready: "Prêt",
       adminOk: "Admin",
       adminNo: "Sans admin",
+
+      navGroupPerf: "Performances",
+      navGroupSys: "Système",
+      navGroupGames: "Jeux",
+      navGroupHistory: "Historique",
+      navGroupLegal: "Légal",
+
       navDash: "Dashboard",
       navPower: "Power",
       navGameMode: "Game Mode",
       navBoost: "Boost",
+      navTimer: "Timer / Prio",
       navClean: "Cleanup",
       navNet: "Réseau",
       navVisual: "Visuel",
       navServices: "Services",
       navStartup: "Démarrage",
       navDebloat: "Debloat",
-      navTimer: "Timer / Prio",
       navProfiles: "Profils jeu",
       navSessions: "Sessions",
+      navAbout: "À propos",
+
       btnRestore: "Point de restauration",
-      btnAbout: "À propos",
       btnRefresh: "Rafraîchir",
-      btnPreset: "Preset gaming",
+      btnPreset: "Optimiser pour jouer",
       btnOpenPowerPlan: "Ouvrir PowerPlan",
       btnOpenWinClean: "Ouvrir WinCleaner",
       btnBalanced: "Équilibré",
@@ -52,21 +59,45 @@
       btnPrio: "Priorité",
       btnFindGames: "Détecter jeux",
       btnCancel: "Annuler",
+
+      scoreLabel: "Score gaming",
+      dashHelp: "Un clic pour préparer Windows au jeu : alimentation, Game Mode, effets visuels, overlays. Un point de restauration est créé automatiquement.",
+
       powerTitle: "Plan d'alimentation",
+      powerHelp: "Bascule le plan d'alimentation Windows actif. Hautes perfs / Ultimate maximisent le CPU au prix de la conso.",
       gmTitle: "Game Mode & Focus",
+      gmHelp: "Active le Game Mode Windows, coupe Game Bar / DVR (capture en arrière-plan) et le Focus Assist pendant le jeu.",
       boostTitle: "Session boost",
+      boostHelp: "Ferme les overlays en tâche de fond pour libérer RAM/CPU pendant une session de jeu. Réversible via « Terminer session ».",
       cleanTitle: "Caches gaming",
+      cleanHelp: "Vide les caches shaders/launchers (NVIDIA, AMD, Steam, Epic, Discord…). Régénérés automatiquement au prochain lancement.",
       netTitle: "DNS & latence",
+      netHelp: "Change le DNS système pour un résolveur rapide (Cloudflare, Google…). Réversible avec Undo ou en repassant sur DHCP.",
+      tcpHelp: "Ajuste des paramètres TCP avancés (autotuning, Nagle) pour réduire la latence réseau. Peut affecter la stabilité sur certaines configs.",
       visualTitle: "Effets Windows",
+      visualHelp: "Réduit les effets visuels Windows (animations, transparence) pour libérer un peu de CPU/GPU. Aucun impact sur la stabilité.",
       svcTitle: "Services gaming",
+      svcHelp: "Passe les services non essentiels en démarrage manuel. Ils restent installés et peuvent redémarrer automatiquement si nécessaire.",
       startupTitle: "Démarrage",
+      startupHelp: "Désactive les entrées lancées automatiquement à l'ouverture de session. Les entrées protégées (🔒) sont ignorées par sécurité.",
       bloatTitle: "Apps détectées",
+      bloatHelp: "Supprime les applications préinstallées non essentielles (AppX). Les apps système critiques sont toujours protégées.",
       timerTitle: "Timer & priorités",
+      timerHelp: "Force une résolution timer fine (~1ms) pour réduire les micro-freezes. Augmente la conso batterie sur portable.",
+      prioHelp: "Relève la priorité CPU d'un processus par son nom. À utiliser avec précaution (risque d'instabilité système).",
       profilesTitle: "Profils par jeu",
+      profilesHelp: "Détecte vos jeux Steam/Epic et enregistre un profil de réglages (power, Game Mode, boost…) à appliquer en un clic avant de lancer.",
       savedProfiles: "Profils enregistrés",
       historyTitle: "Historique",
+      historyHelp: "Journal des actions appliquées par Opti sur cette machine.",
       undoTitle: "Undo",
+      undoHelp: "Annule une action précédente (DNS, services, visuel…) et restaure l'état antérieur.",
       consoleTitle: "Console",
+
+      badgeRec: "Recommandé",
+      badgeOptin: "Opt-in",
+      badgeAdv: "Avancé",
+
       statTargets: "Cibles",
       statEst: "Estimation",
       chkGameMode: "Activer Game Mode",
@@ -87,35 +118,48 @@
       guardTimer: "Timer resolution = agressif (batterie/thermiques). MMCS nécessite admin.",
       emptyGames: "Détecte des jeux Steam/Epic…",
       prioPh: "Nom process (ex. game)",
-      about: "Opti — optimiseur PC gaming Mr-Aurevo-X.\n100% local. Undo + point de restauration recommandés avant apply groupé.",
+
+      aboutCopyright: "© 2026 Mr-Aurevo-X — Tous droits réservés.",
+      aboutDisclaimer: "Opti est fourni « en l'état », sans garantie de gain de performance. Créez un point de restauration avant tout preset groupé et utilisez d'abord les réglages Recommandés.",
+      legalTitle: "Mentions légales",
+      legalTerms: "CGU / ToS",
+      legalPrivacy: "Confidentialité",
+      legalDisclaimer: "Disclaimer",
+      smartTitle: "Windows a protégé votre PC (SmartScreen)",
+      smartHelp: "Opti n'est pas encore signé par un éditeur reconnu de Microsoft. Ceci est normal pour un logiciel indépendant : suivez les étapes ci-dessous pour lancer l'application.",
     },
     en: {
-      tagline: "Gaming optimizer",
+      tagline: "Gaming performance, no compromise",
       copyright: "© 2026 Mr-Aurevo-X · local · no collection",
-      featuresTitle: "Features",
-      features: "Gaming PC boost: power, Game Mode, GPU caches, network, per-game profiles.",
-      privacy: "Mr-Aurevo-X does not collect your data. Everything stays on this PC.",
       elevating: "Elevating…",
       ready: "Ready",
       adminOk: "Admin",
       adminNo: "No admin",
+
+      navGroupPerf: "Performance",
+      navGroupSys: "System",
+      navGroupGames: "Games",
+      navGroupHistory: "History",
+      navGroupLegal: "Legal",
+
       navDash: "Dashboard",
       navPower: "Power",
       navGameMode: "Game Mode",
       navBoost: "Boost",
+      navTimer: "Timer / Prio",
       navClean: "Cleanup",
       navNet: "Network",
       navVisual: "Visual",
       navServices: "Services",
       navStartup: "Startup",
       navDebloat: "Debloat",
-      navTimer: "Timer / Prio",
       navProfiles: "Game profiles",
       navSessions: "Sessions",
+      navAbout: "About",
+
       btnRestore: "Restore point",
-      btnAbout: "About",
       btnRefresh: "Refresh",
-      btnPreset: "Gaming preset",
+      btnPreset: "Optimize for gaming",
       btnOpenPowerPlan: "Open PowerPlan",
       btnOpenWinClean: "Open WinCleaner",
       btnBalanced: "Balanced",
@@ -138,21 +182,45 @@
       btnPrio: "Priority",
       btnFindGames: "Find games",
       btnCancel: "Cancel",
+
+      scoreLabel: "Gaming score",
+      dashHelp: "One click to get Windows game-ready: power plan, Game Mode, visual effects, overlays. A restore point is created automatically.",
+
       powerTitle: "Power plan",
+      powerHelp: "Switches the active Windows power plan. High perf / Ultimate maximize CPU at the cost of power draw.",
       gmTitle: "Game Mode & Focus",
+      gmHelp: "Enables Windows Game Mode, disables Game Bar / DVR (background capture) and Focus Assist while gaming.",
       boostTitle: "Boost session",
+      boostHelp: "Closes background overlays to free up RAM/CPU during a gaming session. Reversible via \u201cEnd session\u201d.",
       cleanTitle: "Gaming caches",
+      cleanHelp: "Clears shader/launcher caches (NVIDIA, AMD, Steam, Epic, Discord…). Automatically rebuilt on next launch.",
       netTitle: "DNS & latency",
+      netHelp: "Changes the system DNS resolver to a fast one (Cloudflare, Google…). Reversible via Undo or by switching back to DHCP.",
+      tcpHelp: "Adjusts advanced TCP settings (autotuning, Nagle) to reduce network latency. May affect stability on some setups.",
       visualTitle: "Windows effects",
+      visualHelp: "Reduces Windows visual effects (animations, transparency) to free up a bit of CPU/GPU. No stability impact.",
       svcTitle: "Gaming services",
+      svcHelp: "Sets non-essential services to manual startup. They stay installed and can still start automatically if needed.",
       startupTitle: "Startup",
+      startupHelp: "Disables entries that auto-launch at sign-in. Protected entries (🔒) are skipped for safety.",
       bloatTitle: "Detected apps",
+      bloatHelp: "Removes non-essential preinstalled apps (AppX). Critical system apps are always protected.",
       timerTitle: "Timer & priorities",
+      timerHelp: "Forces a fine timer resolution (~1ms) to reduce micro-stutters. Increases battery drain on laptops.",
+      prioHelp: "Raises CPU priority for a process by name. Use with care (risk of system instability).",
       profilesTitle: "Per-game profiles",
+      profilesHelp: "Detects your Steam/Epic games and saves a settings profile (power, Game Mode, boost…) to apply in one click before launching.",
       savedProfiles: "Saved profiles",
       historyTitle: "History",
+      historyHelp: "Log of actions applied by Opti on this machine.",
       undoTitle: "Undo",
+      undoHelp: "Reverts a previous action (DNS, services, visual…) and restores the prior state.",
       consoleTitle: "Console",
+
+      badgeRec: "Recommended",
+      badgeOptin: "Opt-in",
+      badgeAdv: "Advanced",
+
       statTargets: "Targets",
       statEst: "Estimate",
       chkGameMode: "Enable Game Mode",
@@ -173,7 +241,15 @@
       guardTimer: "Timer resolution is aggressive (battery/thermals). MMCS needs admin.",
       emptyGames: "Scan Steam/Epic games…",
       prioPh: "Process name (e.g. game)",
-      about: "Opti — Mr-Aurevo-X gaming PC optimizer.\n100% local. Use undo + restore point before bulk apply.",
+
+      aboutCopyright: "© 2026 Mr-Aurevo-X — All rights reserved.",
+      aboutDisclaimer: "Opti is provided \u201cas is\u201d, with no guaranteed performance gain. Create a restore point before any bulk preset and try Recommended settings first.",
+      legalTitle: "Legal notices",
+      legalTerms: "Terms",
+      legalPrivacy: "Privacy",
+      legalDisclaimer: "Disclaimer",
+      smartTitle: "Windows protected your PC (SmartScreen)",
+      smartHelp: "Opti isn't yet signed by a Microsoft-recognized publisher. This is normal for independent software: follow the steps below to launch the app.",
     },
   };
 
@@ -192,6 +268,7 @@
       timer: ["Timer / Prio", "Timer resolution et priorités"],
       profiles: ["Profils jeu", "Appliquer un profil et lancer"],
       sessions: ["Sessions", "Historique et undo"],
+      about: ["À propos", "Mentions légales et informations"],
     },
     en: {
       dash: ["Dashboard", "Gaming score and quick actions"],
@@ -207,12 +284,20 @@
       timer: ["Timer / Prio", "Timer resolution and priorities"],
       profiles: ["Game profiles", "Apply profile and launch"],
       sessions: ["Sessions", "History and undo"],
+      about: ["About", "Legal notices and information"],
     },
+  };
+
+  const LEGAL_FILES = {
+    terms: { fr: "legal/cgu.fr.html", en: "legal/tos.en.html" },
+    privacy: { fr: "legal/privacy.fr.html", en: "legal/privacy.en.html" },
+    disclaimer: { fr: "legal/disclaimer.fr.html", en: "legal/disclaimer.fr.html" },
   };
 
   let api = null;
   let lang = "fr";
   let jobBusy = false;
+  const legalCache = {};
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -295,6 +380,10 @@
     const meta = (PAGE_META[lang] || PAGE_META.fr)[page] || [page, ""];
     $("#pageTitle").textContent = meta[0];
     $("#pageSub").textContent = meta[1];
+    if (page === "about") {
+      const activeTab = $(".legal-tab.active");
+      loadLegal(activeTab ? activeTab.dataset.doc : "terms").catch(() => {});
+    }
   }
 
   async function refreshHealth() {
@@ -331,9 +420,10 @@
   async function refreshBoost() {
     const s = await run("getBoostStatus", {});
     const n = (s.overlays || []).length;
-    $("#boostStatus").textContent = s.active
-      ? `Boost actif — ${n} overlays vus`
-      : `Inactif — ${n} overlays détectés`;
+    const tpl = lang === "en"
+      ? (s.active ? `Boost active — ${n} overlays seen` : `Inactive — ${n} overlays detected`)
+      : (s.active ? `Boost actif — ${n} overlays vus` : `Inactif — ${n} overlays détectés`);
+    $("#boostStatus").textContent = tpl;
   }
 
   async function scanClean() {
@@ -436,13 +526,28 @@
     });
   }
 
+  async function loadLegal(doc) {
+    const key = doc && LEGAL_FILES[doc] ? doc : "terms";
+    const file = LEGAL_FILES[key][lang] || LEGAL_FILES[key].fr;
+    const frame = $("#legalFrame");
+    if (!frame) return;
+    try {
+      if (!legalCache[file]) {
+        const res = await fetch(file, { cache: "no-store" });
+        legalCache[file] = res.ok ? await res.text() : `<p>(${key})</p>`;
+      }
+      frame.srcdoc = legalCache[file];
+    } catch (_) {
+      frame.srcdoc = `<p>(${key})</p>`;
+    }
+  }
+
   function wire() {
     $("#nav").addEventListener("click", (e) => {
       const btn = e.target.closest(".nav-btn");
       if (btn) showPage(btn.dataset.page);
     });
 
-    $("#btnAbout").addEventListener("click", () => alert(SUITE_I18N[lang].about));
     $("#btnRestore").addEventListener("click", async () => {
       try {
         const r = await runJob("createRestorePoint", {});
@@ -543,7 +648,7 @@
     );
     $("#btnTcp").addEventListener("click", async () => {
       if (!$("#chkTcp").checked) {
-        log("Cochez l'opt-in TCP", "warn");
+        log(lang === "en" ? "Check the TCP opt-in first" : "Cochez l'opt-in TCP", "warn");
         return;
       }
       try {
@@ -638,15 +743,15 @@
       try {
         const d = await runJob("findGames", {});
         const games = d.games || [];
-        $("#gameList").innerHTML = games.length
+        $("#gamesList").innerHTML = games.length
           ? games
               .map(
                 (g) =>
                   `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-save="${encodeURIComponent(g.name)}" data-path="${encodeURIComponent(g.path)}">+</button>${g.name}</li>`
               )
               .join("")
-          : '<li class="muted">Aucun jeu trouvé</li>';
-        $$("#gameList [data-save]").forEach((btn) => {
+          : `<li class="muted">${lang === "en" ? "No game found" : "Aucun jeu trouvé"}</li>`;
+        $$("#gamesList [data-save]").forEach((btn) => {
           btn.addEventListener("click", async () => {
             const name = decodeURIComponent(btn.dataset.save);
             const exePath = decodeURIComponent(btn.dataset.path);
@@ -655,7 +760,7 @@
               exePath,
               settings: { power: "high", gameMode: true, disableGameBar: true, focusAssist: true, boost: true, visual: true },
             });
-            log(`Profil sauvé: ${name}`, "ok");
+            log(`${lang === "en" ? "Profile saved" : "Profil sauvé"}: ${name}`, "ok");
             await refreshProfiles();
           });
         });
@@ -665,6 +770,13 @@
     });
     $("#btnRefreshProfiles").addEventListener("click", () => refreshProfiles().catch((e) => log(e.message, "err")));
     $("#btnRefreshSessions").addEventListener("click", () => refreshSessions().catch((e) => log(e.message, "err")));
+
+    $("#legalTabs").addEventListener("click", (e) => {
+      const tab = e.target.closest(".legal-tab");
+      if (!tab) return;
+      $$(".legal-tab").forEach((t) => t.classList.toggle("active", t === tab));
+      loadLegal(tab.dataset.doc).catch(() => {});
+    });
   }
 
   async function boot() {
@@ -694,7 +806,7 @@
         badge.className = "badge warn";
       }
       setStatus(SUITE_I18N[lang].ready);
-      log("Opti prêt", "ok");
+      log(`Opti v${APP_VERSION} prêt`, "ok");
     } catch (e) {
       log(String(e.message || e), "err");
     }

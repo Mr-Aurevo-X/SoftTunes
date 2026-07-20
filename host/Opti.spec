@@ -5,7 +5,7 @@ a = Analysis(
     ['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\host\\opti_host.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\index.html', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\styles.css', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\app.js', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\suite-boot.js', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\brand-icon.png', 'ui')],
+    datas=[('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\index.html', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\styles.css', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\app.js', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\suite-boot.js', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\brand-icon.png', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\logo-opti.png', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\about-portrait.png', 'ui'), ('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\ui\\legal', 'ui\\legal')],
     hiddenimports=['clr'],
     hookspath=[],
     hooksconfig={},

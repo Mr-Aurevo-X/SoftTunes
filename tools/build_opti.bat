@@ -10,6 +10,9 @@ python -m PyInstaller --noconfirm --clean --onefile --windowed ^
   --add-data "%ROOT%\ui\app.js;ui" ^
   --add-data "%ROOT%\ui\suite-boot.js;ui" ^
   --add-data "%ROOT%\ui\brand-icon.png;ui" ^
+  --add-data "%ROOT%\ui\logo-opti.png;ui" ^
+  --add-data "%ROOT%\ui\about-portrait.png;ui" ^
+  --add-data "%ROOT%\ui\legal;ui\legal" ^
   --hidden-import "clr" ^
   --distpath "%ROOT%" ^
   --workpath "%ROOT%\host\build" ^
