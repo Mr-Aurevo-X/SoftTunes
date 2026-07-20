@@ -6,6 +6,10 @@ Optimiseur PC gaming Mr-Aurevo-X — power, Game Mode, boost session, caches GPU
 
 ## Lancer
 
+Double-clic sur **`Opti.exe`** (à la racine de ce dossier, ou dans `Desktop\Opti Mr-Aurevo-X`).
+
+Dev (sans exe) :
+
 ```powershell
 cd "C:\Users\aurel\Desktop\Suite Mr-Aurevo-X\Opti"
 python -m venv .venv
@@ -13,17 +17,13 @@ python -m venv .venv
 .\.venv\Scripts\python host\opti_host.py
 ```
 
-Ou double-clic `Lancer.cmd` (préfère `Opti.exe` s’il existe).
-
-Raccourci Desktop : `Opti Mr-Aurevo-X\Lancer Opti.cmd` → pointe vers ce dépôt Suite.
-
 ## Build
 
 ```bat
 tools\build_opti.bat
 ```
 
-Produit `Opti.exe` à la racine (UI loose `ui\` préférée à côté de l’exe).
+Produit `Opti.exe` à la racine (le dossier `ui\` à côté de l’exe est utilisé en priorité pour les hotfixes).
 
 ## Architecture
 
