@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\host\\opti_host.py'],
+    ['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\host\\opti_setup.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\build\\ui_stage', 'ui')],
-    hiddenimports=['clr'],
+    datas=[('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\Opti-dist', 'Opti-dist')],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -19,14 +19,17 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
-    name='Opti',
+    name='OptiSetup',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=False,
-    console=False,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -34,13 +37,4 @@ exe = EXE(
     entitlements_file=None,
     version='C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\tools\\file_version_info.txt',
     icon=['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\logo-opti.ico'],
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=False,
-    upx_exclude=[],
-    name='Opti',
 )

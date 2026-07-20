@@ -572,8 +572,10 @@
         log(String(e.message || e), "err");
       }
     });
-    $("#btnOpenPowerPlan").addEventListener("click", () => api.open_suite_app("PowerPlan"));
-    $("#btnOpenWinClean").addEventListener("click", () => api.open_suite_app("WinCleaner"));
+    const btnPp = $("#btnOpenPowerPlan");
+    if (btnPp) btnPp.addEventListener("click", () => api.open_suite_app("PowerPlan"));
+    const btnWc = $("#btnOpenWinClean");
+    if (btnWc) btnWc.addEventListener("click", () => api.open_suite_app("WinCleaner"));
 
     $("#btnPowerBalanced").addEventListener("click", () =>
       runJob("setPowerPlan", { profile: "balanced" }).then((r) => log(r.Message, "ok")).catch((e) => log(e.message, "err"))
@@ -743,7 +745,7 @@
       try {
         const d = await runJob("findGames", {});
         const games = d.games || [];
-        $("#gamesList").innerHTML = games.length
+        $("#gameList").innerHTML = games.length
           ? games
               .map(
                 (g) =>
@@ -751,7 +753,7 @@
               )
               .join("")
           : `<li class="muted">${lang === "en" ? "No game found" : "Aucun jeu trouvé"}</li>`;
-        $$("#gamesList [data-save]").forEach((btn) => {
+        $$("#gameList [data-save]").forEach((btn) => {
           btn.addEventListener("click", async () => {
             const name = decodeURIComponent(btn.dataset.save);
             const exePath = decodeURIComponent(btn.dataset.path);
@@ -771,18 +773,21 @@
     $("#btnRefreshProfiles").addEventListener("click", () => refreshProfiles().catch((e) => log(e.message, "err")));
     $("#btnRefreshSessions").addEventListener("click", () => refreshSessions().catch((e) => log(e.message, "err")));
 
-    $("#legalTabs").addEventListener("click", (e) => {
-      const tab = e.target.closest(".legal-tab");
-      if (!tab) return;
-      $$(".legal-tab").forEach((t) => t.classList.toggle("active", t === tab));
-      loadLegal(tab.dataset.doc).catch(() => {});
-    });
+    const legalTabs = $(".legal-tabs");
+    if (legalTabs) {
+      legalTabs.addEventListener("click", (e) => {
+        const tab = e.target.closest(".legal-tab");
+        if (!tab) return;
+        $$(".legal-tab").forEach((t) => t.classList.toggle("active", t === tab));
+        loadLegal(tab.dataset.doc).catch(() => {});
+      });
+    }
   }
 
   async function boot() {
     api = await waitApi();
     if (!api) {
-      log("Host pywebview non détecté — ouvrir via Lancer.cmd", "err");
+      log("Host pywebview non détecté — lancez Opti.exe", "err");
       return;
     }
     try {

@@ -1,6 +1,7 @@
 # Build / runtime
 dist/
 build/
+Opti-dist/
 logs/
 *.log
 *.exe
@@ -9,6 +10,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 host/build/
+host/build_setup/
 *.tmp
 .DS_Store
 Thumbs.db
