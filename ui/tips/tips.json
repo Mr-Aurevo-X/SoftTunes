@@ -24,6 +24,16 @@
       "id": "anticheat",
       "title": "Anti-cheat",
       "body": "Timer resolution et priorités process élevées peuvent être mal vus par certains anti-cheats. Gardez-les en mode Avancé et désactivez-les si un jeu se comporte mal."
+    },
+    {
+      "id": "softperf",
+      "title": "Perf soft vs undervolt",
+      "body": "Perf soft (mode Avancé) ajuste powercfg, HAGS et éventuellement le Power Limit NVIDIA (± soft, borné). Opti ne touche jamais aux voltages ni aux clocks. Pour un vrai undervolt : Adrenalin (AMD) ou MSI Afterburner (NVIDIA), avec prudence et tests de stabilité."
+    },
+    {
+      "id": "undervolt-tools",
+      "title": "Undervolt matériel (externe)",
+      "body": "Un undervolt bien fait peut baisser chaleur et bruit à FPS proche du stock. Mauvaise courbe = crashs / artifacts. Sauvegardez un profil stock, testez une session longue, et n’utilisez pas Opti pour ça — l’outil ne fait que du soft OS / PL."
     }
   ],
   "en": [
@@ -51,6 +61,16 @@
       "id": "anticheat",
       "title": "Anti-cheat",
       "body": "Fine timer resolution and high process priority can upset some anti-cheats. Keep them in Advanced mode and turn them off if a game misbehaves."
+    },
+    {
+      "id": "softperf",
+      "title": "Soft perf vs undervolt",
+      "body": "Soft Perf (Advanced) tweaks powercfg, HAGS, and optionally NVIDIA Power Limit (bounded soft ±). Opti never touches voltages or clocks. For real undervolt: Adrenalin (AMD) or MSI Afterburner (NVIDIA), carefully, with stability testing."
+    },
+    {
+      "id": "undervolt-tools",
+      "title": "Hardware undervolt (external)",
+      "body": "A good undervolt can cut heat/noise near stock FPS. A bad curve means crashes/artifacts. Keep a stock profile, run a long test session, and don’t use Opti for UV — it only does soft OS / PL."
     }
   ]
 }

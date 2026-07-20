@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.2.0";
+  const APP_VERSION = "1.2.1";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -40,6 +40,7 @@
       navPower: "Power",
       navGameMode: "Game Mode",
       navBoost: "Boost",
+      navSoftPerf: "Perf soft",
       navTimer: "Timer / Prio",
       navClean: "Cleanup",
       navNet: "Réseau",
@@ -72,8 +73,20 @@
       btnClearTimer: "Clear timer",
       btnMmcs: "MMCS gaming",
       btnPrio: "Priorité",
+      btnSoftPerfOs: "Appliquer OS soft",
+      btnSoftPerfReset: "Restaurer",
+      btnPlEco: "Eco soft",
+      btnPlStock: "Stock",
+      btnPlPerf: "Perf soft",
       btnFindGames: "Détecter jeux",
       btnCancel: "Annuler",
+      softPerfTitle: "Perf soft",
+      softPerfHelp: "Réglages soft réversibles : anti-parking CPU, PCIe ASPM, HAGS, Power Limit NVIDIA. Pas d’undervolt/OC matériel.",
+      softPerfNvTitle: "Power Limit NVIDIA",
+      softPerfNvHelp: "Eco ≈ −10 %, Perf soft ≈ +5 %, toujours dans les limites carte. Stock = valeur mémorisée / défaut.",
+      chkHags: "Activer HAGS (peut exiger un redémarrage)",
+      chkApplyHags: "Inclure HAGS dans « Appliquer OS soft »",
+      guardSoftPerf: "Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.",
 
       scoreLabel: "Score gaming",
       dashHelp: "Un clic pour préparer Windows au jeu : alimentation, Game Mode, effets visuels, overlays. Un point de restauration est créé automatiquement.",
@@ -176,6 +189,7 @@
       navPower: "Power",
       navGameMode: "Game Mode",
       navBoost: "Boost",
+      navSoftPerf: "Soft perf",
       navTimer: "Timer / Prio",
       navClean: "Cleanup",
       navNet: "Network",
@@ -208,6 +222,11 @@
       btnClearTimer: "Clear timer",
       btnMmcs: "MMCS gaming",
       btnPrio: "Priority",
+      btnSoftPerfOs: "Apply soft OS",
+      btnSoftPerfReset: "Restore",
+      btnPlEco: "Eco soft",
+      btnPlStock: "Stock",
+      btnPlPerf: "Perf soft",
       btnFindGames: "Find games",
       btnCancel: "Cancel",
 
@@ -220,6 +239,13 @@
       gmHelp: "Enables Windows Game Mode, disables Game Bar / DVR (background capture) and Focus Assist while gaming.",
       boostTitle: "Boost session",
       boostHelp: "Closes background overlays to free up RAM/CPU during a gaming session. Reversible via \u201cEnd session\u201d.",
+      softPerfTitle: "Soft perf",
+      softPerfHelp: "Reversible soft tweaks: CPU anti-parking, PCIe ASPM, HAGS, NVIDIA Power Limit. Not hardware undervolt/OC.",
+      softPerfNvTitle: "NVIDIA Power Limit",
+      softPerfNvHelp: "Eco ≈ −10%, Perf soft ≈ +5%, always within board limits. Stock = remembered / default value.",
+      chkHags: "Enable HAGS (may require reboot)",
+      chkApplyHags: "Include HAGS in “Apply soft OS”",
+      guardSoftPerf: "Not hardware undervolt/OC. Soft NVIDIA PL only (board min/max). AMD: use Adrenalin manually.",
       cleanTitle: "Gaming caches",
       cleanHelp: "Clears shader/launcher caches (NVIDIA, AMD, Steam, Epic, Discord…). Automatically rebuilt on next launch.",
       netTitle: "DNS & latency",
@@ -287,6 +313,7 @@
       power: ["Power", "Plans d'alimentation"],
       gamemode: ["Game Mode", "Game Mode, Game Bar, Focus"],
       boost: ["Boost", "Session overlays"],
+      softperf: ["Perf soft", "OS soft + Power Limit NVIDIA"],
       clean: ["Cleanup", "Caches GPU et launchers"],
       net: ["Réseau", "DNS et tweaks latence"],
       visual: ["Visuel", "Effets Windows"],
@@ -304,6 +331,7 @@
       power: ["Power", "Power plans"],
       gamemode: ["Game Mode", "Game Mode, Game Bar, Focus"],
       boost: ["Boost", "Overlay session"],
+      softperf: ["Soft perf", "Soft OS + NVIDIA Power Limit"],
       clean: ["Cleanup", "GPU and launcher caches"],
       net: ["Network", "DNS and latency tweaks"],
       visual: ["Visual", "Windows effects"],
@@ -415,6 +443,7 @@
       loadLegal(activeTab ? activeTab.dataset.doc : "terms").catch(() => {});
     }
     if (page === "tips") loadTips().catch(() => {});
+    if (page === "softperf") refreshSoftPerf().catch(() => {});
   }
 
   async function refreshHealth() {
@@ -538,6 +567,45 @@
       ? (s.active ? `Boost active — ${n} overlays seen` : `Inactive — ${n} overlays detected`)
       : (s.active ? `Boost actif — ${n} overlays vus` : `Inactif — ${n} overlays détectés`);
     $("#boostStatus").textContent = tpl;
+  }
+
+  async function refreshSoftPerf() {
+    const d = await run("getSoftPerf", {});
+    const os = d.os || {};
+    const gpu = d.gpu || {};
+    const nv = d.nvidia || {};
+    const gpuNames = ((gpu.gpus || []).map((g) => g.name).filter(Boolean).join(", ")) || "—";
+    const status = $("#softPerfStatus");
+    if (status) {
+      status.textContent =
+        lang === "en"
+          ? `GPU: ${gpuNames} (${gpu.vendor || "?"}) · CPU min/max AC: ${os.procMinAc ?? "?"}/${os.procMaxAc ?? "?"} · boost: ${os.boostAvailable ? os.boostModeAc : "n/a"} · ASPM: ${os.aspmAvailable ? os.aspmAc : "n/a"} · HAGS: ${os.hagsEnabled == null ? "?" : os.hagsEnabled ? "on" : "off"}`
+          : `GPU : ${gpuNames} (${gpu.vendor || "?"}) · CPU min/max AC : ${os.procMinAc ?? "?"}/${os.procMaxAc ?? "?"} · boost : ${os.boostAvailable ? os.boostModeAc : "n/a"} · ASPM : ${os.aspmAvailable ? os.aspmAc : "n/a"} · HAGS : ${os.hagsEnabled == null ? "?" : os.hagsEnabled ? "on" : "off"}`;
+    }
+    const chkHags = $("#chkHags");
+    if (chkHags && os.hagsEnabled != null) chkHags.checked = !!os.hagsEnabled;
+
+    const nvStatus = $("#softPerfNvStatus");
+    const nvPanel = $("#softPerfNvidiaPanel");
+    const canNv = !!nv.available;
+    ["btnPlEco", "btnPlStock", "btnPlPerf"].forEach((id) => {
+      const b = $("#" + id);
+      if (b) b.disabled = !canNv;
+    });
+    if (nvPanel) nvPanel.style.opacity = canNv ? "1" : "0.65";
+    if (nvStatus) {
+      if (canNv) {
+        nvStatus.textContent =
+          lang === "en"
+            ? `${nv.name || "NVIDIA"} · PL ${nv.currentPl}W (min ${nv.minPl} / max ${nv.maxPl} / stock ${nv.stockPl})`
+            : `${nv.name || "NVIDIA"} · PL ${nv.currentPl}W (min ${nv.minPl} / max ${nv.maxPl} / stock ${nv.stockPl})`;
+      } else {
+        nvStatus.textContent =
+          lang === "en"
+            ? `nvidia-smi unavailable (${nv.reason || "n/a"}). Soft OS still works; AMD undervolt via Adrenalin.`
+            : `nvidia-smi indisponible (${nv.reason || "n/a"}). OS soft reste utilisable ; undervolt AMD via Adrenalin.`;
+      }
+    }
   }
 
   async function scanClean() {
@@ -862,6 +930,51 @@
     $("#btnMmcs").addEventListener("click", () =>
       runJob("setMmcs", { gaming: true }).then((r) => log(r.Message, "ok")).catch((e) => log(e.message, "err"))
     );
+
+    const wireSoftPerf = () => {
+      const btnOs = $("#btnSoftPerfOs");
+      if (!btnOs) return;
+      btnOs.addEventListener("click", async () => {
+        try {
+          const r = await runJob("setSoftPerfOs", {
+            enableSoftOs: true,
+            setHags: !!($("#chkApplyHags") && $("#chkApplyHags").checked),
+            hagsEnabled: !!($("#chkHags") && $("#chkHags").checked),
+          });
+          log(r.Message || "OK", "ok");
+          if (r.note) log(r.note, "warn");
+          await refreshSoftPerf();
+        } catch (e) {
+          log(e.message, "err");
+        }
+      });
+      $("#btnSoftPerfRefresh").addEventListener("click", () =>
+        refreshSoftPerf().catch((e) => log(e.message, "err"))
+      );
+      $("#btnSoftPerfReset").addEventListener("click", async () => {
+        try {
+          const r = await runJob("resetSoftPerf", {});
+          log(r.Message || "OK", r.Success === false ? "err" : "ok");
+          await refreshSoftPerf();
+        } catch (e) {
+          log(e.message, "err");
+        }
+      });
+      const setPl = (preset) => async () => {
+        try {
+          const r = await runJob("setNvidiaPowerLimit", { preset });
+          log(r.Message || "OK", r.Success === false ? "err" : "ok");
+          await refreshSoftPerf();
+        } catch (e) {
+          log(e.message, "err");
+        }
+      };
+      $("#btnPlEco").addEventListener("click", setPl("eco"));
+      $("#btnPlStock").addEventListener("click", setPl("stock"));
+      $("#btnPlPerf").addEventListener("click", setPl("perf"));
+    };
+    wireSoftPerf();
+
     $("#btnPrio").addEventListener("click", async () => {
       try {
         const r = await runJob("setPriority", {

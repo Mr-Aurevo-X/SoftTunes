@@ -1,12 +1,13 @@
 ﻿# Opti
 
-Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète**.
+Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.2.1).
 
 Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite d’outils Mr-Aurevo-X / Launcher.
 
 - Traitement 100 % local — aucune collecte
 - Pas de mise à jour automatique in-app
 - Install : `OptiSetup.exe` → `%LOCALAPPDATA%\Programs\Opti\`
+- Mode Avancé **Perf soft** : anti-parking CPU + Power Limit NVIDIA soft (pas d’undervolt matériel)
 
 ## Lancer
 

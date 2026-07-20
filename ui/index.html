@@ -31,6 +31,7 @@
           <button type="button" class="nav-btn" data-page="power" data-i18n="navPower">Power</button>
           <button type="button" class="nav-btn" data-page="gamemode" data-i18n="navGameMode">Game Mode</button>
           <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Boost</button>
+          <button type="button" class="nav-btn" data-page="softperf" data-page-mode="adv" data-i18n="navSoftPerf">Perf soft</button>
           <button type="button" class="nav-btn" data-page="timer" data-page-mode="adv" data-i18n="navTimer">Timer / Prio</button>
         </div>
         <div class="nav-group">
@@ -239,6 +240,38 @@
                 <option value="Normal">Normal</option>
               </select>
               <button type="button" class="btn" id="btnPrio" data-i18n="btnPrio">Priorité</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-softperf">
+          <p class="help-text" data-i18n="softPerfHelp">Réglages soft réversibles : anti-parking CPU, PCIe ASPM, HAGS, Power Limit NVIDIA. Pas d’undervolt/OC matériel.</p>
+          <div class="guard" data-i18n="guardSoftPerf">Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.</div>
+          <div class="panel">
+            <div class="panel-head"><h3 data-i18n="softPerfTitle">Perf soft</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
+            <div id="softPerfStatus" class="muted">—</div>
+            <div class="btn-row" style="margin-top:12px">
+              <button type="button" class="btn accent" id="btnSoftPerfOs" data-i18n="btnSoftPerfOs">Appliquer OS soft</button>
+              <button type="button" class="btn" id="btnSoftPerfRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+              <button type="button" class="btn" id="btnSoftPerfReset" data-i18n="btnSoftPerfReset">Restaurer</button>
+            </div>
+            <div class="switch-row" style="margin-top:12px">
+              <input type="checkbox" id="chkHags" />
+              <label for="chkHags" data-i18n="chkHags">Activer HAGS (peut exiger un redémarrage)</label>
+            </div>
+            <div class="switch-row">
+              <input type="checkbox" id="chkApplyHags" />
+              <label for="chkApplyHags" data-i18n="chkApplyHags">Inclure HAGS dans « Appliquer OS soft »</label>
+            </div>
+          </div>
+          <div class="panel" id="softPerfNvidiaPanel" style="margin-top:14px">
+            <div class="panel-head"><h3 data-i18n="softPerfNvTitle">Power Limit NVIDIA</h3><span class="risk optin" data-i18n="badgeOptin">Opt-in</span></div>
+            <p class="help-text" id="softPerfNvHelp" data-i18n="softPerfNvHelp">Eco ≈ −10 %, Perf soft ≈ +5 %, toujours dans les limites carte. Stock = valeur mémorisée / défaut.</p>
+            <div id="softPerfNvStatus" class="muted">—</div>
+            <div class="btn-row" style="margin-top:12px">
+              <button type="button" class="btn" id="btnPlEco" data-i18n="btnPlEco">Eco soft</button>
+              <button type="button" class="btn" id="btnPlStock" data-i18n="btnPlStock">Stock</button>
+              <button type="button" class="btn accent" id="btnPlPerf" data-i18n="btnPlPerf">Perf soft</button>
             </div>
           </div>
         </section>

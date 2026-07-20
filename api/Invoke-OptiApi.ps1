@@ -37,6 +37,7 @@ foreach ($modName in @(
         'Timer.ps1'
         'Priority.ps1'
         'GameProfiles.ps1'
+        'SoftPerf.ps1'
     )) {
     $modPath = Join-Path $modDir $modName
     if (-not (Test-Path -LiteralPath $modPath)) { throw "Module manquant: $modPath" }
@@ -208,6 +209,28 @@ try {
         'setMmcs' {
             $r = Set-OptiSystemResponsiveness -Gaming:([bool]($p.gaming -ne $false)) -LogPath $Global:OptiCurrentLog
             Add-OptiSession -Action 'setMmcs' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
+            Ok $r
+        }
+
+        'getSoftPerf' { Ok (Get-OptiSoftPerf) }
+        'setSoftPerfOs' {
+            $r = Set-OptiSoftPerfOs `
+                -EnableSoftOs:([bool]($p.enableSoftOs -ne $false)) `
+                -SetHags:([bool]$p.setHags) `
+                -HagsEnabled:([bool]($p.hagsEnabled -ne $false)) `
+                -LogPath $Global:OptiCurrentLog
+            Add-OptiSession -Action 'setSoftPerfOs' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
+            Ok $r
+        }
+        'setNvidiaPowerLimit' {
+            $preset = if ($p.preset) { [string]$p.preset } else { 'stock' }
+            $r = Set-OptiNvidiaPowerLimit -Preset $preset -LogPath $Global:OptiCurrentLog
+            Add-OptiSession -Action 'setNvidiaPowerLimit' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
+            Ok $r
+        }
+        'resetSoftPerf' {
+            $r = Reset-OptiSoftPerf -LogPath $Global:OptiCurrentLog
+            Add-OptiSession -Action 'resetSoftPerf' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
             Ok $r
         }
 

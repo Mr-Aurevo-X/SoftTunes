@@ -137,6 +137,9 @@ function Invoke-OptiUndo {
                 $restored += 'gameBar'
             }
         }
+        'softperf*' {
+            $restored += @(Restore-OptiSoftPerfFromData -Data $data -LogPath $LogPath)
+        }
         default {
             Write-OptiLog -Message "Undo kind non géré: $kind" -LogPath $LogPath -Level WARN
         }
