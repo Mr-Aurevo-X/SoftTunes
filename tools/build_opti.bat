@@ -36,9 +36,10 @@ copy /Y "%ROOT%\logo-opti.ico" "%DIST%\logo-opti.ico" >nul
 if exist "%ROOT%\Opti-dist" rmdir /S /Q "%ROOT%\Opti-dist"
 mkdir "%ROOT%\Opti-dist"
 xcopy /E /I /Y "%DIST%\*" "%ROOT%\Opti-dist\" >nul
-copy /Y "%DIST%\Opti.exe" "%ROOT%\Opti.exe" >nul
+rem Do not copy a lone Opti.exe to repo/Desktop root: onedir needs _internal next to it.
 
 echo.
 echo OK onedir: %DIST%
 echo OK Opti-dist: %ROOT%\Opti-dist
+echo Run: Opti-dist\Opti.exe  (or OptiSetup.exe after tools\build_setup.bat)
 exit /b 0

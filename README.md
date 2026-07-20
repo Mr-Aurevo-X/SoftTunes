@@ -10,7 +10,8 @@ Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale compl
 
 ## Lancer
 
-Double-clic `Opti.exe` ou `OptiSetup.exe`.
+- Installateur : `OptiSetup.exe`
+- Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
 
 Dev :
 
