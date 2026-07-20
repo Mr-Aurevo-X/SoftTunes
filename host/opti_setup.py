@@ -10,7 +10,7 @@ from pathlib import Path
 
 APP_NAME = "Opti"
 PUBLISHER = "Mr-Aurevo-X"
-VERSION = "1.3.0"
+VERSION = "1.3.1"
 
 
 def bundle_dir() -> Path:

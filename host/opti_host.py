@@ -75,7 +75,24 @@ ADMIN_ACTIONS = frozenset({
     "resetNvidiaClocks",
     "applyGamingPreset",
     "disableStartup",
+    "runUndo",
+    "setPowerPlan",
 })
+
+URL_ALLOWLIST = frozenset({
+    "https://www.msi.com/Landing/afterburner",
+    "http://www.msi.com/Landing/afterburner",
+})
+
+
+def action_needs_admin(action: str, payload: dict | None = None) -> bool:
+    if action in ADMIN_ACTIONS:
+        # Balanced/High power plans often work without admin; Ultimate usually needs it.
+        if action == "setPowerPlan":
+            profile = str((payload or {}).get("profile") or "").strip().lower()
+            return profile == "ultimate"
+        return True
+    return False
 
 
 def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
@@ -161,7 +178,7 @@ class Api:
     def run(self, action: str, payload: dict | None = None) -> dict:
         if payload is None:
             payload = {}
-        if action in ADMIN_ACTIONS and not is_admin():
+        if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
                 "error": "Admin required. Click Elevate in Opti, then retry.",
@@ -300,7 +317,7 @@ class Api:
     def start_action(self, action: str, payload: dict | None = None) -> dict:
         if payload is None:
             payload = {}
-        if action in ADMIN_ACTIONS and not is_admin():
+        if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
                 "error": "Admin required. Click Elevate in Opti, then retry.",
@@ -406,8 +423,8 @@ class Api:
         import webbrowser
 
         u = (url or "").strip()
-        if not u.startswith(("https://", "http://")):
-            return {"ok": False, "error": "URL invalide"}
+        if u not in URL_ALLOWLIST:
+            return {"ok": False, "error": "URL non autorisee"}
         try:
             webbrowser.open(u)
             return {"ok": True, "url": u}

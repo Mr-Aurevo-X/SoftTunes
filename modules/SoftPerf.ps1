@@ -27,6 +27,22 @@ function Get-OptiNvidiaSmiPath {
     return $null
 }
 
+function Invoke-OptiNvidiaSmi {
+    param(
+        [Parameter(Mandatory = $true)][string]$SmiPath,
+        [Parameter(Mandatory = $true)][string[]]$ArgumentList
+    )
+    $out = & $SmiPath @ArgumentList 2>&1
+    $code = $LASTEXITCODE
+    if ($null -eq $code) { $code = 0 }
+    $text = (@($out) | ForEach-Object { "$_" }) -join "`n"
+    return @{
+        Ok       = ([int]$code -eq 0)
+        ExitCode = [int]$code
+        Output   = $text
+    }
+}
+
 function Get-OptiPowerCfgAcIndex {
     param(
         [string]$SubGuid,
@@ -329,7 +345,15 @@ function Set-OptiNvidiaPowerLimit {
     $target = [math]::Max([double]$nv.minPl, [math]::Min([double]$nv.maxPl, [math]::Round($target, 0)))
 
     try {
-        $null = & $nv.path -pl $target 2>&1
+        $r = Invoke-OptiNvidiaSmi -SmiPath $nv.path -ArgumentList @('-pl', ([string][int]$target))
+        if (-not $r.Ok) {
+            return @{
+                Success = $false
+                Message = ("nvidia-smi -pl failed (exit {0})" -f $r.ExitCode)
+                detail  = $r.Output
+                nvidia  = $nv
+            }
+        }
         $afterNv = Get-OptiNvidiaPowerInfo
         Write-OptiLog -Message ("NVIDIA PL set to {0}W ({1})" -f $target, $Preset) -LogPath $LogPath -Level OK
         return @{
@@ -356,7 +380,11 @@ function Reset-OptiSoftPerf {
     $nv = Get-OptiNvidiaPowerInfo
     if ($nv.available -and $null -ne $nv.stockPl) {
         try {
-            $null = & $nv.path -pl ([int][math]::Round([double]$nv.stockPl)) 2>&1
+            $watts = [int][math]::Round([double]$nv.stockPl)
+            $r = Invoke-OptiNvidiaSmi -SmiPath $nv.path -ArgumentList @('-pl', ([string]$watts))
+            if (-not $r.Ok) {
+                return @{ Success = $false; Message = ("nvidia-smi -pl failed (exit {0})" -f $r.ExitCode); detail = $r.Output }
+            }
             return @{ Success = $true; Message = 'Restored NVIDIA stock power limit (no OS snapshot found)' }
         } catch {
             return @{ Success = $false; Message = $_.Exception.Message }
@@ -401,8 +429,9 @@ function Restore-OptiSoftPerfFromData {
         $smi = Get-OptiNvidiaSmiPath
         if ($smi) {
             try {
-                $null = & $smi -pl ([int][math]::Round([double]$Data.nvidiaPl)) 2>&1
-                $restored += 'nvidiaPl'
+                $watts = [int][math]::Round([double]$Data.nvidiaPl)
+                $r = Invoke-OptiNvidiaSmi -SmiPath $smi -ArgumentList @('-pl', ([string]$watts))
+                if ($r.Ok) { $restored += 'nvidiaPl' }
             } catch { }
         }
     }

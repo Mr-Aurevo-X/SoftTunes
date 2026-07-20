@@ -1,6 +1,6 @@
 ﻿# Opti
 
-Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.3.0).
+Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.3.1).
 
 Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite d’outils Mr-Aurevo-X / Launcher.
 

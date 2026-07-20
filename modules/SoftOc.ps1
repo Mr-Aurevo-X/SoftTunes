@@ -1,11 +1,10 @@
 #Requires -Version 5.1
-# SoftOc.ps1 — soft NVIDIA clock locks (bounded) + Afterburner bridge (no voltage curves)
+# SoftOc.ps1 — soft NVIDIA clock locks (bounded near board max) + Afterburner bridge
 
 function Get-OptiAfterburnerPath {
     $candidates = @(
         (Join-Path ${env:ProgramFiles(x86)} 'MSI Afterburner\MSIAfterburner.exe')
         (Join-Path ${env:ProgramFiles} 'MSI Afterburner\MSIAfterburner.exe')
-        (Join-Path ${env:ProgramFiles(x86)} 'MSI Afterburner\MSIAfterburner.exe')
     )
     foreach ($c in $candidates) {
         if ($c -and (Test-Path -LiteralPath $c)) { return $c }
@@ -75,11 +74,14 @@ function Set-OptiNvidiaClocks {
         return @{ Success = $false; Message = 'Could not read max graphics clock'; nvidia = $clk }
     }
 
+    $coreMax = [int][math]::Round([double]$clk.coreMax)
+    $memMax = if ($null -ne $clk.memMax -and $clk.memMax -gt 0) { [int][math]::Round([double]$clk.memMax) } else { 0 }
+
     $before = @{
         coreCurrent = $clk.coreCurrent
         memCurrent  = $clk.memCurrent
-        coreMax     = $clk.coreMax
-        memMax      = $clk.memMax
+        coreMax     = $coreMax
+        memMax      = $memMax
     }
     $null = New-OptiUndoSnapshot -Name 'softoc-clocks' -Data $before
 
@@ -92,8 +94,16 @@ function Set-OptiNvidiaClocks {
 
     try {
         if ($Preset -eq 'stock') {
-            $null = & $clk.path -rgc 2>&1
-            $null = & $clk.path -rmc 2>&1
+            $r1 = Invoke-OptiNvidiaSmi -SmiPath $clk.path -ArgumentList @('-rgc')
+            $r2 = Invoke-OptiNvidiaSmi -SmiPath $clk.path -ArgumentList @('-rmc')
+            if (-not $r1.Ok -or -not $r2.Ok) {
+                return @{
+                    Success = $false
+                    Message = ("nvidia-smi reset failed (rgc={0} rmc={1})" -f $r1.ExitCode, $r2.ExitCode)
+                    detail  = @($r1.Output, $r2.Output) -join ' | '
+                    nvidia  = (Get-OptiNvidiaClockInfo)
+                }
+            }
             Write-OptiLog -Message 'NVIDIA clocks reset (rgc/rmc)' -LogPath $LogPath -Level OK
             return @{
                 Success = $true
@@ -103,33 +113,60 @@ function Set-OptiNvidiaClocks {
             }
         }
 
-        $baseCore = [int][math]::Round([double]$clk.coreCurrent)
-        if ($baseCore -le 0) { $baseCore = [int][math]::Round([double]$clk.coreMax * 0.9) }
-        $targetCore = [math]::Min([int]$clk.coreMax, $baseCore + $offset)
-        $targetCore = [math]::Max(300, $targetCore)
-
-        # Lock graphics clock to a narrow band around target (soft OC)
-        $lo = [math]::Max(300, $targetCore - 25)
-        $hi = [math]::Min([int]$clk.coreMax, $targetCore + 25)
-        $null = & $clk.path -lgc "$lo,$hi" 2>&1
-
-        if ($null -ne $clk.memMax -and $clk.memMax -gt 0 -and $offset -gt 0) {
-            $baseMem = [int][math]::Round([double]$clk.memCurrent)
-            if ($baseMem -le 0) { $baseMem = [int][math]::Round([double]$clk.memMax * 0.9) }
-            $memOff = [math]::Min(100, $offset)
-            $tm = [math]::Min([int]$clk.memMax, $baseMem + $memOff)
-            $mlo = [math]::Max(400, $tm - 50)
-            $mhi = [math]::Min([int]$clk.memMax, $tm + 50)
-            $null = & $clk.path -lmc "$mlo,$mhi" 2>&1
+        # Soft OC locks near board max — never from idle current.
+        # plus50 => ~max-50 MHz, plus100 => ~max.
+        $targetCore = [math]::Min($coreMax, [math]::Max(300, $coreMax - 100 + $offset))
+        if ($targetCore -lt [math]::Round($coreMax * 0.5)) {
+            return @{
+                Success = $false
+                Message = 'Refusing Soft OC: target too far below board max'
+                nvidia  = $clk
+            }
         }
 
-        Write-OptiLog -Message ("NVIDIA soft OC core ~{0} MHz ({1})" -f $targetCore, $Preset) -LogPath $LogPath -Level OK
+        $lo = [math]::Max(300, $targetCore - 25)
+        $hi = [math]::Min($coreMax, $targetCore + 25)
+        if ($hi -lt $lo) { $hi = $lo }
+
+        $rg = Invoke-OptiNvidiaSmi -SmiPath $clk.path -ArgumentList @('-lgc', "$lo,$hi")
+        if (-not $rg.Ok) {
+            return @{
+                Success = $false
+                Message = ("nvidia-smi -lgc failed (exit {0})" -f $rg.ExitCode)
+                detail  = $rg.Output
+                nvidia  = $clk
+            }
+        }
+
+        $targetMem = $null
+        $mlo = $null
+        $mhi = $null
+        if ($memMax -gt 0 -and $offset -gt 0) {
+            $memOff = [math]::Min(100, $offset)
+            $targetMem = [math]::Min($memMax, [math]::Max(400, $memMax - 100 + $memOff))
+            $mlo = [math]::Max(400, $targetMem - 50)
+            $mhi = [math]::Min($memMax, $targetMem + 50)
+            if ($mhi -lt $mlo) { $mhi = $mlo }
+            $rm = Invoke-OptiNvidiaSmi -SmiPath $clk.path -ArgumentList @('-lmc', "$mlo,$mhi")
+            if (-not $rm.Ok) {
+                return @{
+                    Success = $false
+                    Message = ("nvidia-smi -lmc failed (exit {0})" -f $rm.ExitCode)
+                    detail  = $rm.Output
+                    nvidia  = (Get-OptiNvidiaClockInfo)
+                }
+            }
+        }
+
+        Write-OptiLog -Message ("NVIDIA soft OC core lock {0}-{1} MHz ({2})" -f $lo, $hi, $Preset) -LogPath $LogPath -Level OK
         return @{
-            Success   = $true
-            Message   = ("Soft OC applied: core ~{0} MHz ({1})" -f $targetCore, $Preset)
-            preset    = $Preset
+            Success    = $true
+            Message    = ("Soft OC applied: core lock {0}-{1} MHz ({2})" -f $lo, $hi, $Preset)
+            preset     = $Preset
             targetCore = $targetCore
-            nvidia    = (Get-OptiNvidiaClockInfo)
+            coreLo     = $lo
+            coreHi     = $hi
+            nvidia     = (Get-OptiNvidiaClockInfo)
         }
     } catch {
         return @{ Success = $false; Message = $_.Exception.Message; nvidia = $clk }
@@ -163,11 +200,28 @@ function Restore-OptiSoftOcFromData {
     $restored = @()
     $smi = Get-OptiNvidiaSmiPath
     if (-not $smi) { return $restored }
+
+    # Undo Soft OC = unlock clocks (driver default boost). Optional prior band re-lock
+    # only when snapshot explicitly stores priorLock=true with lo/hi.
     try {
-        $null = & $smi -rgc 2>&1
-        $null = & $smi -rmc 2>&1
-        $restored += 'nvidiaClocksReset'
+        if ($null -ne $Data -and $Data.priorLock -eq $true -and $null -ne $Data.coreLo -and $null -ne $Data.coreHi) {
+            $rg = Invoke-OptiNvidiaSmi -SmiPath $smi -ArgumentList @('-lgc', ("{0},{1}" -f [int]$Data.coreLo, [int]$Data.coreHi))
+            if ($rg.Ok) { $restored += 'nvidiaCoreRelock' }
+            if ($null -ne $Data.memLo -and $null -ne $Data.memHi) {
+                $rm = Invoke-OptiNvidiaSmi -SmiPath $smi -ArgumentList @('-lmc', ("{0},{1}" -f [int]$Data.memLo, [int]$Data.memHi))
+                if ($rm.Ok) { $restored += 'nvidiaMemRelock' }
+            }
+        } else {
+            $r1 = Invoke-OptiNvidiaSmi -SmiPath $smi -ArgumentList @('-rgc')
+            $r2 = Invoke-OptiNvidiaSmi -SmiPath $smi -ArgumentList @('-rmc')
+            if ($r1.Ok -and $r2.Ok) {
+                $restored += 'nvidiaClocksReset'
+            } else {
+                Write-OptiLog -Message ("SoftOc restore smi fail rgc={0} rmc={1}" -f $r1.ExitCode, $r2.ExitCode) -LogPath $LogPath -Level WARN
+            }
+        }
     } catch { }
+
     Write-OptiLog -Message ("SoftOc restore: {0}" -f ($restored -join ', ')) -LogPath $LogPath -Level OK
     return $restored
 }

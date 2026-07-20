@@ -40,18 +40,34 @@ function Set-OptiSystemResponsiveness {
     )
     # Multimedia Class Scheduler — SystemResponsiveness (0-100, lower = more for games)
     $path = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile'
+    $games = Join-Path $path 'Tasks\Games'
     $prev = $null
+    $prevGpu = $null
+    $prevPrio = $null
+    $prevSched = $null
     try {
         $cur = Get-ItemProperty -Path $path -Name 'SystemResponsiveness' -ErrorAction SilentlyContinue
         if ($null -ne $cur.SystemResponsiveness) { $prev = [int]$cur.SystemResponsiveness }
     } catch { }
-    $null = New-OptiUndoSnapshot -Name 'priority-mmcs' -Data @{ SystemResponsiveness = $prev }
+    try {
+        if (Test-Path $games) {
+            $g = Get-ItemProperty -Path $games -ErrorAction SilentlyContinue
+            if ($null -ne $g.'GPU Priority') { $prevGpu = [int]$g.'GPU Priority' }
+            if ($null -ne $g.Priority) { $prevPrio = [int]$g.Priority }
+            if ($null -ne $g.'Scheduling Category') { $prevSched = [string]$g.'Scheduling Category' }
+        }
+    } catch { }
+    $null = New-OptiUndoSnapshot -Name 'priority-mmcs' -Data @{
+        SystemResponsiveness = $prev
+        GamesGpuPriority     = $prevGpu
+        GamesPriority        = $prevPrio
+        GamesScheduling      = $prevSched
+    }
     $val = if ($Gaming) { 10 } else { 20 }
     try {
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
         Set-ItemProperty -Path $path -Name 'SystemResponsiveness' -Value $val -Type DWord -ErrorAction Stop
         # Games task
-        $games = Join-Path $path 'Tasks\Games'
         if (-not (Test-Path $games)) { New-Item -Path $games -Force | Out-Null }
         Set-ItemProperty -Path $games -Name 'GPU Priority' -Value 8 -Type DWord -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $games -Name 'Priority' -Value 6 -Type DWord -ErrorAction SilentlyContinue

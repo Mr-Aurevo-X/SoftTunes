@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.3.0";
+  const APP_VERSION = "1.3.1";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -21,20 +21,23 @@
       navSoftOc: "Soft OC",
       navMonitor: "Monitor FPS",
       softOcTitle: "Soft OC NVIDIA",
-      softOcHelp: "Soft OC NVIDIA : locks clocks bornés. Pas d undervolt.",
-      guardSoftOc: "Soft OC n est pas un undervolt. Limites nvidia-smi. Stabilite = vous.",
+      softOcHelp: "Soft OC NVIDIA : locks clocks bornés. Pas d'undervolt.",
+      guardSoftOc: "Soft OC n'est pas un undervolt. Limites nvidia-smi. Stabilité = vous.",
       btnOcStock: "Reset clocks",
       btnOc50: "+50 MHz",
       btnOc100: "+100 MHz",
       afterburnerTitle: "Undervolt (externe)",
       afterburnerHelp: "Vrai undervolt via MSI Afterburner.",
       btnOpenAfterburner: "Ouvrir Afterburner",
-      btnAfterburnerDl: "Page telechargement",
+      btnAfterburnerDl: "Page téléchargement",
       monitorTitle: "Monitor FPS",
       monitorHelp: "FPS / frametime via RTSS (Afterburner).",
       guardMonitor: "Installez Afterburner + RTSS, lancez un jeu avec OSD.",
       monitorApp: "App",
-      confirmDanger: "Confirmer cette action ? Elle peut etre difficile a annuler.",
+      confirmDanger: "Confirmer cette action ? Elle peut être difficile à annuler.",
+      needsAdminHint: "Admin requis — cliquez Élever, puis réessayez.",
+      confirmSoftOc: "Appliquer un Soft OC (locks clocks NVIDIA) ?",
+      confirmSoftPerf: "Appliquer Soft Perf / Power Limit ?",
       emptyBloat: "Aucune app",
       profileSaveTitle: "Enregistrer un profil",
       profileApplyTitle: "Appliquer le profil",
@@ -55,12 +58,6 @@
       ready: "Prêt",
       adminOk: "Admin",
       adminNo: "Sans admin",
-
-      navGroupPerf: "Performances",
-      navGroupSys: "Système",
-      navGroupGames: "Jeux",
-      navGroupHistory: "Historique",
-      navGroupLegal: "Légal",
 
       navDash: "Dashboard",
       navPower: "Power",
@@ -204,6 +201,9 @@
       guardMonitor: "Install Afterburner + RTSS, run a game with OSD.",
       monitorApp: "App",
       confirmDanger: "Confirm this action? It may be hard to undo.",
+      needsAdminHint: "Admin required — click Elevate, then retry.",
+      confirmSoftOc: "Apply Soft OC (NVIDIA clock locks)?",
+      confirmSoftPerf: "Apply Soft Perf / Power Limit?",
       emptyBloat: "No apps",
       profileSaveTitle: "Save a profile",
       profileApplyTitle: "Apply profile",
@@ -224,12 +224,6 @@
       ready: "Ready",
       adminOk: "Admin",
       adminNo: "No admin",
-
-      navGroupPerf: "Performance",
-      navGroupSys: "System",
-      navGroupGames: "Games",
-      navGroupHistory: "History",
-      navGroupLegal: "Legal",
 
       navDash: "Dashboard",
       navPower: "Power",
@@ -434,10 +428,21 @@
     return null;
   }
 
+  function needsAdminMessage(res) {
+    const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+    if (res && res.data && res.data.needsAdmin) return pack.needsAdminHint || res.error || "Admin required";
+    if (res && /admin required/i.test(String(res.error || ""))) return pack.needsAdminHint || res.error;
+    return null;
+  }
+
   async function run(action, payload) {
     if (!api) throw new Error("API host indisponible");
     const res = await api.run(action, payload || {});
-    if (!res || !res.ok) throw new Error((res && res.error) || "Échec");
+    if (!res || !res.ok) {
+      const adm = needsAdminMessage(res);
+      if (adm) { setStatus(adm); throw new Error(adm); }
+      throw new Error((res && res.error) || "Échec");
+    }
     return res.data;
   }
 
@@ -448,7 +453,11 @@
     setProgress(0, action);
     try {
       const start = await api.start_action(action, payload || {});
-      if (!start || !start.ok) throw new Error((start && start.error) || "start_action failed");
+      if (!start || !start.ok) {
+        const adm = needsAdminMessage(start);
+        if (adm) { setStatus(adm); throw new Error(adm); }
+        throw new Error((start && start.error) || "start_action failed");
+      }
       for (;;) {
         await new Promise((r) => setTimeout(r, 200));
         const prog = await api.get_action_progress();
@@ -571,6 +580,7 @@
     });
     const active = $(".nav-btn.active");
     if (active && active.hidden) showPage("dash");
+    if (on) startDashFpsPoll(); else stopDashFpsPoll();
   }
 
   async function loadTips() {
@@ -656,12 +666,21 @@
 
 
   let monitorTimer = null;
+  let dashFpsTimer = null;
   function stopMonitorPoll() {
     if (monitorTimer) { clearInterval(monitorTimer); monitorTimer = null; }
   }
   function startMonitorPoll() {
     stopMonitorPoll();
     monitorTimer = setInterval(() => { refreshMonitor().catch(() => {}); }, 1000);
+  }
+  function stopDashFpsPoll() {
+    if (dashFpsTimer) { clearInterval(dashFpsTimer); dashFpsTimer = null; }
+  }
+  function startDashFpsPoll() {
+    stopDashFpsPoll();
+    if (!document.body.classList.contains("mode-advanced")) return;
+    dashFpsTimer = setInterval(() => { refreshMonitor().catch(() => {}); }, 2000);
   }
 
   async function refreshSoftOc() {
@@ -677,8 +696,8 @@
     const abEl = $("#afterburnerStatus");
     if (abEl) {
       abEl.textContent = ab.found
-        ? (lang === "en" ? ("Found: " + ab.path) : ("Trouve : " + ab.path))
-        : (lang === "en" ? "Afterburner not installed" : "Afterburner non installe");
+        ? (lang === "en" ? ("Found: " + ab.path) : ("Trouvé : " + ab.path))
+        : (lang === "en" ? "Afterburner not installed" : "Afterburner non installé");
     }
     ["btnOcStock", "btnOc50", "btnOc100"].forEach((id) => {
       const b = $("#" + id);
@@ -708,7 +727,7 @@
       if (fpsEl) fpsEl.textContent = "—";
       if (ftEl) ftEl.textContent = "—";
       if (appEl) appEl.textContent = "—";
-      if (st) st.textContent = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d echantillon RTSS");
+      if (st) st.textContent = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d'échantillon RTSS");
       if (mini) mini.hidden = true;
     }
   }
@@ -1049,6 +1068,8 @@
       const btnOs = $("#btnSoftPerfOs");
       if (!btnOs) return;
       btnOs.addEventListener("click", async () => {
+        const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+        if (!confirm(pack.confirmSoftPerf || pack.confirmDanger || "Confirm?")) return;
         try {
           const r = await runJob("setSoftPerfOs", {
             enableSoftOs: true,
@@ -1075,6 +1096,8 @@
         }
       });
       const setPl = (preset) => async () => {
+        const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+        if (!confirm(pack.confirmSoftPerf || pack.confirmDanger || "Confirm?")) return;
         try {
           const r = await runJob("setNvidiaPowerLimit", { preset });
           log(r.Message || "OK", r.Success === false ? "err" : "ok");
@@ -1095,8 +1118,8 @@
         try {
           if (!api.request_elevation) { log("Elevation API missing", "err"); return; }
           const r = await api.request_elevation();
-          if (r && r.alreadyAdmin) log(lang === "en" ? "Already admin" : "Deja admin", "ok");
-          else if (r && r.elevating) log(lang === "en" ? "UAC prompted — relaunching" : "UAC demande — relance", "warn");
+          if (r && r.alreadyAdmin) log(lang === "en" ? "Already admin" : "Déjà admin", "ok");
+          else if (r && r.elevating) log(lang === "en" ? "UAC prompted — relaunching" : "UAC demandé — relance", "warn");
           else log((r && r.error) || "Elevation failed", "err");
         } catch (e) { log(String(e.message || e), "err"); }
       });
@@ -1110,6 +1133,8 @@
       });
     }
     const setOc = (preset) => async () => {
+      const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+      if (!confirm(pack.confirmSoftOc || pack.confirmDanger || "Confirm?")) return;
       try {
         const r = await runJob("setNvidiaClocks", { preset });
         log(r.Message || "OK", r.Success === false ? "err" : "ok");

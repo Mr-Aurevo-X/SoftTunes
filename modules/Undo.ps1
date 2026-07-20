@@ -183,6 +183,7 @@ function Invoke-OptiUndo {
         }
         'priority-mmcs*' {
             $path = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile'
+            $games = Join-Path $path 'Tasks\Games'
             if ($null -ne $data.SystemResponsiveness) {
                 try {
                     if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
@@ -191,6 +192,23 @@ function Invoke-OptiUndo {
                 } catch {
                     Write-OptiLog -Message ("Undo MMCS fail: {0}" -f $_.Exception.Message) -LogPath $LogPath -Level WARN
                 }
+            }
+            try {
+                if (-not (Test-Path $games)) { New-Item -Path $games -Force | Out-Null }
+                if ($null -ne $data.GamesGpuPriority) {
+                    Set-ItemProperty -Path $games -Name 'GPU Priority' -Value ([int]$data.GamesGpuPriority) -Type DWord -ErrorAction SilentlyContinue
+                    $restored += 'GamesGpuPriority'
+                }
+                if ($null -ne $data.GamesPriority) {
+                    Set-ItemProperty -Path $games -Name 'Priority' -Value ([int]$data.GamesPriority) -Type DWord -ErrorAction SilentlyContinue
+                    $restored += 'GamesPriority'
+                }
+                if ($null -ne $data.GamesScheduling -and [string]$data.GamesScheduling -ne '') {
+                    Set-ItemProperty -Path $games -Name 'Scheduling Category' -Value ([string]$data.GamesScheduling) -ErrorAction SilentlyContinue
+                    $restored += 'GamesScheduling'
+                }
+            } catch {
+                Write-OptiLog -Message ("Undo MMCS Games fail: {0}" -f $_.Exception.Message) -LogPath $LogPath -Level WARN
             }
         }
         default {
