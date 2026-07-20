@@ -1,0 +1,14 @@
+# Build / runtime
+dist/
+build/
+logs/
+*.log
+*.exe
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+host/build/
+*.tmp
+.DS_Store
+Thumbs.db

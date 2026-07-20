@@ -1,0 +1,13 @@
+# Keep AppX packages (never remove)
+Microsoft.WindowsStore
+Microsoft.DesktopAppInstaller
+Microsoft.WindowsCalculator
+Microsoft.Windows.Photos
+Microsoft.WindowsTerminal
+Microsoft.WindowsNotepad
+Microsoft.Paint
+Microsoft.ScreenSketch
+Microsoft.XboxIdentityProvider
+Microsoft.Xbox.TCUI
+Microsoft.GamingApp
+Microsoft.XboxGamingOverlay

@@ -1,0 +1,18 @@
+# Startup entries containing these substrings are protected
+Windows Security
+SecurityHealth
+Realtek
+NVIDIA
+AMD
+Intel
+Steam
+Epic
+Discord
+Xbox
+Audio
+Killer
+Razer
+Logitech
+Corsair
+powershell
+Windows Defender

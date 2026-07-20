@@ -1,0 +1,43 @@
+# Services never touched by Opti
+WinDefend
+WdNisSvc
+Sense
+mpssvc
+SecurityHealthService
+wuauserv
+UsoSvc
+WaaSMedicSvc
+BITS
+DoSvc
+AudioEndpointBuilder
+Audiosrv
+RpcSs
+DcomLaunch
+Dhcp
+Dnscache
+NlaSvc
+netprofm
+nsi
+EventLog
+Power
+Schedule
+ProfSvc
+SamSs
+LanmanServer
+LanmanWorkstation
+CryptSvc
+BFE
+CoreMessagingRegistrar
+BrokerInfrastructure
+SystemEventsBroker
+UserManager
+FontCache
+StateRepository
+AppXSvc
+ClipSVC
+LicenseManager
+PlugPlay
+cdrom
+NVDisplay.ContainerLocalSystem
+AMD External Events Utility
+Intel(R) SURQC

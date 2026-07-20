@@ -1,0 +1,23 @@
+/* Mr-Aurevo-X — rouge vif / noir dense */
+:root {
+  --bg0: #0b0b0d;
+  --bg1: #141416;
+  --bg2: #1c1c20;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f0f0f2;
+  --muted: #9a9aa3;
+  --accent: #e03545;
+  --accent-dim: rgba(224, 53, 69, 0.2);
+  --accent-glow: rgba(224, 53, 69, 0.4);
+  --warn: #e0a84a;
+  --danger: #e03545;
+  --ok: #5a9e72;
+  --info: #7a8fad;
+  --card-hover: #242428;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  --radius: 16px;
+  --font: "Outfit", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sidebar: 260px;
+}

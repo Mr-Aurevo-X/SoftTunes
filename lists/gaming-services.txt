@@ -1,0 +1,18 @@
+# Optional services safe to set Manual for gaming sessions
+SysMain
+WSearch
+DiagTrack
+dmwappushservice
+MapsBroker
+Fax
+XblAuthManager
+XblGameSave
+XboxNetApiSvc
+XboxGipSvc
+WMPNetworkSvc
+RemoteRegistry
+RetailDemo
+PhoneSvc
+WerSvc
+PcaSvc
+TroubleshootingSvc

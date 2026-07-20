@@ -1,0 +1,20 @@
+# Candidate AppX names for gaming debloat
+Microsoft.BingNews
+Microsoft.BingWeather
+Microsoft.BingFinance
+Microsoft.GetHelp
+Microsoft.Getstarted
+Microsoft.MicrosoftOfficeHub
+Microsoft.MicrosoftSolitaireCollection
+Microsoft.People
+Microsoft.WindowsFeedbackHub
+Microsoft.WindowsMaps
+Microsoft.ZuneMusic
+Microsoft.ZuneVideo
+microsoft.windowscommunicationsapps
+Microsoft.Todos
+Microsoft.PowerAutomateDesktop
+Microsoft.Microsoft3DViewer
+Microsoft.SkypeApp
+Microsoft.BingSearch
+Clipchamp.Clipchamp

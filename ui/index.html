@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Opti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-mark" src="brand-icon.png" width="40" height="40" alt="" />
+        <div class="brand-text">
+          <h1>Opti</h1>
+          <p data-i18n="tagline">Optimiseur gaming</p>
+        </div>
+      </div>
+      <span id="adminBadge" class="badge warn" data-i18n="elevating">Élévation…</span>
+      <div class="feature-desc">
+        <strong data-i18n="featuresTitle">Fonctions</strong>
+        <span data-i18n="features">Boost PC gaming : power, Game Mode, caches GPU, réseau, profils par jeu.</span>
+      </div>
+      <p class="privacy-note" id="privacyNote">Mr-Aurevo-X ne collecte aucune donnée. Traitement local.</p>
+      <nav class="nav" id="nav">
+        <button type="button" class="nav-btn active" data-page="dash" data-i18n="navDash">Dashboard</button>
+        <button type="button" class="nav-btn" data-page="power" data-i18n="navPower">Power</button>
+        <button type="button" class="nav-btn" data-page="gamemode" data-i18n="navGameMode">Game Mode</button>
+        <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Boost</button>
+        <button type="button" class="nav-btn" data-page="clean" data-i18n="navClean">Cleanup</button>
+        <button type="button" class="nav-btn" data-page="net" data-i18n="navNet">Réseau</button>
+        <button type="button" class="nav-btn" data-page="visual" data-i18n="navVisual">Visuel</button>
+        <button type="button" class="nav-btn" data-page="services" data-i18n="navServices">Services</button>
+        <button type="button" class="nav-btn" data-page="startup" data-i18n="navStartup">Démarrage</button>
+        <button type="button" class="nav-btn" data-page="debloat" data-i18n="navDebloat">Debloat</button>
+        <button type="button" class="nav-btn" data-page="timer" data-i18n="navTimer">Timer / Prio</button>
+        <button type="button" class="nav-btn" data-page="profiles" data-i18n="navProfiles">Profils jeu</button>
+        <button type="button" class="nav-btn" data-page="sessions" data-i18n="navSessions">Sessions</button>
+      </nav>
+      <div class="side-actions">
+        <button type="button" class="btn accent" id="btnRestore" data-i18n="btnRestore">Point de restauration</button>
+        <button type="button" class="btn ghost" id="btnAbout" data-i18n="btnAbout">À propos</button>
+      </div>
+      <div class="side-status" id="sideStatus" data-i18n="ready">Prêt</div>
+      <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X · local</p>
+    </aside>
+
+    <div class="main">
+      <div class="page-header">
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="pageSub">Score gaming et actions rapides</p>
+      </div>
+      <div class="content">
+        <section class="page active" id="page-dash">
+          <div class="score-ring" id="scoreRing" style="--score:0"><span id="scoreVal">—</span></div>
+          <div class="stats" id="dashStats"></div>
+          <div class="btn-row">
+            <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Preset gaming</button>
+            <button type="button" class="btn" id="btnHealthRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+            <button type="button" class="btn" id="btnOpenPowerPlan" data-i18n="btnOpenPowerPlan">Ouvrir PowerPlan</button>
+            <button type="button" class="btn" id="btnOpenWinClean" data-i18n="btnOpenWinClean">Ouvrir WinCleaner</button>
+          </div>
+        </section>
+
+        <section class="page" id="page-power">
+          <div class="panel">
+            <h3 data-i18n="powerTitle">Plan d'alimentation</h3>
+            <ul class="list" id="powerList"><li class="muted">—</li></ul>
+            <div class="btn-row">
+              <button type="button" class="btn" id="btnPowerBalanced" data-i18n="btnBalanced">Équilibré</button>
+              <button type="button" class="btn accent" id="btnPowerHigh" data-i18n="btnHigh">Hautes perfs</button>
+              <button type="button" class="btn" id="btnPowerUlt" data-i18n="btnUltimate">Ultimate</button>
+              <button type="button" class="btn" id="btnPowerRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-gamemode">
+          <div class="panel">
+            <h3 data-i18n="gmTitle">Game Mode & Focus</h3>
+            <div class="switch-row"><input type="checkbox" id="chkGameMode" checked /><label for="chkGameMode" data-i18n="chkGameMode">Activer Game Mode</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkDisableBar" checked /><label for="chkDisableBar" data-i18n="chkDisableBar">Désactiver Game Bar / DVR</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkFocus" checked /><label for="chkFocus" data-i18n="chkFocus">Focus Assist / Quiet Hours</label></div>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnApplyGm" data-i18n="btnApply">Appliquer</button>
+              <button type="button" class="btn" id="btnRefreshGm" data-i18n="btnRefresh">Rafraîchir</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-boost">
+          <div class="guard" data-i18n="guardBoost">Arrête les overlays (Xbox Game Bar, etc.). Discord / overlays GPU = opt-in.</div>
+          <div class="panel">
+            <h3 data-i18n="boostTitle">Session boost</h3>
+            <div class="switch-row"><input type="checkbox" id="chkKillOv" checked /><label for="chkKillOv" data-i18n="chkKillOv">Stop overlays</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkDiscord" /><label for="chkDiscord" data-i18n="chkDiscord">Inclure Discord</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkGpuOv" /><label for="chkGpuOv" data-i18n="chkGpuOv">Inclure overlay NVIDIA/AMD</label></div>
+            <p id="boostStatus" class="muted">—</p>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnStartBoost" data-i18n="btnStartBoost">Démarrer boost</button>
+              <button type="button" class="btn" id="btnStopBoost" data-i18n="btnStopBoost">Terminer session</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-clean">
+          <div class="stats" id="cleanStats">
+            <div class="stat"><div class="label" data-i18n="statTargets">Cibles</div><div class="value" id="stTargets">—</div></div>
+            <div class="stat warn"><div class="label" data-i18n="statEst">Estimation</div><div class="value" id="stEst">—</div></div>
+          </div>
+          <div class="panel">
+            <h3 data-i18n="cleanTitle">Caches gaming</h3>
+            <div class="check-grid" id="cleanCats"></div>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnScanClean" data-i18n="btnScan">Analyser</button>
+              <button type="button" class="btn danger" id="btnRunClean" data-i18n="btnClean">Nettoyer</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-net">
+          <div class="guard" data-i18n="guardNet">Tweaks TCP = opt-in. DNS reversible via undo.</div>
+          <div class="panel">
+            <h3 data-i18n="netTitle">DNS & latence</h3>
+            <div class="field">
+              <select class="opti-select" id="dnsPreset"></select>
+              <button type="button" class="btn accent" id="btnSetDns" data-i18n="btnSetDns">Appliquer DNS</button>
+              <button type="button" class="btn" id="btnFlushDns" data-i18n="btnFlushDns">Flush DNS</button>
+            </div>
+            <div class="switch-row" style="margin-top:12px"><input type="checkbox" id="chkTcp" /><label for="chkTcp" data-i18n="chkTcp">Tweaks TCP gaming (opt-in)</label></div>
+            <div class="btn-row">
+              <button type="button" class="btn" id="btnTcp" data-i18n="btnApplyTcp">Appliquer tweaks</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-visual">
+          <div class="panel">
+            <h3 data-i18n="visualTitle">Effets Windows</h3>
+            <div class="switch-row"><input type="checkbox" id="chkFx" checked /><label for="chkFx" data-i18n="chkFx">Meilleures performances visuelles</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkAnim" checked /><label for="chkAnim" data-i18n="chkAnim">Désactiver animations</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkTrans" checked /><label for="chkTrans" data-i18n="chkTrans">Désactiver transparence</label></div>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnVisual" data-i18n="btnApply">Appliquer</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-services">
+          <div class="guard" data-i18n="guardSvc">Services protégés (Defender, Update, audio, réseau) jamais touchés.</div>
+          <div class="panel">
+            <h3 data-i18n="svcTitle">Services gaming</h3>
+            <div class="check-grid" id="svcList"></div>
+            <div class="btn-row">
+              <button type="button" class="btn" id="btnScanSvc" data-i18n="btnRefresh">Rafraîchir</button>
+              <button type="button" class="btn danger" id="btnApplySvc" data-i18n="btnDisableSvc">Passer en manuel</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-startup">
+          <div class="panel">
+            <h3 data-i18n="startupTitle">Démarrage</h3>
+            <div class="check-grid" id="startupList"></div>
+            <div class="btn-row">
+              <button type="button" class="btn" id="btnScanStartup" data-i18n="btnRefresh">Rafraîchir</button>
+              <button type="button" class="btn danger" id="btnDisableStartup" data-i18n="btnDisableStartup">Désactiver sélection</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-debloat">
+          <div class="guard" data-i18n="guardDebloat">keep-apps.txt protège Store, Terminal, Xbox identity, etc.</div>
+          <div class="panel">
+            <h3 data-i18n="bloatTitle">Apps détectées</h3>
+            <div class="check-grid" id="bloatList"></div>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnScanBloat" data-i18n="btnScan">Scanner</button>
+              <button type="button" class="btn danger" id="btnRemoveBloat" data-i18n="btnRemoveBloat">Supprimer sélection</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-timer">
+          <div class="guard" data-i18n="guardTimer">Timer resolution = agressif (batterie/thermiques). MMCS nécessite admin.</div>
+          <div class="panel">
+            <h3 data-i18n="timerTitle">Timer & priorités</h3>
+            <div class="switch-row"><input type="checkbox" id="chkTimer" /><label for="chkTimer" data-i18n="chkTimer">Activer timer ~1ms (opt-in)</label></div>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnTimer" data-i18n="btnApplyTimer">Appliquer timer</button>
+              <button type="button" class="btn" id="btnClearTimer" data-i18n="btnClearTimer">Clear timer</button>
+              <button type="button" class="btn" id="btnMmcs" data-i18n="btnMmcs">MMCS gaming</button>
+            </div>
+            <div class="field" style="margin-top:14px">
+              <input type="text" id="prioProc" data-i18n-placeholder="prioPh" placeholder="Nom process (ex. game)" />
+              <select class="opti-select" id="prioLevel">
+                <option value="AboveNormal">AboveNormal</option>
+                <option value="High" selected>High</option>
+                <option value="Normal">Normal</option>
+              </select>
+              <button type="button" class="btn" id="btnPrio" data-i18n="btnPrio">Priorité</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-profiles">
+          <div class="panel">
+            <h3 data-i18n="profilesTitle">Profils par jeu</h3>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnFindGames" data-i18n="btnFindGames">Détecter jeux</button>
+              <button type="button" class="btn" id="btnRefreshProfiles" data-i18n="btnRefresh">Rafraîchir profils</button>
+            </div>
+            <ul class="list" id="gamesList"><li class="muted" data-i18n="emptyGames">Détecte des jeux Steam/Epic…</li></ul>
+            <h3 style="margin-top:14px" data-i18n="savedProfiles">Profils enregistrés</h3>
+            <ul class="list" id="profileList"><li class="muted">—</li></ul>
+          </div>
+        </section>
+
+        <section class="page" id="page-sessions">
+          <div class="panel">
+            <h3 data-i18n="historyTitle">Historique</h3>
+            <ul class="list" id="sessionList"><li class="muted">—</li></ul>
+            <div class="btn-row">
+              <button type="button" class="btn" id="btnRefreshSessions" data-i18n="btnRefresh">Rafraîchir</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h3 data-i18n="undoTitle">Undo</h3>
+            <ul class="list" id="undoList"><li class="muted">—</li></ul>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="console">
+      <div class="console-head">
+        <span data-i18n="consoleTitle">Console</span>
+        <span class="progress-label" id="progLabel"></span>
+        <button type="button" class="btn ghost" id="btnCancel" style="height:28px;font-size:0.75rem" data-i18n="btnCancel">Annuler</button>
+      </div>
+      <div class="progress determinate" id="prog"><i id="progBar"></i></div>
+      <pre id="log"></pre>
+    </div>
+  </div>
+  <script src="suite-boot.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

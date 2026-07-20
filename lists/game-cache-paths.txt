@@ -1,0 +1,2 @@
+# Extra cache paths (environment variables expanded)
+# %LOCALAPPDATA%\Steam\appcache

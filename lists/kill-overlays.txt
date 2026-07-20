@@ -1,0 +1,15 @@
+# Overlay / helper process names (without .exe) — stopped during boost
+GameBar
+GameBarFT
+GameBarPresenceWriter
+XboxPcAppFT
+XboxApp
+XboxGameBar
+NVIDIA Share
+nvsphelper64
+nvcontainer
+RadeonSoftware
+AMDRSServ
+AMDRSSrcExt
+# Discord — only if user enables IncludeDiscord
+Discord
