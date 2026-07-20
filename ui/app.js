@@ -2,12 +2,29 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.1.0";
+  const APP_VERSION = "1.2.0";
+  const ADV_KEY = "opti-advanced-mode";
+  let lastPresetDelta = null;
 
   const SUITE_I18N = {
     fr: {
-      tagline: "Performance gaming, sans compromis",
-      copyright: "© 2026 Mr-Aurevo-X · local · pas de collecte",
+      tagline: "Indépendant · 100 % gratuit · version finale",
+      copyright: "© 2026 Mr-Aurevo-X · indépendant · gratuit",
+      privacy: "Opti est un logiciel indépendant 100 % gratuit. Traitement local uniquement. Version finale — pas de mise à jour automatique.",
+      modeAdvanced: "Mode avancé",
+      navTips: "Conseils",
+      breakdownTitle: "Détail du score",
+      deltaTitle: "Avant / après preset",
+      tipsHelp: "Conseils pédagogiques — pas de promesse « boost x4 ».",
+      scoreLabel: "Score de préparation",
+      gradeExcellent: "Excellent — prêt à jouer",
+      gradeGood: "Bon — quelques freins mineurs",
+      gradeFair: "Moyen — optimisez avant de jouer",
+      gradePoor: "Faible — machine saturée ou mal réglée",
+      aboutCopyright: "© 2026 Mr-Aurevo-X · Logiciel indépendant · 100 % gratuit · version finale · 100 % local",
+      aboutDisclaimer: "Logiciel indépendant, 100 % gratuit, version finale. Aucune garantie de FPS. Pas de mise à jour automatique.",
+      smartHelp: "Sans certificat payant, Windows peut afficher un avertissement. « Informations complémentaires » puis « Exécuter quand même ».",
+      dashHelp: "Le score mesure si le PC est prêt maintenant (pas un FPS). Preset = power + Game Mode + visuel + boost.",
       elevating: "Élévation…",
       ready: "Prêt",
       adminOk: "Admin",
@@ -37,8 +54,6 @@
       btnRestore: "Point de restauration",
       btnRefresh: "Rafraîchir",
       btnPreset: "Optimiser pour jouer",
-      btnOpenPowerPlan: "Ouvrir PowerPlan",
-      btnOpenWinClean: "Ouvrir WinCleaner",
       btnBalanced: "Équilibré",
       btnHigh: "Hautes perfs",
       btnUltimate: "Ultimate",
@@ -129,8 +144,23 @@
       smartHelp: "Opti n'est pas encore signé par un éditeur reconnu de Microsoft. Ceci est normal pour un logiciel indépendant : suivez les étapes ci-dessous pour lancer l'application.",
     },
     en: {
-      tagline: "Gaming performance, no compromise",
-      copyright: "© 2026 Mr-Aurevo-X · local · no collection",
+      tagline: "Standalone · 100% free · final version",
+      copyright: "© 2026 Mr-Aurevo-X · standalone · free",
+      privacy: "Opti is standalone 100% free software. Local processing only. Final version — no automatic updates.",
+      modeAdvanced: "Advanced mode",
+      navTips: "Tips",
+      breakdownTitle: "Score breakdown",
+      deltaTitle: "Before / after preset",
+      tipsHelp: "Educational tips — no fake “x4 boost” claims.",
+      scoreLabel: "Readiness score",
+      gradeExcellent: "Excellent — ready to play",
+      gradeGood: "Good — minor bottlenecks",
+      gradeFair: "Fair — optimize before playing",
+      gradePoor: "Poor — machine saturated or misconfigured",
+      aboutCopyright: "© 2026 Mr-Aurevo-X · Standalone · 100% free · final version · 100% local",
+      aboutDisclaimer: "Standalone, 100% free, final version. No FPS guarantee. No automatic updates.",
+      smartHelp: "Without a paid certificate, Windows may show a warning. “More info” then “Run anyway”.",
+      dashHelp: "Score is readiness now (not FPS). Preset = power + Game Mode + visual + boost.",
       elevating: "Elevating…",
       ready: "Ready",
       adminOk: "Admin",
@@ -160,8 +190,6 @@
       btnRestore: "Restore point",
       btnRefresh: "Refresh",
       btnPreset: "Optimize for gaming",
-      btnOpenPowerPlan: "Open PowerPlan",
-      btnOpenWinClean: "Open WinCleaner",
       btnBalanced: "Balanced",
       btnHigh: "High perf",
       btnUltimate: "Ultimate",
@@ -267,11 +295,12 @@
       debloat: ["Debloat", "AppX non essentiels"],
       timer: ["Timer / Prio", "Timer resolution et priorités"],
       profiles: ["Profils jeu", "Appliquer un profil et lancer"],
+      tips: ["Conseils", "Comprendre score, stutter, overlays"],
       sessions: ["Sessions", "Historique et undo"],
-      about: ["À propos", "Mentions légales et informations"],
+      about: ["À propos", "Mentions légales — version finale"],
     },
     en: {
-      dash: ["Dashboard", "Gaming score and quick actions"],
+      dash: ["Dashboard", "Readiness score and quick actions"],
       power: ["Power", "Power plans"],
       gamemode: ["Game Mode", "Game Mode, Game Bar, Focus"],
       boost: ["Boost", "Overlay session"],
@@ -283,15 +312,16 @@
       debloat: ["Debloat", "Non-essential AppX"],
       timer: ["Timer / Prio", "Timer resolution and priorities"],
       profiles: ["Game profiles", "Apply profile and launch"],
+      tips: ["Tips", "Score, stutter, overlays"],
       sessions: ["Sessions", "History and undo"],
-      about: ["About", "Legal notices and information"],
+      about: ["About", "Legal — final version"],
     },
   };
 
   const LEGAL_FILES = {
     terms: { fr: "legal/cgu.fr.html", en: "legal/tos.en.html" },
     privacy: { fr: "legal/privacy.fr.html", en: "legal/privacy.en.html" },
-    disclaimer: { fr: "legal/disclaimer.fr.html", en: "legal/disclaimer.fr.html" },
+    disclaimer: { fr: "legal/disclaimer.fr.html", en: "legal/disclaimer.en.html" },
   };
 
   let api = null;
@@ -384,13 +414,52 @@
       const activeTab = $(".legal-tab.active");
       loadLegal(activeTab ? activeTab.dataset.doc : "terms").catch(() => {});
     }
+    if (page === "tips") loadTips().catch(() => {});
   }
 
   async function refreshHealth() {
     const h = await runJob("getHealth", {});
     const score = h.score || 0;
+    const grade = h.grade || "poor";
+    const label = lang === "en" ? (h.labelEn || grade) : (h.labelFr || grade);
+    const gradeKey = {
+      excellent: "gradeExcellent",
+      good: "gradeGood",
+      fair: "gradeFair",
+      poor: "gradePoor",
+    }[grade] || "gradePoor";
+    const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
     $("#scoreRing").style.setProperty("--score", score);
     $("#scoreVal").textContent = String(score);
+    const gradeEl = $("#scoreGradeText");
+    if (gradeEl) {
+      gradeEl.textContent = `${label} — ${pack[gradeKey] || label}`;
+      gradeEl.className = `score-grade grade-${grade}`;
+    }
+    const bd = h.breakdown || {};
+    const bars = [
+      ["RAM", bd.ram],
+      ["Disque", bd.disk],
+      ["CPU", bd.cpu],
+      ["Power", bd.power],
+      ["Game Mode", bd.game],
+    ];
+    const barsEl = $("#scoreBars");
+    if (barsEl) {
+      barsEl.innerHTML = bars
+        .map(
+          ([name, v]) =>
+            `<div class="bar-row"><span>${name}</span><div class="bar"><i style="width:${Math.max(0, Math.min(100, v || 0))}%"></i></div><b>${v ?? "—"}</b></div>`
+        )
+        .join("");
+    }
+    const badges = $("#dashBadges");
+    if (badges) {
+      badges.innerHTML = `
+        <span class="risk ${h.gameMode ? "ok" : "warn"}">Game Mode ${h.gameMode ? "ON" : "OFF"}</span>
+        <span class="risk ok">${(h.powerPlan || "Power").toString().slice(0, 28)}</span>
+        <span class="risk ok">v${APP_VERSION}</span>`;
+    }
     const ramPct = h.ram ? h.ram.usedPercent : "—";
     const power = h.powerPlan || "—";
     const gm = h.gameMode ? "ON" : "OFF";
@@ -399,7 +468,52 @@
       <div class="stat blue"><div class="label">CPU</div><div class="value">${h.cpuLoad || 0}%</div></div>
       <div class="stat ok"><div class="label">Power</div><div class="value" style="font-size:0.95rem">${power}</div></div>
       <div class="stat warn"><div class="label">Game Mode</div><div class="value">${gm}</div></div>`;
-    log(`Score gaming: ${score}`, "ok");
+
+    const deltaPanel = $("#deltaPanel");
+    const deltaText = $("#deltaText");
+    if (deltaPanel && deltaText) {
+      if (lastPresetDelta) {
+        deltaPanel.hidden = false;
+        deltaText.textContent = lastPresetDelta;
+      } else if (h.lastScore && h.lastScore.context === "after-preset") {
+        deltaPanel.hidden = false;
+        deltaText.textContent =
+          lang === "en"
+            ? `Last preset score: ${h.lastScore.score} (${h.lastScore.labelFr || h.lastScore.grade})`
+            : `Dernier score après preset : ${h.lastScore.score} (${h.lastScore.labelFr || h.lastScore.grade})`;
+      }
+    }
+    log(`Score: ${score} (${label})`, "ok");
+  }
+
+  function applyAdvancedMode(on) {
+    document.body.classList.toggle("mode-advanced", !!on);
+    try {
+      localStorage.setItem(ADV_KEY, on ? "1" : "0");
+    } catch (_) {}
+    $$(".nav-btn[data-page-mode='adv']").forEach((btn) => {
+      btn.hidden = !on;
+    });
+    const active = $(".nav-btn.active");
+    if (active && active.hidden) showPage("dash");
+  }
+
+  async function loadTips() {
+    const box = $("#tipsList");
+    if (!box) return;
+    try {
+      const res = await fetch("tips/tips.json", { cache: "no-store" });
+      const data = await res.json();
+      const items = data[lang] || data.fr || [];
+      box.innerHTML = items
+        .map(
+          (t) =>
+            `<article class="tip-card"><h3>${t.title}</h3><p>${t.body}</p></article>`
+        )
+        .join("");
+    } catch (_) {
+      box.innerHTML = `<p class="muted">${lang === "en" ? "Tips unavailable" : "Conseils indisponibles"}</p>`;
+    }
   }
 
   async function refreshPower() {
@@ -567,16 +681,35 @@
       try {
         const r = await runJob("applyGamingPreset", {});
         log(r.Message || "Preset OK", "ok");
+        if (r && (r.before || r.after)) {
+          const d = r.delta != null ? r.delta : 0;
+          lastPresetDelta =
+            lang === "en"
+              ? `Before ${r.before && r.before.score} → after ${r.after && r.after.score} (${d >= 0 ? "+" : ""}${d})`
+              : `Avant ${r.before && r.before.score} → après ${r.after && r.after.score} (${d >= 0 ? "+" : ""}${d})`;
+          const deltaPanel = $("#deltaPanel");
+          const deltaText = $("#deltaText");
+          if (deltaPanel && deltaText) {
+            deltaPanel.hidden = false;
+            deltaText.textContent = lastPresetDelta;
+          }
+        }
         await refreshHealth();
       } catch (e) {
         log(String(e.message || e), "err");
       }
     });
-    const btnPp = $("#btnOpenPowerPlan");
-    if (btnPp) btnPp.addEventListener("click", () => api.open_suite_app("PowerPlan"));
-    const btnWc = $("#btnOpenWinClean");
-    if (btnWc) btnWc.addEventListener("click", () => api.open_suite_app("WinCleaner"));
 
+    const chkAdv = $("#chkAdvanced");
+    if (chkAdv) {
+      let adv = false;
+      try {
+        adv = localStorage.getItem(ADV_KEY) === "1";
+      } catch (_) {}
+      chkAdv.checked = adv;
+      applyAdvancedMode(adv);
+      chkAdv.addEventListener("change", () => applyAdvancedMode(chkAdv.checked));
+    }
     $("#btnPowerBalanced").addEventListener("click", () =>
       runJob("setPowerPlan", { profile: "balanced" }).then((r) => log(r.Message, "ok")).catch((e) => log(e.message, "err"))
     );
@@ -791,14 +924,18 @@
       return;
     }
     try {
+      // Local language preference only (no suite dependency)
+      const saved = localStorage.getItem("opti-lang");
+      if (saved === "en" || saved === "fr") lang = saved;
+      else if (navigator.language && navigator.language.toLowerCase().startsWith("en")) lang = "en";
       if (window.MrAurevoXSuite) {
-        const s = await window.MrAurevoXSuite.loadSuiteSettings(api);
-        lang = s.language || "fr";
-        window.MrAurevoXSuite.applyAccent(s.accent);
+        window.MrAurevoXSuite.applyAccent("#e03545");
       }
     } catch (_) {}
     applyI18n();
     wire();
+    const aboutVer = $("#aboutVersion");
+    if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${lang === "en" ? "final version" : "version finale"}`;
 
     try {
       const ping = await run("ping", {});

@@ -78,10 +78,26 @@ function Get-OptiGamingHealth {
 
     $score = [int][math]::Round(($ramScore * 0.25) + ($diskFreeScore * 0.2) + ($cpuScore * 0.2) + ($powerScore * 0.2) + ($gmScore * 0.15))
 
+    # Grade: readiness label (not FPS). Higher = PC more ready to play right now.
+    $grade = 'poor'
+    $labelFr = 'Faible'
+    $labelEn = 'Poor'
+    if ($score -ge 80) {
+        $grade = 'excellent'; $labelFr = 'Excellent'; $labelEn = 'Excellent'
+    } elseif ($score -ge 60) {
+        $grade = 'good'; $labelFr = 'Bon'; $labelEn = 'Good'
+    } elseif ($score -ge 40) {
+        $grade = 'fair'; $labelFr = 'Moyen'; $labelEn = 'Fair'
+    }
+
     $stats = Get-OptiSessionStats
+    $last = Get-OptiLastScoreSnapshot
 
     return @{
         score       = $score
+        grade       = $grade
+        labelFr     = $labelFr
+        labelEn     = $labelEn
         ram         = $ram
         disks       = $disks
         cpuLoad     = $cpu
@@ -94,7 +110,39 @@ function Get-OptiGamingHealth {
             power = $powerScore
             game  = $gmScore
         }
+        lastScore   = $last
         sessions    = $stats
         admin       = [bool](Test-OptiAdmin)
     }
+}
+
+function Get-OptiLastScorePath {
+    Join-Path (Get-OptiDataDir) 'last-score.json'
+}
+
+function Get-OptiLastScoreSnapshot {
+    $path = Get-OptiLastScorePath
+    if (-not (Test-Path -LiteralPath $path)) { return $null }
+    try {
+        return (Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json)
+    } catch { return $null }
+}
+
+function Save-OptiScoreSnapshot {
+    param(
+        [int]$Score,
+        [string]$Grade,
+        [string]$LabelFr,
+        [string]$Context = 'manual'
+    )
+    $obj = [ordered]@{
+        score     = $Score
+        grade     = $Grade
+        labelFr   = $LabelFr
+        context   = $Context
+        savedAt   = (Get-Date).ToString('o')
+    }
+    $path = Get-OptiLastScorePath
+    [System.IO.File]::WriteAllText($path, ($obj | ConvertTo-Json -Compress), [System.Text.UTF8Encoding]::new($false))
+    return $obj
 }

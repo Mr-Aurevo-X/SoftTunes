@@ -1,0 +1,8 @@
+{
+  "version": "1.2.0",
+  "channel": "final",
+  "product": "Opti",
+  "standalone": true,
+  "free": true,
+  "autoUpdate": false
+}

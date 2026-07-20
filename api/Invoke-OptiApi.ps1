@@ -236,8 +236,11 @@ try {
         }
 
         'applyGamingPreset' {
-            # One-shot: restore point + power high + game mode + visual + boost
-            Write-OptiProgress -Percent 5 -Phase 'Preset' -Detail 'Point de restauration...'
+            Write-OptiProgress -Percent 3 -Phase 'Preset' -Detail 'Score avant...'
+            $beforeHealth = Get-OptiGamingHealth
+            $beforeSnap = Save-OptiScoreSnapshot -Score ([int]$beforeHealth.score) -Grade ([string]$beforeHealth.grade) -LabelFr ([string]$beforeHealth.labelFr) -Context 'before-preset'
+
+            Write-OptiProgress -Percent 8 -Phase 'Preset' -Detail 'Point de restauration...'
             $rp = New-OptiRestorePoint -Description 'Opti Gaming Preset'
             Write-OptiProgress -Percent 25 -Phase 'Preset' -Detail 'Power...'
             $pw = Set-OptiPowerPlan -Profile 'high' -LogPath $Global:OptiCurrentLog
@@ -247,14 +250,24 @@ try {
             $vs = Set-OptiVisualGaming -LogPath $Global:OptiCurrentLog
             Write-OptiProgress -Percent 85 -Phase 'Preset' -Detail 'Boost...'
             $bo = Start-OptiBoostSession -KillOverlays $true -LogPath $Global:OptiCurrentLog
+
+            Write-OptiProgress -Percent 95 -Phase 'Preset' -Detail 'Score après...'
+            $afterHealth = Get-OptiGamingHealth
+            $afterSnap = Save-OptiScoreSnapshot -Score ([int]$afterHealth.score) -Grade ([string]$afterHealth.grade) -LabelFr ([string]$afterHealth.labelFr) -Context 'after-preset'
+
+            $delta = [int]$afterHealth.score - [int]$beforeHealth.score
+            $deltaLabel = if ($delta -ge 0) { "+$delta" } else { "$delta" }
             $r = @{
                 Success = $true
-                Message = 'Preset gaming appliqué'
+                Message = ('Preset OK - score {0} -> {1} ({2})' -f $beforeHealth.score, $afterHealth.score, $deltaLabel)
                 restorePoint = $rp
                 power = $pw
                 gameMode = $gm
                 visual = $vs
                 boost = $bo
+                before = $beforeSnap
+                after = $afterSnap
+                delta = $delta
             }
             Add-OptiSession -Action 'applyGamingPreset' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
             Ok $r

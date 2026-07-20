@@ -21,7 +21,8 @@
         </div>
       </div>
       <span id="adminBadge" class="badge warn" data-i18n="elevating">Élévation…</span>
-      <p class="privacy-note" id="privacyNote">100 % local · aucune collecte</p>
+      <p class="privacy-note" id="privacyNote">100 % gratuit · local · version finale</p>
+      <label class="mode-toggle"><input type="checkbox" id="chkAdvanced" /><span data-i18n="modeAdvanced">Mode avancé</span></label>
 
       <nav class="nav" id="nav">
         <div class="nav-group">
@@ -30,20 +31,21 @@
           <button type="button" class="nav-btn" data-page="power" data-i18n="navPower">Power</button>
           <button type="button" class="nav-btn" data-page="gamemode" data-i18n="navGameMode">Game Mode</button>
           <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Boost</button>
-          <button type="button" class="nav-btn" data-page="timer" data-i18n="navTimer">Timer / Prio</button>
+          <button type="button" class="nav-btn" data-page="timer" data-page-mode="adv" data-i18n="navTimer">Timer / Prio</button>
         </div>
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupSys">Système</div>
           <button type="button" class="nav-btn" data-page="clean" data-i18n="navClean">Cleanup</button>
           <button type="button" class="nav-btn" data-page="net" data-i18n="navNet">Réseau</button>
           <button type="button" class="nav-btn" data-page="visual" data-i18n="navVisual">Visuel</button>
-          <button type="button" class="nav-btn" data-page="services" data-i18n="navServices">Services</button>
+          <button type="button" class="nav-btn" data-page="services" data-page-mode="adv" data-i18n="navServices">Services</button>
           <button type="button" class="nav-btn" data-page="startup" data-i18n="navStartup">Démarrage</button>
-          <button type="button" class="nav-btn" data-page="debloat" data-i18n="navDebloat">Debloat</button>
+          <button type="button" class="nav-btn" data-page="debloat" data-page-mode="adv" data-i18n="navDebloat">Debloat</button>
         </div>
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupGames">Jeux</div>
           <button type="button" class="nav-btn" data-page="profiles" data-i18n="navProfiles">Profils</button>
+          <button type="button" class="nav-btn" data-page="tips" data-i18n="navTips">Conseils</button>
         </div>
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupHistory">Historique</div>
@@ -73,8 +75,9 @@
           <div class="hero-perf">
             <div class="score-ring" id="scoreRing" style="--score:0"><span id="scoreVal">—</span></div>
             <div class="hero-copy">
-              <h3 data-i18n="scoreLabel">Prêt à performer</h3>
-              <p data-i18n="dashHelp">Un clic applique le preset recommandé : power hautes perfs, Game Mode, effets réduits, boost overlays.</p>
+              <h3 id="scoreGradeLabel" data-i18n="scoreLabel">Score de préparation</h3>
+              <p id="scoreGradeText" class="score-grade">—</p>
+              <p data-i18n="dashHelp">Un clic applique le preset recommandé : power, Game Mode, effets, boost overlays. Score = préparation, pas un FPS.</p>
               <div class="badge-row" id="dashBadges"></div>
               <div class="btn-row">
                 <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Optimiser pour jouer</button>
@@ -82,8 +85,15 @@
               </div>
             </div>
           </div>
+          <div class="panel" id="breakdownPanel">
+            <h3 data-i18n="breakdownTitle">Détail du score</h3>
+            <div class="bars" id="scoreBars"></div>
+          </div>
+          <div class="panel" id="deltaPanel" hidden>
+            <h3 data-i18n="deltaTitle">Avant / après preset</h3>
+            <p id="deltaText" class="help-text">—</p>
+          </div>
           <div class="stats" id="dashStats"></div>
-          <p class="help-text" data-i18n="dashHelp">Le score combine RAM, CPU, espace disque, plan d’alimentation et Game Mode. Plus il est haut, plus le PC est prêt pour le jeu.</p>
         </section>
 
         <section class="page" id="page-power">
@@ -247,6 +257,11 @@
           </div>
         </section>
 
+        <section class="page" id="page-tips">
+          <p class="help-text" data-i18n="tipsHelp">Conseils pédagogiques — pas de promesse « boost x4 ». Comprendre stutter, overlays, anti-cheat.</p>
+          <div id="tipsList" class="tips-list"></div>
+        </section>
+
         <section class="page" id="page-sessions">
           <p class="help-text" data-i18n="historyHelp">Historique des actions et snapshots Undo pour revenir en arrière.</p>
           <div class="panel">
@@ -265,21 +280,21 @@
             <img class="about-logo" src="logo-opti.png" width="72" height="72" alt="Opti" />
             <div>
               <h3>Opti</h3>
-              <p data-i18n="tagline">Optimiseur PC gaming · Mr-Aurevo-X</p>
-              <p class="muted" id="aboutVersion">v1.1.0</p>
+              <p data-i18n="tagline">Optimiseur PC gaming · indépendant · 100 % gratuit</p>
+              <p class="muted" id="aboutVersion">v1.2.0 · version finale</p>
             </div>
           </div>
           <div class="about-portrait-wrap">
             <img src="about-portrait.png" alt="Mr-Aurevo-X" class="about-portrait" />
-            <p class="copyright" data-i18n="aboutCopyright">© 2026 Mr-Aurevo-X · Tous droits réservés · Traitement 100 % local</p>
+            <p class="copyright" data-i18n="aboutCopyright">© 2026 Mr-Aurevo-X · Logiciel indépendant · 100 % gratuit · version finale · 100 % local</p>
           </div>
           <div class="panel">
             <h3 data-i18n="legalDisclaimer">Avertissement</h3>
-            <p data-i18n="aboutDisclaimer">Aucune garantie de FPS. Point de restauration recommandé. Options avancées = responsabilité utilisateur.</p>
+            <p data-i18n="aboutDisclaimer">Logiciel indépendant, 100 % gratuit, version finale complète. Aucune garantie de FPS. Point de restauration recommandé. Options avancées = responsabilité utilisateur. Pas de mise à jour automatique.</p>
           </div>
           <div class="panel">
             <h3 data-i18n="smartTitle">Windows SmartScreen</h3>
-            <p data-i18n="smartHelp">Sans certificat payant, Windows peut afficher un avertissement. Cliquez « Informations complémentaires » puis « Exécuter quand même ». Opti est un outil local Mr-Aurevo-X, sans collecte de données.</p>
+            <p data-i18n="smartHelp">Sans certificat payant, Windows peut afficher un avertissement. « Informations complémentaires » puis « Exécuter quand même ». Opti est un outil local indépendant, sans collecte.</p>
           </div>
           <div class="panel">
             <h3 data-i18n="legalTitle">Documents légaux</h3>

@@ -10,7 +10,7 @@ from pathlib import Path
 
 APP_NAME = "Opti"
 PUBLISHER = "Mr-Aurevo-X"
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 
 def bundle_dir() -> Path:
@@ -36,7 +36,7 @@ def bundle_dir() -> Path:
 
 def install_root() -> Path:
     local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    return Path(local) / "Programs" / "Mr-Aurevo-X" / "Opti"
+    return Path(local) / "Programs" / "Opti"
 
 
 def create_shortcut(lnk_path: Path, target: Path, workdir: Path, icon: Path | None = None) -> None:
@@ -47,7 +47,7 @@ def create_shortcut(lnk_path: Path, target: Path, workdir: Path, icon: Path | No
         sc.Targetpath = str(target)
         sc.WorkingDirectory = str(workdir)
         sc.IconLocation = str(icon or target)
-        sc.Description = "Opti — Optimiseur PC gaming Mr-Aurevo-X"
+        sc.Description = "Opti — Optimiseur PC gaming (indépendant, gratuit)"
         sc.save()
         return
     except Exception:
@@ -72,7 +72,7 @@ def write_uninstall(dest: Path, exe: Path) -> None:
 $ErrorActionPreference = 'SilentlyContinue'
 $dest = '{dest}'
 $desktop = [Environment]::GetFolderPath('Desktop')
-$start = Join-Path $env:APPDATA 'Microsoft\\Windows\\Start Menu\\Programs\\Mr-Aurevo-X'
+$start = Join-Path $env:APPDATA 'Microsoft\\Windows\\Start Menu\\Programs\\Opti'
 Remove-Item (Join-Path $desktop 'Opti.lnk') -Force
 Remove-Item (Join-Path $start 'Opti.lnk') -Force -ErrorAction SilentlyContinue
 Remove-Item $start -Recurse -Force -ErrorAction SilentlyContinue
@@ -131,7 +131,7 @@ def main() -> int:
         return 1
 
     desktop = Path(os.path.join(os.path.expanduser("~"), "Desktop"))
-    start_dir = Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Mr-Aurevo-X"
+    start_dir = Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Opti"
     start_dir.mkdir(parents=True, exist_ok=True)
     icon = dest / "logo-opti.ico"
     if not icon.is_file():

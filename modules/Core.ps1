@@ -73,7 +73,7 @@ function Get-OptiListLines {
 function Get-OptiDataDir {
     $local = $env:LOCALAPPDATA
     if (-not $local) { $local = Join-Path $env:USERPROFILE 'AppData\Local' }
-    $dir = Join-Path $local 'Mr-Aurevo-X\Opti'
+    $dir = Join-Path $local 'Opti'
     if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
     return $dir
 }
