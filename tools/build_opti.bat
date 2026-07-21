@@ -10,6 +10,9 @@ if not exist "%ROOT%\.venv\Scripts\python.exe" (
 
 "%ROOT%\.venv\Scripts\python" "%ROOT%\tools\minify_js.py"
 
+call "%ROOT%\tools\download_presentmon.bat"
+if errorlevel 1 exit /b 1
+
 "%ROOT%\.venv\Scripts\python" -m PyInstaller --noconfirm --clean --onedir --windowed --noupx ^
   --name "Opti" ^
   --icon "%ROOT%\logo-opti.ico" ^
