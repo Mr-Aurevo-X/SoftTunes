@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.4.2";
+  const APP_VERSION = "1.4.3";
   const OVERLAY_KEY = "opti-fps-overlay";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
@@ -36,8 +36,8 @@
       monitorHelp: "FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan — ou activez l'overlay HUD.",
       monitorApp: "App",
       btnMonHelp: "Aide capture FPS",
-      chkFpsOverlay: "Overlay FPS léger (toujours visible, clic traversant)",
-      overlayHelp: "Petit HUD en haut à droite — reste à l'écran bureau et en jeu. Clic traversant (ne bloque pas la souris).",
+      chkFpsOverlay: "Overlay FPS léger (déplaçable, toujours visible)",
+      overlayHelp: "Petit HUD en haut à droite — glissez la barre Opti pour le déplacer. Position mémorisée.",
       confirmDanger: "Confirmer cette action ? Elle peut être difficile à annuler.",
       needsAdminHint: "Admin requis — cliquez Élever, puis réessayez.",
       confirmSoftOc: "Appliquer un Soft OC (locks clocks NVIDIA) ?",
@@ -205,8 +205,8 @@
       monitorHelp: "Native FPS / frametime (PresentMon). Run a game in the foreground — or enable the HUD overlay.",
       monitorApp: "App",
       btnMonHelp: "FPS capture help",
-      chkFpsOverlay: "Light FPS overlay (always on screen, click-through)",
-      overlayHelp: "Small HUD top-right — stays on desktop and in-game. Click-through (won't block mouse).",
+      chkFpsOverlay: "Light FPS overlay (draggable, always on screen)",
+      overlayHelp: "Small HUD top-right — drag the Opti bar to move it. Position is saved.",
       confirmDanger: "Confirm this action? It may be hard to undo.",
       needsAdminHint: "Admin required — click Elevate, then retry.",
       confirmSoftOc: "Apply Soft OC (NVIDIA clock locks)?",

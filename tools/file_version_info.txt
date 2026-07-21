@@ -36,7 +36,7 @@ VSVersionInfo(
 
         StringStruct(u'FileDescription', u'Opti - Optimiseur PC gaming'),
 
-        StringStruct(u'FileVersion', u'1.4.2.0'),
+        StringStruct(u'FileVersion', u'1.4.3.0'),
 
         StringStruct(u'InternalName', u'Opti'),
 
@@ -46,7 +46,7 @@ VSVersionInfo(
 
         StringStruct(u'ProductName', u'Opti'),
 
-        StringStruct(u'ProductVersion', u'1.4.2.0')])
+        StringStruct(u'ProductVersion', u'1.4.3.0')])
 
       ]),
 

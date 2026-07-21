@@ -146,7 +146,7 @@ class Api:
         self._job_result: dict[str, Any] | None = None
         self._current_proc: subprocess.Popen[str] | None = None
         self._fps = FpsWorkerManager(root)
-        self._overlay = FpsOverlay(self._fps)
+        self._overlay = FpsOverlay(self._fps, root)
 
     def get_suite_accent(self) -> dict:
         return {"ok": True, "accent": resolve_suite_accent()}
@@ -499,7 +499,7 @@ def main() -> None:
             on_top=True,
             transparent=True,
             hidden=True,
-            easy_drag=False,
+            easy_drag=True,
             resizable=False,
             background_color="#000000",
         )

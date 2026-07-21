@@ -56,6 +56,7 @@ class FpsWorkerManager:
                 stderr=subprocess.DEVNULL,
                 text=True,
                 encoding="utf-8",
+                errors="replace",
                 bufsize=1,
                 cwd=str(self._root),
                 env=env,
