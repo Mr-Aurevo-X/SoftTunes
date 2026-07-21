@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.3.3";
+  const APP_VERSION = "1.3.5";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -500,7 +500,14 @@
     if (page === "tips") loadTips().catch(() => {});
     if (page === "softperf") refreshSoftPerf().catch(() => {});
     if (page === "softoc") refreshSoftOc().catch(() => {});
-    if (page === "monitor") { startMonitorPoll(); refreshMonitor().catch(() => {}); } else { stopMonitorPoll(); }
+    if (page === "monitor") {
+      stopDashFpsPoll();
+      startMonitorPoll();
+      refreshMonitor().catch(() => {});
+    } else {
+      stopMonitorPoll();
+      if (document.body.classList.contains("mode-advanced")) startDashFpsPoll();
+    }
   }
 
   function renderHealth(h) {
@@ -694,6 +701,7 @@
   function startDashFpsPoll() {
     stopDashFpsPoll();
     if (!document.body.classList.contains("mode-advanced")) return;
+    if ($("#page-monitor") && $("#page-monitor").classList.contains("active")) return;
     refreshMonitor().catch(() => {});
     dashFpsTimer = setInterval(() => { refreshMonitor().catch(() => {}); }, 2000);
   }
@@ -1316,7 +1324,9 @@
       }
       setStatus(SUITE_I18N[lang].ready);
       log("Opti v" + APP_VERSION + " ready", "ok");
-      refreshMonitor().catch(() => {});
+      if (document.body.classList.contains("mode-advanced")) {
+        refreshMonitor().catch(() => {});
+      }
     } catch (e) {
       log(String(e.message || e), "err");
     }
