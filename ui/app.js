@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.3.2";
+  const APP_VERSION = "1.3.3";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -737,6 +737,8 @@
       if (ftEl) ftEl.textContent = (d.frametimeMs != null ? d.frametimeMs + " ms" : "—");
       if (appEl) appEl.textContent = d.app || "—";
       if (st) st.textContent = "RTSS OK";
+      const hintEl = $("#monitorHint");
+      if (hintEl) { hintEl.hidden = true; hintEl.textContent = ""; }
       if (mini) {
         mini.hidden = false;
         mini.removeAttribute("role");
@@ -747,15 +749,32 @@
       if (ftEl) ftEl.textContent = "—";
       if (appEl) appEl.textContent = "—";
       const err = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d'échantillon RTSS");
-      if (st) st.textContent = err;
+      const hint = lang === "en" ? ((d && d.hintEn) || "") : ((d && d.hintFr) || "");
+      if (st) st.textContent = hint ? err + " — " + hint : err;
+      const hintEl = $("#monitorHint");
+      if (hintEl) {
+        const lines = [];
+        if (d && d.rtssConnected) {
+          lines.push(lang === "en"
+            ? "RTSS is connected. Start a game with Afterburner OSD enabled (Shift+F12 in-game)."
+            : "RTSS est connecté. Lancez un jeu avec l'OSD Afterburner activé (Shift+F12 en jeu).");
+        } else {
+          lines.push(lang === "en"
+            ? "1. Install MSI Afterburner + RTSS · 2. Start RTSS (tray icon) · 3. Enable OSD in Afterburner · 4. Launch a game"
+            : "1. Installer Afterburner + RTSS · 2. Lancer RTSS (icône barre des tâches) · 3. Activer l'OSD dans Afterburner · 4. Lancer un jeu");
+        }
+        hintEl.textContent = lines.join(" ");
+        hintEl.hidden = false;
+      }
       if (mini) {
         const adv = document.body.classList.contains("mode-advanced");
         if (adv) {
           mini.hidden = false;
           mini.setAttribute("role", "button");
-          mini.textContent = lang === "en"
-            ? "FPS — RTSS not detected (open Monitor FPS)"
-            : "FPS — RTSS non détecté (ouvrir Monitor FPS)";
+          const short = d && d.rtssConnected
+            ? (lang === "en" ? "FPS — waiting for game (RTSS OK)" : "FPS — en attente de jeu (RTSS OK)")
+            : (lang === "en" ? "FPS — RTSS not running (open Monitor)" : "FPS — RTSS non lancé (ouvrir Monitor)");
+          mini.textContent = short;
         } else {
           mini.hidden = true;
           mini.removeAttribute("role");
