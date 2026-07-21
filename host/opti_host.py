@@ -501,7 +501,7 @@ def main() -> None:
             hidden=True,
             easy_drag=False,
             resizable=False,
-            background_color="#00000000",
+            background_color="#000000",
         )
         api.attach_overlay(hud)
 
