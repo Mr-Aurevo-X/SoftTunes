@@ -16,7 +16,9 @@ if not exist "%ROOT%\.venv\Scripts\python.exe" (
   --version-file "%ROOT%\tools\file_version_info.txt" ^
   --add-data "%ROOT%\build\ui_stage;ui" ^
   --hidden-import "clr" ^
-  --hidden-import "rtss_reader" ^
+  --hidden-import "fps_worker" ^
+  --hidden-import "presentmon_reader" ^
+  --hidden-import "fps_worker_manager" ^
   --distpath "%ROOT%\dist" ^
   --workpath "%ROOT%\host\build" ^
   --specpath "%ROOT%\host" ^
@@ -32,6 +34,7 @@ xcopy /E /I /Y "%ROOT%\modules" "%DIST%\modules\" >nul
 xcopy /E /I /Y "%ROOT%\lists" "%DIST%\lists\" >nul
 xcopy /E /I /Y "%ROOT%\ui" "%DIST%\ui\" >nul
 if exist "%ROOT%\build\ui_stage\app.js" copy /Y "%ROOT%\build\ui_stage\app.js" "%DIST%\ui\app.js" >nul
+if exist "%ROOT%\tools\bin" xcopy /E /I /Y "%ROOT%\tools\bin" "%DIST%\bin\" >nul
 copy /Y "%ROOT%\logo-opti.ico" "%DIST%\logo-opti.ico" >nul
 
 if exist "%ROOT%\Opti-dist" rmdir /S /Q "%ROOT%\Opti-dist"

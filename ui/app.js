@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.3.5";
+  const APP_VERSION = "1.4.0";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -15,7 +15,7 @@
       modeAdvancedHint: "Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
       btnElevate: "Élever (admin)",
       dashSoftHint: "Power Limit NVIDIA et anti-parking — Mode avancé",
-      dashMonitorHint: "FPS en direct (RTSS) → Mode avancé · Monitor FPS",
+      dashMonitorHint: "FPS en direct → Mode avancé · Monitor FPS",
       navGroupEssentials: "Essentiels",
       navGroupTools: "Outils",
       navGroupAdvanced: "Avancé",
@@ -32,9 +32,10 @@
       btnOpenAfterburner: "Ouvrir Afterburner",
       btnAfterburnerDl: "Page téléchargement",
       monitorTitle: "Monitor FPS",
-      monitorHelp: "FPS / frametime via RTSS (Afterburner).",
-      guardMonitor: "Installez Afterburner + RTSS, lancez un jeu avec OSD.",
+      monitorHelp: "FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan.",
+      guardMonitor: "Aucun RTSS requis. Mettez le jeu au premier plan ; admin recommandé si aucune donnée.",
       monitorApp: "App",
+      btnMonHelp: "Aide capture FPS",
       confirmDanger: "Confirmer cette action ? Elle peut être difficile à annuler.",
       needsAdminHint: "Admin requis — cliquez Élever, puis réessayez.",
       confirmSoftOc: "Appliquer un Soft OC (locks clocks NVIDIA) ?",
@@ -182,7 +183,7 @@
       modeAdvancedHint: "Shows: Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
       btnElevate: "Elevate (admin)",
       dashSoftHint: "NVIDIA Power Limit and anti-parking — Advanced mode",
-      dashMonitorHint: "Live FPS (RTSS) → Advanced mode · FPS Monitor",
+      dashMonitorHint: "Live FPS → Advanced mode · FPS Monitor",
       navGroupEssentials: "Essentials",
       navGroupTools: "Tools",
       navGroupAdvanced: "Advanced",
@@ -199,9 +200,10 @@
       btnOpenAfterburner: "Open Afterburner",
       btnAfterburnerDl: "Download page",
       monitorTitle: "FPS Monitor",
-      monitorHelp: "FPS / frametime via RTSS (Afterburner).",
-      guardMonitor: "Install Afterburner + RTSS, run a game with OSD.",
+      monitorHelp: "Native FPS / frametime (PresentMon). Run a game in the foreground.",
+      guardMonitor: "No RTSS needed. Focus the game; run Opti as admin if no data appears.",
       monitorApp: "App",
+      btnMonHelp: "FPS capture help",
       confirmDanger: "Confirm this action? It may be hard to undo.",
       needsAdminHint: "Admin required — click Elevate, then retry.",
       confirmSoftOc: "Apply Soft OC (NVIDIA clock locks)?",
@@ -351,7 +353,7 @@
       boost: ["Boost", "Session overlays"],
       softperf: ["Power Limit / Soft", "OS soft + Power Limit NVIDIA"],
       softoc: ["Soft OC", "Locks clocks NVIDIA"],
-      monitor: ["Monitor FPS", "FPS / frametime RTSS"],
+      monitor: ["Monitor FPS", "FPS / frametime natif"],
       clean: ["Cleanup", "Caches GPU et launchers"],
       net: ["Réseau", "DNS et tweaks latence"],
       visual: ["Visuel", "Effets Windows"],
@@ -371,7 +373,7 @@
       boost: ["Boost", "Overlay session"],
       softperf: ["Power Limit / Soft", "Soft OS + NVIDIA Power Limit"],
       softoc: ["Soft OC", "Bounded NVIDIA clock locks"],
-      monitor: ["FPS Monitor", "FPS / frametime via RTSS"],
+      monitor: ["FPS Monitor", "Native FPS / frametime"],
       clean: ["Cleanup", "GPU and launcher caches"],
       net: ["Network", "DNS and latency tweaks"],
       visual: ["Visual", "Windows effects"],
@@ -502,10 +504,12 @@
     if (page === "softoc") refreshSoftOc().catch(() => {});
     if (page === "monitor") {
       stopDashFpsPoll();
+      if (api && api.start_fps_monitor) api.start_fps_monitor().catch(() => {});
       startMonitorPoll();
       refreshMonitor().catch(() => {});
     } else {
       stopMonitorPoll();
+      if (api && api.stop_fps_monitor) api.stop_fps_monitor().catch(() => {});
       if (document.body.classList.contains("mode-advanced")) startDashFpsPoll();
     }
   }
@@ -740,11 +744,12 @@
     const appEl = $("#monApp");
     const st = $("#monitorStatus");
     const mini = $("#dashFpsMini");
+    const active = d && (d.captureActive || d.available);
     if (d && d.available && d.fps != null) {
       if (fpsEl) fpsEl.textContent = String(d.fps);
       if (ftEl) ftEl.textContent = (d.frametimeMs != null ? d.frametimeMs + " ms" : "—");
       if (appEl) appEl.textContent = d.app || "—";
-      if (st) st.textContent = "RTSS OK";
+      if (st) st.textContent = lang === "en" ? "Capture active" : "Capture active";
       const hintEl = $("#monitorHint");
       if (hintEl) { hintEl.hidden = true; hintEl.textContent = ""; }
       if (mini) {
@@ -755,21 +760,25 @@
     } else {
       if (fpsEl) fpsEl.textContent = "—";
       if (ftEl) ftEl.textContent = "—";
-      if (appEl) appEl.textContent = "—";
-      const err = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d'échantillon RTSS");
+      if (appEl) appEl.textContent = d && d.app ? d.app : "—";
+      const err = (d && d.error) || (lang === "en" ? "No FPS sample" : "Pas d'échantillon FPS");
       const hint = lang === "en" ? ((d && d.hintEn) || "") : ((d && d.hintFr) || "");
       if (st) st.textContent = hint ? err + " — " + hint : err;
       const hintEl = $("#monitorHint");
       if (hintEl) {
         const lines = [];
-        if (d && d.rtssConnected) {
+        if (d && d.needsAdmin) {
           lines.push(lang === "en"
-            ? "RTSS is connected. Start a game with Afterburner OSD enabled (Shift+F12 in-game)."
-            : "RTSS est connecté. Lancez un jeu avec l'OSD Afterburner activé (Shift+F12 en jeu).");
+            ? "Try « Elevate (admin) » in the header, then reopen Monitor FPS."
+            : "Essayez « Élever (admin) » en haut, puis rouvrez Monitor FPS.");
+        } else if (active) {
+          lines.push(lang === "en"
+            ? "Capture is running. Focus a game window and wait a few seconds."
+            : "La capture tourne. Mettez le jeu au premier plan et attendez quelques secondes.");
         } else {
           lines.push(lang === "en"
-            ? "1. Install MSI Afterburner + RTSS · 2. Start RTSS (tray icon) · 3. Enable OSD in Afterburner · 4. Launch a game"
-            : "1. Installer Afterburner + RTSS · 2. Lancer RTSS (icône barre des tâches) · 3. Activer l'OSD dans Afterburner · 4. Lancer un jeu");
+            ? "1. Launch a game · 2. Alt+Tab to the game · 3. Run Opti as admin if still empty"
+            : "1. Lancez un jeu · 2. Alt+Tab vers le jeu · 3. Élevez Opti en admin si toujours vide");
         }
         hintEl.textContent = lines.join(" ");
         hintEl.hidden = false;
@@ -779,9 +788,9 @@
         if (adv) {
           mini.hidden = false;
           mini.setAttribute("role", "button");
-          const short = d && d.rtssConnected
-            ? (lang === "en" ? "FPS — waiting for game (RTSS OK)" : "FPS — en attente de jeu (RTSS OK)")
-            : (lang === "en" ? "FPS — RTSS not running (open Monitor)" : "FPS — RTSS non lancé (ouvrir Monitor)");
+          const short = active
+            ? (lang === "en" ? "FPS — waiting for game" : "FPS — en attente de jeu")
+            : (lang === "en" ? "FPS — open Monitor" : "FPS — ouvrir Monitor");
           mini.textContent = short;
         } else {
           mini.hidden = true;
@@ -1233,7 +1242,12 @@
       } catch (e) { log(e.message, "err"); }
     };
     if ($("#btnAfterburnerDl")) $("#btnAfterburnerDl").addEventListener("click", openDl);
-    if ($("#btnMonDl")) $("#btnMonDl").addEventListener("click", openDl);
+    if ($("#btnMonHelp")) {
+      $("#btnMonHelp").addEventListener("click", () => {
+        const hintEl = $("#monitorHint");
+        if (hintEl) hintEl.hidden = !hintEl.hidden;
+      });
+    }
     if ($("#btnMonRefresh")) $("#btnMonRefresh").addEventListener("click", () => refreshMonitor().catch((e) => log(e.message, "err")));
 
 

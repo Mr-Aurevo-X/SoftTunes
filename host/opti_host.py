@@ -13,6 +13,8 @@ from typing import Any
 
 import webview
 
+from fps_worker_manager import FpsWorkerManager
+
 
 def app_dir() -> Path:
     if getattr(sys, "frozen", False):
@@ -142,6 +144,7 @@ class Api:
         self._job_error: str | None = None
         self._job_result: dict[str, Any] | None = None
         self._current_proc: subprocess.Popen[str] | None = None
+        self._fps = FpsWorkerManager(root)
 
     def get_suite_accent(self) -> dict:
         return {"ok": True, "accent": resolve_suite_accent()}
@@ -394,30 +397,32 @@ class Api:
         ok = elevate_self()
         return {"ok": bool(ok), "elevating": bool(ok), "alreadyAdmin": False}
 
+    def start_fps_monitor(self) -> dict:
+        try:
+            return self._fps.start()
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
+    def stop_fps_monitor(self) -> dict:
+        try:
+            return self._fps.stop()
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
     def get_fps_sample(self) -> dict:
         try:
-            from rtss_reader import get_fps_sample as _sample
-
-            return _sample()
+            return self._fps.get_sample()
         except Exception as exc:
-            try:
-                import sys as _sys
-                from pathlib import Path as _P
-
-                host_dir = _P(__file__).resolve().parent
-                if str(host_dir) not in _sys.path:
-                    _sys.path.insert(0, str(host_dir))
-                from rtss_reader import get_fps_sample as _sample
-
-                return _sample()
-            except Exception as exc2:
-                return {
-                    "ok": False,
-                    "available": False,
-                    "fps": None,
-                    "frametimeMs": None,
-                    "error": str(exc2 or exc),
-                }
+            return {
+                "ok": False,
+                "available": False,
+                "fps": None,
+                "frametimeMs": None,
+                "onePercentLow": None,
+                "app": None,
+                "error": str(exc),
+                "source": "presentmon",
+            }
 
     def open_url(self, url: str) -> dict:
         import webbrowser
@@ -440,6 +445,11 @@ class Api:
 
 
 def main() -> None:
+    if "--fps-worker" in sys.argv:
+        from fps_worker import main as fps_worker_main
+
+        raise SystemExit(fps_worker_main())
+
     # Lazy UAC: do not elevate on every launch. User can request via UI.
     if "--elevate" in sys.argv:
         if elevate_self():

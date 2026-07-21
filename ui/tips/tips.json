@@ -13,7 +13,7 @@
     {
       "id": "fps-frametime",
       "title": "FPS vs frametime",
-      "body": "Le FPS moyen cache les à-coups. Le frametime (ms entre frames) montre la régularité : 16,7 ms ≈ 60 FPS stables. Surveillez les pics (Monitor FPS via RTSS) plutôt qu’un seul chiffre moyen."
+      "body": "Le FPS moyen cache les à-coups. Le frametime (ms entre frames) montre la régularité : 16,7 ms ≈ 60 FPS stables. Surveillez les pics (Monitor FPS intégré) plutôt qu’un seul chiffre moyen."
     },
     {
       "id": "bottleneck",
@@ -65,7 +65,7 @@
     {
       "id": "fps-frametime",
       "title": "FPS vs frametime",
-      "body": "Average FPS hides hitching. Frametime (ms between frames) shows smoothness: 16.7 ms ≈ steady 60 FPS. Watch spikes (Monitor FPS via RTSS) instead of one average number."
+      "body": "Average FPS hides hitching. Frametime (ms between frames) shows smoothness: 16.7 ms ≈ steady 60 FPS. Watch spikes (built-in Monitor FPS) instead of one average number."
     },
     {
       "id": "bottleneck",

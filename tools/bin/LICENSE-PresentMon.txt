@@ -1,0 +1,4 @@
+PresentMon is distributed under the MIT License.
+Source: https://github.com/GameTechDev/PresentMon
+
+Bundled binary: PresentMon-x64.exe (release v2.3.1)

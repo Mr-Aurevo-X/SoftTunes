@@ -320,8 +320,8 @@
         </section>
 
         <section class="page" id="page-monitor">
-          <p class="help-text" data-i18n="monitorHelp">FPS / frametime via RTSS (MSI Afterburner). Aucune donnée fictive si RTSS est absent.</p>
-          <div class="guard" data-i18n="guardMonitor">Installez Afterburner + RTSS, lancez un jeu avec OSD pour voir des valeurs live.</div>
+          <p class="help-text" data-i18n="monitorHelp">FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan.</p>
+          <div class="guard" data-i18n="guardMonitor">Aucun RTSS requis. Mettez le jeu au premier plan ; admin recommandé si aucune donnée.</div>
           <div class="panel">
             <div class="panel-head"><h3 data-i18n="monitorTitle">Monitor FPS</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
             <div class="stats" id="monitorStats">
@@ -333,7 +333,7 @@
             <p id="monitorHint" class="muted help-text" hidden></p>
             <div class="btn-row">
               <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
-              <button type="button" class="btn" id="btnMonDl" data-i18n="btnAfterburnerDl">Afterburner / RTSS</button>
+              <button type="button" class="btn" id="btnMonHelp" data-i18n="btnMonHelp">Aide capture FPS</button>
             </div>
           </div>
         </section>
