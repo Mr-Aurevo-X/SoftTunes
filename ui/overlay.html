@@ -202,20 +202,37 @@
       }
       ftEl.textContent = d.frametimeMs != null ? (d.frametimeMs + " ms") : "";
       oplEl.textContent = d.onePercentLow != null ? ("1% " + d.onePercentLow) : "";
-      cpuEl.textContent = d.cpuPct != null ? ("CPU " + d.cpuPct + "%") : "";
-      cpuTEl.textContent = d.cpuTempC != null ? degC(d.cpuTempC) : "";
-      gpuEl.textContent = d.gpuPct != null ? ("GPU " + d.gpuPct + "%") : "";
-      gpuTEl.textContent = d.gpuTempC != null ? degC(d.gpuTempC) : "";
+      var cpuParts = [];
+      if (d.cpuPct != null) cpuParts.push(String(d.cpuPct) + "%");
+      if (d.cpuTempC != null) cpuParts.push(degC(d.cpuTempC));
+      cpuEl.textContent = cpuParts.length ? ("CPU " + cpuParts.join(" ")) : "";
+      cpuTEl.textContent = "";
+      var gpuParts = [];
+      if (d.gpuPct != null) gpuParts.push(String(d.gpuPct) + "%");
+      if (d.gpuTempC != null) gpuParts.push(degC(d.gpuTempC));
+      gpuEl.textContent = gpuParts.length ? ("GPU " + gpuParts.join(" ")) : "";
+      gpuTEl.textContent = "";
       ramEl.textContent = d.ramPct != null ? ("RAM " + d.ramPct + "%") : "";
       appEl.textContent = d.app || d.status || "Bureau";
 
       /* hide empty optional metrics even if checkbox on */
       setVisible(ftEl, CFG.show.frametime !== false && !!ftEl.textContent);
       setVisible(oplEl, CFG.show.onePercentLow !== false && !!oplEl.textContent);
-      setVisible(cpuEl, CFG.show.cpu !== false && !!cpuEl.textContent);
-      setVisible(cpuTEl, CFG.show.cpuTemp !== false && !!cpuTEl.textContent);
-      setVisible(gpuEl, CFG.show.gpu !== false && !!gpuEl.textContent);
-      setVisible(gpuTEl, CFG.show.gpuTemp !== false && !!gpuTEl.textContent);
+      var showCpu = (CFG.show.cpu !== false && d.cpuPct != null) || (CFG.show.cpuTemp !== false && d.cpuTempC != null);
+      var showGpu = (CFG.show.gpu !== false && d.gpuPct != null) || (CFG.show.gpuTemp !== false && d.gpuTempC != null);
+      /* rebuild combined text according to checkboxes */
+      cpuParts = [];
+      if (CFG.show.cpu !== false && d.cpuPct != null) cpuParts.push(String(d.cpuPct) + "%");
+      if (CFG.show.cpuTemp !== false && d.cpuTempC != null) cpuParts.push(degC(d.cpuTempC));
+      cpuEl.textContent = cpuParts.length ? ("CPU " + cpuParts.join(" ")) : "";
+      gpuParts = [];
+      if (CFG.show.gpu !== false && d.gpuPct != null) gpuParts.push(String(d.gpuPct) + "%");
+      if (CFG.show.gpuTemp !== false && d.gpuTempC != null) gpuParts.push(degC(d.gpuTempC));
+      gpuEl.textContent = gpuParts.length ? ("GPU " + gpuParts.join(" ")) : "";
+      setVisible(cpuEl, showCpu && !!cpuEl.textContent);
+      setVisible(cpuTEl, false);
+      setVisible(gpuEl, showGpu && !!gpuEl.textContent);
+      setVisible(gpuTEl, false);
       setVisible(ramEl, CFG.show.ram !== false && !!ramEl.textContent);
       setVisible(fpsEl, CFG.show.fps !== false);
       setVisible(appEl, CFG.show.app !== false);

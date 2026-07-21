@@ -3,8 +3,8 @@ setlocal
 cd /d "%~dp0.."
 set BIN=%CD%\tools\bin
 set DLL=%BIN%\LibreHardwareMonitorLib.dll
-set HID=%BIN%\HidSharp.dll
-if exist "%DLL%" if exist "%HID%" (
+set MEM=%BIN%\System.Memory.dll
+if exist "%DLL%" if exist "%MEM%" (
   echo LHM DLLs already present: %BIN%
   exit /b 0
 )
@@ -18,19 +18,29 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "$dest=Join-Path $env:TEMP 'lhm-opti-extract';" ^
   "if (Test-Path $dest) { Remove-Item -Recurse -Force $dest };" ^
   "Expand-Archive -Path $zip -DestinationPath $dest -Force;" ^
-  "$lib=Get-ChildItem -Path $dest -Recurse -Filter 'LibreHardwareMonitorLib.dll' | Select-Object -First 1;" ^
-  "$hid=Get-ChildItem -Path $dest -Recurse -Filter 'HidSharp.dll' | Select-Object -First 1;" ^
-  "if (-not $lib) { throw 'LibreHardwareMonitorLib.dll not found in zip' };" ^
-  "Copy-Item -Force $lib.FullName '%DLL%';" ^
-  "if ($hid) { Copy-Item -Force $hid.FullName '%HID%' };" ^
+  "$names=@(" ^
+  "  'LibreHardwareMonitorLib.dll','HidSharp.dll','System.Memory.dll','System.Buffers.dll'," ^
+  "  'System.Numerics.Vectors.dll','System.Runtime.CompilerServices.Unsafe.dll'," ^
+  "  'System.Collections.Immutable.dll','System.Text.Json.dll','System.Text.Encodings.Web.dll'," ^
+  "  'System.IO.Pipelines.dll','System.Threading.Tasks.Extensions.dll'," ^
+  "  'Microsoft.Bcl.AsyncInterfaces.dll','Microsoft.Bcl.HashCode.dll'," ^
+  "  'BlackSharp.Core.dll','RAMSPDToolkit-NDD.dll','DiskInfoToolkit.dll'," ^
+  "  'System.CodeDom.dll','System.Formats.Nrbf.dll','System.Reflection.Metadata.dll'," ^
+  "  'System.Resources.Extensions.dll','System.Security.AccessControl.dll'," ^
+  "  'System.Security.Principal.Windows.dll','System.Threading.AccessControl.dll'" ^
+  ");" ^
+  "foreach ($n in $names) {" ^
+  "  $f=Get-ChildItem -Path $dest -Recurse -Filter $n -File | Select-Object -First 1;" ^
+  "  if ($f) { Copy-Item -Force $f.FullName (Join-Path '%BIN%' $n) }" ^
+  "};" ^
   "Remove-Item -Force $zip -ErrorAction SilentlyContinue;" ^
   "Remove-Item -Recurse -Force $dest -ErrorAction SilentlyContinue"
 if not exist "%DLL%" (
   echo LHM download failed.
   exit /b 1
 )
-if not exist "%HID%" (
-  echo Warning: HidSharp.dll missing - some sensors may be unavailable.
+if not exist "%MEM%" (
+  echo Warning: System.Memory.dll missing - LHM Open may fail.
 )
 echo OK %DLL%
 exit /b 0

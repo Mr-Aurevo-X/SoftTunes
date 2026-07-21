@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.5.0";
+  const APP_VERSION = "1.5.1";
   const OVERLAY_KEY = "opti-fps-overlay";
   const OVERLAY_CFG_KEY = "opti-overlay-config";
   const ADV_KEY = "opti-advanced-mode";
