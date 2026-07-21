@@ -45,7 +45,7 @@ Important
   - Opti traite tout en local (pas de telemetrie editeur).
   - Soft OC / services / debloat peuvent demander UAC (bouton Elever).
   - Soft OC NVIDIA != undervolt ; UV reel = MSI Afterburner.
-  - Monitor FPS necessite Afterburner + RTSS.
+  - Monitor FPS : PresentMon integre (jeu au premier plan ; admin si ETW refuse). Overlay HUD optionnel.
 
 Support
 -------

@@ -1,8 +1,16 @@
-{
-  "version": "1.4.0",
-  "channel": "final",
-  "product": "Opti",
-  "standalone": true,
-  "free": true,
-  "autoUpdate": false
-}
+{
+
+  "version": "1.4.1",
+
+  "channel": "final",
+
+  "product": "Opti",
+
+  "standalone": true,
+
+  "free": true,
+
+  "autoUpdate": false
+
+}
+

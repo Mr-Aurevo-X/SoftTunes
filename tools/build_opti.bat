@@ -22,6 +22,7 @@ if errorlevel 1 exit /b 1
   --hidden-import "fps_worker" ^
   --hidden-import "presentmon_reader" ^
   --hidden-import "fps_worker_manager" ^
+  --hidden-import "fps_overlay" ^
   --distpath "%ROOT%\dist" ^
   --workpath "%ROOT%\host\build" ^
   --specpath "%ROOT%\host" ^

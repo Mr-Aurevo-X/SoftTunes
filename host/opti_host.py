@@ -14,6 +14,7 @@ from typing import Any
 import webview
 
 from fps_worker_manager import FpsWorkerManager
+from fps_overlay import FpsOverlay, OVERLAY_TITLE
 
 
 def app_dir() -> Path:
@@ -145,6 +146,7 @@ class Api:
         self._job_result: dict[str, Any] | None = None
         self._current_proc: subprocess.Popen[str] | None = None
         self._fps = FpsWorkerManager(root)
+        self._overlay = FpsOverlay(self._fps)
 
     def get_suite_accent(self) -> dict:
         return {"ok": True, "accent": resolve_suite_accent()}
@@ -397,17 +399,35 @@ class Api:
         ok = elevate_self()
         return {"ok": bool(ok), "elevating": bool(ok), "alreadyAdmin": False}
 
+    def attach_overlay(self, window: Any) -> None:
+        self._overlay.set_window(window)
+
     def start_fps_monitor(self) -> dict:
         try:
-            return self._fps.start()
+            return self._fps.acquire()
         except Exception as exc:
             return {"ok": False, "error": str(exc)}
 
     def stop_fps_monitor(self) -> dict:
         try:
-            return self._fps.stop()
+            return self._fps.release()
         except Exception as exc:
             return {"ok": False, "error": str(exc)}
+
+    def start_fps_overlay(self) -> dict:
+        try:
+            return self._overlay.enable()
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
+    def stop_fps_overlay(self) -> dict:
+        try:
+            return self._overlay.disable()
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
+    def get_fps_overlay_status(self) -> dict:
+        return {"ok": True, "enabled": self._overlay.is_enabled()}
 
     def get_fps_sample(self) -> dict:
         try:
@@ -461,6 +481,23 @@ def main() -> None:
         raise SystemExit(f"UI introuvable: {index}")
 
     api = Api(root)
+    overlay_html = ui_dir() / "overlay.html"
+    if overlay_html.is_file():
+        hud = webview.create_window(
+            OVERLAY_TITLE,
+            overlay_html.as_uri(),
+            width=200,
+            height=72,
+            frameless=True,
+            on_top=True,
+            transparent=True,
+            hidden=True,
+            easy_drag=False,
+            resizable=False,
+            background_color="#00000000",
+        )
+        api.attach_overlay(hud)
+
     webview.create_window(
         title="Opti",
         url=index.as_uri(),

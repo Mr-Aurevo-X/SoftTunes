@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Opti HUD</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      overflow: hidden;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .hud {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 120px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(224, 53, 69, 0.45);
+      background: rgba(10, 10, 12, 0.78);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(6px);
+    }
+    .row { display: flex; align-items: baseline; gap: 8px; }
+    .fps {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #f2f2f2;
+    }
+    .fps.live { color: #e03545; }
+    .ft { font-size: 11px; color: #9aa0a8; }
+    .app {
+      font-size: 10px;
+      color: #6d737b;
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e03545;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div class="brand">Opti</div>
+    <div class="row">
+      <span class="fps" id="fpsVal">— FPS</span>
+      <span class="ft" id="ftVal"></span>
+    </div>
+    <div class="app" id="appVal">En attente</div>
+  </div>
+  <script>
+    function updateHud(d) {
+      d = d || {};
+      var fpsEl = document.getElementById("fpsVal");
+      var ftEl = document.getElementById("ftVal");
+      var appEl = document.getElementById("appVal");
+      if (d.fps != null) {
+        fpsEl.textContent = String(d.fps) + " FPS";
+        fpsEl.classList.add("live");
+      } else {
+        fpsEl.textContent = "— FPS";
+        fpsEl.classList.remove("live");
+      }
+      ftEl.textContent = d.frametimeMs != null ? (d.frametimeMs + " ms") : "";
+      appEl.textContent = d.app || d.status || "Bureau";
+    }
+  </script>
+</body>
+</html>

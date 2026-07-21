@@ -2,7 +2,8 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.4.0";
+  const APP_VERSION = "1.4.1";
+  const OVERLAY_KEY = "opti-fps-overlay";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -32,10 +33,11 @@
       btnOpenAfterburner: "Ouvrir Afterburner",
       btnAfterburnerDl: "Page téléchargement",
       monitorTitle: "Monitor FPS",
-      monitorHelp: "FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan.",
-      guardMonitor: "Aucun RTSS requis. Mettez le jeu au premier plan ; admin recommandé si aucune donnée.",
+      monitorHelp: "FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan — ou activez l'overlay HUD.",
       monitorApp: "App",
       btnMonHelp: "Aide capture FPS",
+      chkFpsOverlay: "Overlay FPS léger (toujours visible, clic traversant)",
+      overlayHelp: "Petit HUD en haut à droite — reste à l'écran bureau et en jeu. Clic traversant (ne bloque pas la souris).",
       confirmDanger: "Confirmer cette action ? Elle peut être difficile à annuler.",
       needsAdminHint: "Admin requis — cliquez Élever, puis réessayez.",
       confirmSoftOc: "Appliquer un Soft OC (locks clocks NVIDIA) ?",
@@ -200,10 +202,11 @@
       btnOpenAfterburner: "Open Afterburner",
       btnAfterburnerDl: "Download page",
       monitorTitle: "FPS Monitor",
-      monitorHelp: "Native FPS / frametime (PresentMon). Run a game in the foreground.",
-      guardMonitor: "No RTSS needed. Focus the game; run Opti as admin if no data appears.",
+      monitorHelp: "Native FPS / frametime (PresentMon). Run a game in the foreground — or enable the HUD overlay.",
       monitorApp: "App",
       btnMonHelp: "FPS capture help",
+      chkFpsOverlay: "Light FPS overlay (always on screen, click-through)",
+      overlayHelp: "Small HUD top-right — stays on desktop and in-game. Click-through (won't block mouse).",
       confirmDanger: "Confirm this action? It may be hard to undo.",
       needsAdminHint: "Admin required — click Elevate, then retry.",
       confirmSoftOc: "Apply Soft OC (NVIDIA clock locks)?",
@@ -732,6 +735,43 @@
     });
   }
 
+  async function setFpsOverlay(enabled) {
+    if (!api) return;
+    const chk = $("#chkFpsOverlay");
+    if (enabled) {
+      if (!api.start_fps_overlay) {
+        log(lang === "en" ? "Overlay API missing" : "API overlay absente", "err");
+        if (chk) chk.checked = false;
+        return;
+      }
+      const r = await api.start_fps_overlay();
+      if (!r || r.ok === false) {
+        log((r && r.error) || (lang === "en" ? "Overlay failed" : "Échec overlay"), "err");
+        if (chk) chk.checked = false;
+        localStorage.removeItem(OVERLAY_KEY);
+        return;
+      }
+      localStorage.setItem(OVERLAY_KEY, "1");
+    } else {
+      if (api.stop_fps_overlay) await api.stop_fps_overlay().catch(() => {});
+      localStorage.removeItem(OVERLAY_KEY);
+    }
+  }
+
+  async function restoreFpsOverlay() {
+    const chk = $("#chkFpsOverlay");
+    if (!chk || !api) return;
+    let want = localStorage.getItem(OVERLAY_KEY) === "1";
+    try {
+      if (api.get_fps_overlay_status) {
+        const st = await api.get_fps_overlay_status();
+        if (st && st.enabled) want = true;
+      }
+    } catch (_) {}
+    chk.checked = want;
+    if (want) await setFpsOverlay(true);
+  }
+
   async function refreshMonitor() {
     if (!api || !api.get_fps_sample) {
       const st = $("#monitorStatus");
@@ -1249,7 +1289,12 @@
       });
     }
     if ($("#btnMonRefresh")) $("#btnMonRefresh").addEventListener("click", () => refreshMonitor().catch((e) => log(e.message, "err")));
-
+    const chkOv = $("#chkFpsOverlay");
+    if (chkOv) {
+      chkOv.addEventListener("change", () => {
+        setFpsOverlay(chkOv.checked).catch((e) => log(e.message, "err"));
+      });
+    }
 
 
     $("#btnPrio").addEventListener("click", async () => {
@@ -1341,6 +1386,7 @@
       if (document.body.classList.contains("mode-advanced")) {
         refreshMonitor().catch(() => {});
       }
+      restoreFpsOverlay().catch(() => {});
     } catch (e) {
       log(String(e.message || e), "err");
     }

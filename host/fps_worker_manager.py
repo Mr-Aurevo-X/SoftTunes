@@ -32,6 +32,7 @@ class FpsWorkerManager:
         self._lock = threading.Lock()
         self._proc: subprocess.Popen[str] | None = None
         self._io_lock = threading.Lock()
+        self._clients = 0
 
     def _worker_cmd(self) -> list[str]:
         if getattr(sys, "frozen", False):
@@ -83,16 +84,31 @@ class FpsWorkerManager:
             pass
 
     def start(self) -> dict[str, Any]:
+        return self.acquire()
+
+    def stop(self) -> dict[str, Any]:
+        return self.release()
+
+    def acquire(self) -> dict[str, Any]:
         with self._lock:
+            self._clients += 1
+            if self._clients > 1:
+                return {"ok": True, "running": True}
             try:
                 if self._proc is None or self._proc.poll() is not None:
                     self._spawn()
                 return {"ok": True, "running": True}
             except Exception as exc:
+                self._clients = max(0, self._clients - 1)
                 return {"ok": False, "error": str(exc)}
 
-    def stop(self) -> dict[str, Any]:
+    def release(self) -> dict[str, Any]:
         with self._lock:
+            if self._clients <= 0:
+                return {"ok": True, "running": False}
+            self._clients -= 1
+            if self._clients > 0:
+                return {"ok": True, "running": True}
             self._kill_worker()
             return {"ok": True, "running": False}
 

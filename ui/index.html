@@ -95,7 +95,7 @@
                 <button type="button" class="linkish" id="btnGotoSoftPerf" data-i18n="dashSoftHint">Power Limit NVIDIA &amp; anti-parking → Mode avancé</button>
               </p>
               <p class="help-text" id="dashMonitorHint">
-                <button type="button" class="linkish" id="btnGotoMonitor" data-i18n="dashMonitorHint">FPS en direct (RTSS) → Mode avancé · Monitor FPS</button>
+                <button type="button" class="linkish" id="btnGotoMonitor" data-i18n="dashMonitorHint">FPS en direct → Mode avancé · Monitor FPS</button>
               </p>
               <div class="fps-mini muted" id="dashFpsMini" hidden>—</div>
               <div class="legend" id="dashLegend">
@@ -321,7 +321,6 @@
 
         <section class="page" id="page-monitor">
           <p class="help-text" data-i18n="monitorHelp">FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan.</p>
-          <div class="guard" data-i18n="guardMonitor">Aucun RTSS requis. Mettez le jeu au premier plan ; admin recommandé si aucune donnée.</div>
           <div class="panel">
             <div class="panel-head"><h3 data-i18n="monitorTitle">Monitor FPS</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
             <div class="stats" id="monitorStats">
@@ -331,6 +330,10 @@
             </div>
             <p id="monitorStatus" class="muted">—</p>
             <p id="monitorHint" class="muted help-text" hidden></p>
+            <div class="switch-row" style="margin-top:12px">
+              <input type="checkbox" id="chkFpsOverlay" />
+              <label for="chkFpsOverlay" data-i18n="chkFpsOverlay">Overlay FPS léger (toujours visible, clic traversant)</label>
+            </div>
             <div class="btn-row">
               <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
               <button type="button" class="btn" id="btnMonHelp" data-i18n="btnMonHelp">Aide capture FPS</button>
