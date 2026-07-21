@@ -44,7 +44,17 @@ copy /Y "%ROOT%\logo-opti.ico" "%DIST%\logo-opti.ico" >nul
 if exist "%ROOT%\Opti-dist" rmdir /S /Q "%ROOT%\Opti-dist"
 mkdir "%ROOT%\Opti-dist"
 xcopy /E /I /Y "%DIST%\*" "%ROOT%\Opti-dist\" >nul
-rem Do not copy a lone Opti.exe to repo/Desktop root: onedir needs _internal next to it.
+
+rem Runnable at repo root (onedir: exe + _internal + payload folders; ui\ stays dev source)
+copy /Y "%ROOT%\Opti-dist\Opti.exe" "%ROOT%\Opti.exe" >nul
+if exist "%ROOT%\_internal" rmdir /S /Q "%ROOT%\_internal"
+xcopy /E /I /Y "%ROOT%\Opti-dist\_internal" "%ROOT%\_internal\" >nul
+xcopy /E /I /Y "%ROOT%\Opti-dist\api" "%ROOT%\api\" >nul
+xcopy /E /I /Y "%ROOT%\Opti-dist\modules" "%ROOT%\modules\" >nul
+xcopy /E /I /Y "%ROOT%\Opti-dist\lists" "%ROOT%\lists\" >nul
+if exist "%ROOT%\Opti-dist\bin" xcopy /E /I /Y "%ROOT%\Opti-dist\bin" "%ROOT%\bin\" >nul
+if exist "%ROOT%\Opti-dist\logo-opti.ico" copy /Y "%ROOT%\Opti-dist\logo-opti.ico" "%ROOT%\logo-opti.ico" >nul
+rem Do not copy a lone Opti.exe without _internal — both are deployed above.
 
 echo.
 echo OK onedir: %DIST%

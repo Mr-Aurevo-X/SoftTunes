@@ -481,6 +481,13 @@ def main() -> None:
         raise SystemExit(f"UI introuvable: {index}")
 
     api = Api(root)
+    ver = "1.4.1"
+    try:
+        vf = root / "version.json"
+        if vf.is_file():
+            ver = str(json.loads(vf.read_text(encoding="utf-8")).get("version", ver))
+    except Exception:
+        pass
     overlay_html = ui_dir() / "overlay.html"
     if overlay_html.is_file():
         hud = webview.create_window(
@@ -499,7 +506,7 @@ def main() -> None:
         api.attach_overlay(hud)
 
     webview.create_window(
-        title="Opti",
+        title=f"Opti {ver}",
         url=index.as_uri(),
         js_api=api,
         width=1180,
