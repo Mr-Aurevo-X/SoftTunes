@@ -451,6 +451,7 @@ button.linkish {
 }
 .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .fps-mini { margin-top: 8px; font-family: "JetBrains Mono", monospace; font-size: 0.8rem; }
+.fps-mini[role="button"] { cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .console.has-err { border-color: rgba(224,53,69,0.45); box-shadow: 0 0 0 1px rgba(224,53,69,0.2); }
 body:not(.mode-advanced) .nav-group:has(.nav-btn[data-page-mode='adv']) .nav-label { opacity: 0.85; }
 .about-portrait-wrap {

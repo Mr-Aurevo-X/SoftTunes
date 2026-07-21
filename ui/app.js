@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.3.1";
+  const APP_VERSION = "1.3.2";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -15,6 +15,7 @@
       modeAdvancedHint: "Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
       btnElevate: "Élever (admin)",
       dashSoftHint: "Power Limit NVIDIA et anti-parking — Mode avancé",
+      dashMonitorHint: "FPS en direct (RTSS) → Mode avancé · Monitor FPS",
       navGroupEssentials: "Essentiels",
       navGroupTools: "Outils",
       navGroupAdvanced: "Avancé",
@@ -53,7 +54,7 @@
       aboutCopyright: "© 2026 Mr-Aurevo-X · Logiciel indépendant · 100 % gratuit · version finale · 100 % local",
       aboutDisclaimer: "Logiciel indépendant, 100 % gratuit, version finale. Aucune garantie de FPS. Pas de mise à jour automatique.",
       smartHelp: "Opti n'est pas encore signé par un éditeur reconnu de Microsoft. Ceci est normal pour un logiciel indépendant : suivez les étapes ci-dessous pour lancer l'application.",
-      dashHelp: "Le score mesure si le PC est prêt maintenant (pas un FPS). Preset = power + Game Mode + visuel + boost.",
+      dashHelp: "Le score mesure si le PC est prêt maintenant (pas un FPS). Preset = power + Game Mode + visuel + boost. CPU/RAM varient à la seconde — une baisse juste après le preset est souvent temporaire.",
       elevating: "Élévation…",
       ready: "Prêt",
       adminOk: "Admin",
@@ -181,6 +182,7 @@
       modeAdvancedHint: "Shows: Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
       btnElevate: "Elevate (admin)",
       dashSoftHint: "NVIDIA Power Limit and anti-parking — Advanced mode",
+      dashMonitorHint: "Live FPS (RTSS) → Advanced mode · FPS Monitor",
       navGroupEssentials: "Essentials",
       navGroupTools: "Tools",
       navGroupAdvanced: "Advanced",
@@ -219,7 +221,7 @@
       aboutCopyright: "© 2026 Mr-Aurevo-X · Standalone · 100% free · final version · 100% local",
       aboutDisclaimer: "Standalone, 100% free, final version. No FPS guarantee. No automatic updates.",
       smartHelp: "Opti isn't yet signed by a Microsoft-recognized publisher. This is normal for independent software: follow the steps below to launch the app.",
-      dashHelp: "Score is readiness now (not FPS). Preset = power + Game Mode + visual + boost.",
+      dashHelp: "Score is readiness now (not FPS). Preset = power + Game Mode + visual + boost. CPU/RAM fluctuate — a drop right after preset is often temporary.",
       elevating: "Elevating…",
       ready: "Ready",
       adminOk: "Admin",
@@ -580,7 +582,7 @@
     });
     const active = $(".nav-btn.active");
     if (active && active.hidden) showPage("dash");
-    if (on) startDashFpsPoll(); else stopDashFpsPoll();
+    if (on) startDashFpsPoll(); else { stopDashFpsPoll(); refreshMonitor().catch(() => {}); }
   }
 
   async function loadTips() {
@@ -677,9 +679,16 @@
   function stopDashFpsPoll() {
     if (dashFpsTimer) { clearInterval(dashFpsTimer); dashFpsTimer = null; }
   }
+  function gotoMonitorPage() {
+    const chk = $("#chkAdvanced");
+    if (chk && !chk.checked) { chk.checked = true; applyAdvancedMode(true); }
+    showPage("monitor");
+  }
+
   function startDashFpsPoll() {
     stopDashFpsPoll();
     if (!document.body.classList.contains("mode-advanced")) return;
+    refreshMonitor().catch(() => {});
     dashFpsTimer = setInterval(() => { refreshMonitor().catch(() => {}); }, 2000);
   }
 
@@ -722,13 +731,30 @@
       if (ftEl) ftEl.textContent = (d.frametimeMs != null ? d.frametimeMs + " ms" : "—");
       if (appEl) appEl.textContent = d.app || "—";
       if (st) st.textContent = "RTSS OK";
-      if (mini) { mini.hidden = false; mini.textContent = "FPS " + d.fps + (d.frametimeMs != null ? (" · " + d.frametimeMs + " ms") : ""); }
+      if (mini) {
+        mini.hidden = false;
+        mini.removeAttribute("role");
+        mini.textContent = "FPS " + d.fps + (d.frametimeMs != null ? (" · " + d.frametimeMs + " ms") : "");
+      }
     } else {
       if (fpsEl) fpsEl.textContent = "—";
       if (ftEl) ftEl.textContent = "—";
       if (appEl) appEl.textContent = "—";
-      if (st) st.textContent = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d'échantillon RTSS");
-      if (mini) mini.hidden = true;
+      const err = (d && d.error) || (lang === "en" ? "No RTSS sample" : "Pas d'échantillon RTSS");
+      if (st) st.textContent = err;
+      if (mini) {
+        const adv = document.body.classList.contains("mode-advanced");
+        if (adv) {
+          mini.hidden = false;
+          mini.setAttribute("role", "button");
+          mini.textContent = lang === "en"
+            ? "FPS — RTSS not detected (open Monitor FPS)"
+            : "FPS — RTSS non détecté (ouvrir Monitor FPS)";
+        } else {
+          mini.hidden = true;
+          mini.removeAttribute("role");
+        }
+      }
     }
   }
 
@@ -1132,6 +1158,9 @@
         showPage("softperf");
       });
     }
+    const gotoMon = $("#btnGotoMonitor");
+    if (gotoMon) gotoMon.addEventListener("click", gotoMonitorPage);
+    if ($("#dashFpsMini")) $("#dashFpsMini").addEventListener("click", gotoMonitorPage);
     const setOc = (preset) => async () => {
       const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
       if (!confirm(pack.confirmSoftOc || pack.confirmDanger || "Confirm?")) return;
