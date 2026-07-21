@@ -1,4 +1,4 @@
-"""Lightweight always-on-top FPS HUD overlay (draggable)."""
+"""Lightweight always-on-top FPS HUD overlay (draggable, configurable)."""
 from __future__ import annotations
 
 import ctypes
@@ -9,15 +9,50 @@ from ctypes import wintypes
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
+from system_stats import HardwareStatsSampler
+
 if TYPE_CHECKING:
     from fps_worker_manager import FpsWorkerManager
 
 OVERLAY_TITLE = "Opti HUD"
 GWL_EXSTYLE = -20
 WS_EX_TOOLWINDOW = 0x00000080
-SWP_NOSIZE = 0x0001
-SWP_NOZORDER = 0x0004
-SWP_SHOWWINDOW = 0x0040
+
+DEFAULT_CONFIG: dict[str, Any] = {
+    "layout": "line",
+    "show": {
+        "brand": True,
+        "fps": True,
+        "frametime": True,
+        "onePercentLow": True,
+        "app": True,
+        "cpu": True,
+        "cpuTemp": True,
+        "gpu": True,
+        "gpuTemp": True,
+        "ram": True,
+    },
+}
+
+LAYOUT_SIZES = {
+    "line": (560, 40),
+    "card": (180, 128),
+}
+
+
+def _merge_config(raw: Any) -> dict[str, Any]:
+    cfg = json.loads(json.dumps(DEFAULT_CONFIG))
+    if not isinstance(raw, dict):
+        return cfg
+    layout = raw.get("layout")
+    if layout in ("line", "card"):
+        cfg["layout"] = layout
+    show = raw.get("show")
+    if isinstance(show, dict):
+        for key in cfg["show"]:
+            if key in show:
+                cfg["show"][key] = bool(show[key])
+    return cfg
 
 
 class FpsOverlay:
@@ -25,15 +60,50 @@ class FpsOverlay:
         self._fps = fps
         self._root = root
         self._pos_file = root / "overlay-pos.json"
+        self._cfg_file = root / "overlay-config.json"
         self._window: Any = None
         self._enabled = False
         self._poll_thread: threading.Thread | None = None
         self._stop = threading.Event()
         self._lock = threading.Lock()
         self._last_pos: tuple[int, int] | None = None
+        self._config = self._load_config()
+        self._stats = HardwareStatsSampler(root)
+        self._config_dirty = True
 
     def set_window(self, window: Any) -> None:
         self._window = window
+
+    def get_config(self) -> dict[str, Any]:
+        return json.loads(json.dumps(self._config))
+
+    def set_config(self, raw: Any) -> dict[str, Any]:
+        with self._lock:
+            self._config = _merge_config(raw)
+            self._save_config(self._config)
+            self._config_dirty = True
+            if self._enabled and self._window:
+                self._apply_layout_size()
+                self._push_config()
+                self._push_sample(self._fps.get_sample())
+            return {"ok": True, "config": self.get_config()}
+
+    def _load_config(self) -> dict[str, Any]:
+        try:
+            if self._cfg_file.is_file():
+                return _merge_config(json.loads(self._cfg_file.read_text(encoding="utf-8")))
+        except Exception:
+            pass
+        return _merge_config(None)
+
+    def _save_config(self, cfg: dict[str, Any]) -> None:
+        try:
+            self._cfg_file.write_text(
+                json.dumps(cfg, ensure_ascii=True, indent=2),
+                encoding="utf-8",
+            )
+        except Exception:
+            pass
 
     def _hwnd(self) -> int | None:
         if not self._window:
@@ -52,10 +122,23 @@ class FpsOverlay:
             pass
         return None
 
+    def _size_for_layout(self) -> tuple[int, int]:
+        layout = self._config.get("layout") or "line"
+        return LAYOUT_SIZES.get(layout, LAYOUT_SIZES["line"])
+
+    def _apply_layout_size(self) -> None:
+        if not self._window:
+            return
+        try:
+            w, h = self._size_for_layout()
+            self._window.resize(w, h)
+        except Exception:
+            pass
+
     def _default_position(self) -> tuple[int, int]:
         user32 = ctypes.windll.user32
         sw = user32.GetSystemMetrics(0)
-        w = int(getattr(self._window, "width", 168) or 168)
+        w, _ = self._size_for_layout()
         return max(8, sw - w - 16), 16
 
     def _load_position(self) -> tuple[int, int] | None:
@@ -73,7 +156,7 @@ class FpsOverlay:
     def _save_position(self, x: int, y: int) -> None:
         try:
             self._pos_file.write_text(
-                json.dumps({"x": x, "y": y}, ensure_ascii=False),
+                json.dumps({"x": x, "y": y}, ensure_ascii=True),
                 encoding="utf-8",
             )
         except Exception:
@@ -83,6 +166,7 @@ class FpsOverlay:
         if not self._window:
             return
         try:
+            self._apply_layout_size()
             saved = self._load_position()
             if saved:
                 self._window.move(saved[0], saved[1])
@@ -120,13 +204,34 @@ class FpsOverlay:
         except Exception:
             pass
 
+    def _push_config(self) -> None:
+        if not self._window:
+            return
+        try:
+            js = "applyOverlayConfig(" + json.dumps(self._config, ensure_ascii=True) + ")"
+            self._window.evaluate_js(js)
+            self._config_dirty = False
+        except Exception:
+            pass
+
     def _push_sample(self, sample: dict[str, Any]) -> None:
         if not self._window:
             return
+        if self._config_dirty:
+            self._push_config()
+        hw = self._stats.sample()
         payload: dict[str, Any] = {
             "fps": sample.get("fps"),
             "frametimeMs": sample.get("frametimeMs"),
+            "onePercentLow": sample.get("onePercentLow"),
+            "fpsMin": sample.get("fpsMin"),
+            "fpsMax": sample.get("fpsMax"),
             "app": sample.get("app"),
+            "cpuPct": hw.get("cpuPct"),
+            "cpuTempC": hw.get("cpuTempC"),
+            "gpuPct": hw.get("gpuPct"),
+            "gpuTempC": hw.get("gpuTempC"),
+            "ramPct": hw.get("ramPct"),
         }
         if not sample.get("available"):
             err = (sample.get("error") or "").strip()
@@ -154,21 +259,23 @@ class FpsOverlay:
     def enable(self) -> dict[str, Any]:
         with self._lock:
             if self._enabled:
-                return {"ok": True, "enabled": True}
+                return {"ok": True, "enabled": True, "config": self.get_config()}
             acquired = self._fps.acquire()
             if not acquired.get("ok"):
                 return acquired
             self._enabled = True
             self._stop.clear()
+            self._config_dirty = True
             if self._window:
                 self._position_window()
                 self._window.show()
                 time.sleep(0.2)
                 self._apply_toolwindow()
+                self._push_config()
                 self._push_sample(self._fps.get_sample())
             self._poll_thread = threading.Thread(target=self._poll_loop, daemon=True)
             self._poll_thread.start()
-            return {"ok": True, "enabled": True}
+            return {"ok": True, "enabled": True, "config": self.get_config()}
 
     def disable(self) -> dict[str, Any]:
         with self._lock:
@@ -190,3 +297,4 @@ class FpsOverlay:
 
     def shutdown(self) -> None:
         self.disable()
+        self._stats.close()

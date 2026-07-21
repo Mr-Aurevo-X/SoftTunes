@@ -2,8 +2,9 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.4.5";
+  const APP_VERSION = "1.5.0";
   const OVERLAY_KEY = "opti-fps-overlay";
+  const OVERLAY_CFG_KEY = "opti-overlay-config";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
@@ -37,7 +38,18 @@
       monitorApp: "App",
       btnMonHelp: "Aide capture FPS",
       chkFpsOverlay: "Overlay FPS léger (déplaçable, toujours visible)",
-      overlayHelp: "Petit HUD en haut à droite — glissez la barre Opti pour le déplacer. Position mémorisée.",
+      overlayHelp: "Petit HUD — glissez Opti pour déplacer. Layout et métriques mémorisés. Températures via Libre Hardware Monitor.",
+      overlayLayout: "Layout",
+      overlayLayoutLine: "Ligne",
+      overlayLayoutCard: "Carte",
+      ovBrand: "Brand",
+      ovOpl: "1% low",
+      ovApp: "App",
+      ovCpu: "CPU %",
+      ovCpuTemp: "CPU °C",
+      ovGpu: "GPU %",
+      ovGpuTemp: "GPU °C",
+      ovRam: "RAM %",
       confirmDanger: "Confirmer cette action ? Elle peut être difficile à annuler.",
       needsAdminHint: "Admin requis — cliquez Élever, puis réessayez.",
       confirmSoftOc: "Appliquer un Soft OC (locks clocks NVIDIA) ?",
@@ -206,7 +218,18 @@
       monitorApp: "App",
       btnMonHelp: "FPS capture help",
       chkFpsOverlay: "Light FPS overlay (draggable, always on screen)",
-      overlayHelp: "Small HUD top-right — drag the Opti bar to move it. Position is saved.",
+      overlayHelp: "Small HUD — drag Opti to move. Layout and metrics are saved. Temps via Libre Hardware Monitor.",
+      overlayLayout: "Layout",
+      overlayLayoutLine: "Line",
+      overlayLayoutCard: "Card",
+      ovBrand: "Brand",
+      ovOpl: "1% low",
+      ovApp: "App",
+      ovCpu: "CPU %",
+      ovCpuTemp: "CPU °C",
+      ovGpu: "GPU %",
+      ovGpuTemp: "GPU °C",
+      ovRam: "RAM %",
       confirmDanger: "Confirm this action? It may be hard to undo.",
       needsAdminHint: "Admin required — click Elevate, then retry.",
       confirmSoftOc: "Apply Soft OC (NVIDIA clock locks)?",
@@ -735,6 +758,71 @@
     });
   }
 
+  function defaultOverlayConfig() {
+    return {
+      layout: "line",
+      show: {
+        brand: true, fps: true, frametime: true, onePercentLow: true,
+        app: true, cpu: true, cpuTemp: true, gpu: true, gpuTemp: true, ram: true
+      }
+    };
+  }
+
+  function collectOverlayConfigFromForm() {
+    const cfg = defaultOverlayConfig();
+    const sel = $("#selOverlayLayout");
+    if (sel && (sel.value === "line" || sel.value === "card")) cfg.layout = sel.value;
+    document.querySelectorAll("[data-ov]").forEach((el) => {
+      const key = el.getAttribute("data-ov");
+      if (key && Object.prototype.hasOwnProperty.call(cfg.show, key)) {
+        cfg.show[key] = !!el.checked;
+      }
+    });
+    return cfg;
+  }
+
+  function applyOverlayConfigToForm(cfg) {
+    if (!cfg) return;
+    const sel = $("#selOverlayLayout");
+    if (sel && (cfg.layout === "line" || cfg.layout === "card")) sel.value = cfg.layout;
+    const show = cfg.show || {};
+    document.querySelectorAll("[data-ov]").forEach((el) => {
+      const key = el.getAttribute("data-ov");
+      if (key && Object.prototype.hasOwnProperty.call(show, key)) el.checked = !!show[key];
+    });
+  }
+
+  async function persistOverlayConfig() {
+    const cfg = collectOverlayConfigFromForm();
+    try {
+      localStorage.setItem(OVERLAY_CFG_KEY, JSON.stringify(cfg));
+    } catch (_) {}
+    if (!api || !api.set_overlay_config) return cfg;
+    try {
+      const r = await api.set_overlay_config(cfg);
+      if (r && r.config) applyOverlayConfigToForm(r.config);
+    } catch (e) {
+      log(e.message || String(e), "err");
+    }
+    return cfg;
+  }
+
+  async function loadOverlayConfig() {
+    let cfg = defaultOverlayConfig();
+    try {
+      const raw = localStorage.getItem(OVERLAY_CFG_KEY);
+      if (raw) cfg = Object.assign(cfg, JSON.parse(raw));
+    } catch (_) {}
+    if (api && api.get_overlay_config) {
+      try {
+        const r = await api.get_overlay_config();
+        if (r && r.config) cfg = r.config;
+      } catch (_) {}
+    }
+    applyOverlayConfigToForm(cfg);
+    return cfg;
+  }
+
   async function setFpsOverlay(enabled) {
     if (!api) return;
     const chk = $("#chkFpsOverlay");
@@ -744,6 +832,7 @@
         if (chk) chk.checked = false;
         return;
       }
+      await persistOverlayConfig();
       const r = await api.start_fps_overlay();
       if (!r || r.ok === false) {
         log((r && r.error) || (lang === "en" ? "Overlay failed" : "Échec overlay"), "err");
@@ -752,6 +841,7 @@
         return;
       }
       localStorage.setItem(OVERLAY_KEY, "1");
+      if (r.config) applyOverlayConfigToForm(r.config);
     } else {
       if (api.stop_fps_overlay) await api.stop_fps_overlay().catch(() => {});
       localStorage.removeItem(OVERLAY_KEY);
@@ -761,11 +851,13 @@
   async function restoreFpsOverlay() {
     const chk = $("#chkFpsOverlay");
     if (!chk || !api) return;
+    await loadOverlayConfig();
     let want = localStorage.getItem(OVERLAY_KEY) === "1";
     try {
       if (api.get_fps_overlay_status) {
         const st = await api.get_fps_overlay_status();
         if (st && st.enabled) want = true;
+        if (st && st.config) applyOverlayConfigToForm(st.config);
       }
     } catch (_) {}
     chk.checked = want;
@@ -1295,6 +1387,17 @@
         setFpsOverlay(chkOv.checked).catch((e) => log(e.message, "err"));
       });
     }
+    const selLayout = $("#selOverlayLayout");
+    if (selLayout) {
+      selLayout.addEventListener("change", () => {
+        persistOverlayConfig().catch((e) => log(e.message, "err"));
+      });
+    }
+    document.querySelectorAll("[data-ov]").forEach((el) => {
+      el.addEventListener("change", () => {
+        persistOverlayConfig().catch((e) => log(e.message, "err"));
+      });
+    });
 
 
     $("#btnPrio").addEventListener("click", async () => {

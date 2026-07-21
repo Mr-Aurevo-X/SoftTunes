@@ -427,7 +427,20 @@ class Api:
             return {"ok": False, "error": str(exc)}
 
     def get_fps_overlay_status(self) -> dict:
-        return {"ok": True, "enabled": self._overlay.is_enabled()}
+        return {
+            "ok": True,
+            "enabled": self._overlay.is_enabled(),
+            "config": self._overlay.get_config(),
+        }
+
+    def get_overlay_config(self) -> dict:
+        return {"ok": True, "config": self._overlay.get_config()}
+
+    def set_overlay_config(self, config: dict | None = None) -> dict:
+        try:
+            return self._overlay.set_config(config or {})
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
 
     def get_fps_sample(self) -> dict:
         try:
@@ -502,8 +515,8 @@ def main() -> None:
         hud = webview.create_window(
             OVERLAY_TITLE,
             overlay_html.as_uri(),
-            width=168,
-            height=76,
+            width=560,
+            height=40,
             frameless=True,
             on_top=True,
             transparent=True,

@@ -22,35 +22,15 @@
     }
     .hud {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2px;
       width: 100%;
       height: 100%;
       min-width: 0;
-      padding: 8px 12px;
       border-radius: 10px;
       border: 1px solid rgba(224, 53, 69, 0.45);
       background: rgba(10, 10, 12, 0.92);
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
       backdrop-filter: blur(6px);
-    }
-    .row { display: flex; align-items: baseline; gap: 8px; }
-    .fps {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
       color: #f2f2f2;
-    }
-    .fps.live { color: #e03545; }
-    .ft { font-size: 11px; color: #9aa0a8; }
-    .app {
-      font-size: 10px;
-      color: #6d737b;
-      max-width: 160px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .brand {
       font-size: 9px;
@@ -58,27 +38,161 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #e03545;
-      opacity: 0.85;
+      opacity: 0.9;
       cursor: move;
-      padding-bottom: 2px;
+      flex-shrink: 0;
+    }
+    .sep {
+      color: #4a5058;
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+    .metric { white-space: nowrap; flex-shrink: 0; }
+    .metric.hidden, .brand.hidden, .sep.hidden, .app.hidden { display: none !important; }
+    .fps { font-weight: 700; color: #f2f2f2; }
+    .fps.live { color: #e03545; }
+    .ft, .opl, .sys { color: #9aa0a8; }
+    .app {
+      color: #6d737b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    /* LINE layout */
+    .hud.layout-line {
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+    .hud.layout-line .brand { padding-right: 4px; }
+    .hud.layout-line .fps { font-size: 13px; }
+    .hud.layout-line .app { max-width: 140px; }
+
+    /* CARD layout */
+    .hud.layout-card {
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      padding: 8px 12px;
+    }
+    .hud.layout-card .metrics-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px 8px;
+    }
+    .hud.layout-card .fps { font-size: 20px; }
+    .hud.layout-card .ft, .hud.layout-card .opl, .hud.layout-card .sys { font-size: 11px; }
+    .hud.layout-card .app { font-size: 10px; max-width: 160px; }
+    .hud.layout-card .sep { display: none; }
+    .hud.layout-line .metrics-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
   </style>
 </head>
 <body>
-  <div class="hud">
-    <div class="brand" title="Glisser pour deplacer">Opti</div>
-    <div class="row">
-      <span class="fps" id="fpsVal">-- FPS</span>
-      <span class="ft" id="ftVal"></span>
+  <div class="hud layout-line" id="hudRoot">
+    <div class="brand" id="mBrand" title="Glisser pour deplacer">Opti</div>
+    <div class="metrics-row" id="metricsRow">
+      <span class="sep" data-before="fps">|</span>
+      <span class="metric fps" id="mFps" data-key="fps">-- FPS</span>
+      <span class="sep" data-before="frametime">|</span>
+      <span class="metric ft" id="mFt" data-key="frametime"></span>
+      <span class="sep" data-before="onePercentLow">|</span>
+      <span class="metric opl" id="mOpl" data-key="onePercentLow"></span>
+      <span class="sep" data-before="cpu">|</span>
+      <span class="metric sys" id="mCpu" data-key="cpu"></span>
+      <span class="sep" data-before="cpuTemp">|</span>
+      <span class="metric sys" id="mCpuTemp" data-key="cpuTemp"></span>
+      <span class="sep" data-before="gpu">|</span>
+      <span class="metric sys" id="mGpu" data-key="gpu"></span>
+      <span class="sep" data-before="gpuTemp">|</span>
+      <span class="metric sys" id="mGpuTemp" data-key="gpuTemp"></span>
+      <span class="sep" data-before="ram">|</span>
+      <span class="metric sys" id="mRam" data-key="ram"></span>
+      <span class="sep" data-before="app">|</span>
+      <span class="app" id="mApp" data-key="app">En attente</span>
     </div>
-    <div class="app" id="appVal">En attente</div>
   </div>
   <script>
+    var CFG = {
+      layout: "line",
+      show: {
+        brand: true, fps: true, frametime: true, onePercentLow: true,
+        app: true, cpu: true, cpuTemp: true, gpu: true, gpuTemp: true, ram: true
+      }
+    };
+
+    function degC(n) {
+      return String(n) + "\u00B0C";
+    }
+
+    function setVisible(el, on) {
+      if (!el) return;
+      if (on) el.classList.remove("hidden");
+      else el.classList.add("hidden");
+    }
+
+    function refreshSeparators() {
+      var seps = document.querySelectorAll(".sep[data-before]");
+      var first = true;
+      /* brand handled separately */
+      var brandOn = CFG.show.brand !== false;
+      for (var i = 0; i < seps.length; i++) {
+        var key = seps[i].getAttribute("data-before");
+        var metric = document.querySelector('[data-key="' + key + '"]');
+        var showKey = CFG.show[key] !== false;
+        var hasText = metric && metric.textContent && metric.textContent.trim().length > 0;
+        var visible = showKey && hasText && !metric.classList.contains("hidden");
+        if (CFG.layout === "line" && visible) {
+          setVisible(seps[i], !first || brandOn);
+          first = false;
+        } else {
+          setVisible(seps[i], false);
+        }
+      }
+    }
+
+    function applyOverlayConfig(cfg) {
+      cfg = cfg || {};
+      if (cfg.layout === "line" || cfg.layout === "card") CFG.layout = cfg.layout;
+      if (cfg.show && typeof cfg.show === "object") {
+        for (var k in cfg.show) {
+          if (Object.prototype.hasOwnProperty.call(cfg.show, k)) CFG.show[k] = !!cfg.show[k];
+        }
+      }
+      var root = document.getElementById("hudRoot");
+      root.classList.remove("layout-line", "layout-card");
+      root.classList.add("layout-" + CFG.layout);
+      setVisible(document.getElementById("mBrand"), CFG.show.brand !== false);
+      ["fps", "frametime", "onePercentLow", "cpu", "cpuTemp", "gpu", "gpuTemp", "ram", "app"].forEach(function (key) {
+        var el = document.querySelector('[data-key="' + key + '"]');
+        setVisible(el, CFG.show[key] !== false);
+      });
+      refreshSeparators();
+    }
+
     function updateHud(d) {
       d = d || {};
-      var fpsEl = document.getElementById("fpsVal");
-      var ftEl = document.getElementById("ftVal");
-      var appEl = document.getElementById("appVal");
+      var fpsEl = document.getElementById("mFps");
+      var ftEl = document.getElementById("mFt");
+      var oplEl = document.getElementById("mOpl");
+      var cpuEl = document.getElementById("mCpu");
+      var cpuTEl = document.getElementById("mCpuTemp");
+      var gpuEl = document.getElementById("mGpu");
+      var gpuTEl = document.getElementById("mGpuTemp");
+      var ramEl = document.getElementById("mRam");
+      var appEl = document.getElementById("mApp");
+
       if (d.fps != null) {
         fpsEl.textContent = String(d.fps) + " FPS";
         fpsEl.classList.add("live");
@@ -87,8 +201,29 @@
         fpsEl.classList.remove("live");
       }
       ftEl.textContent = d.frametimeMs != null ? (d.frametimeMs + " ms") : "";
+      oplEl.textContent = d.onePercentLow != null ? ("1% " + d.onePercentLow) : "";
+      cpuEl.textContent = d.cpuPct != null ? ("CPU " + d.cpuPct + "%") : "";
+      cpuTEl.textContent = d.cpuTempC != null ? degC(d.cpuTempC) : "";
+      gpuEl.textContent = d.gpuPct != null ? ("GPU " + d.gpuPct + "%") : "";
+      gpuTEl.textContent = d.gpuTempC != null ? degC(d.gpuTempC) : "";
+      ramEl.textContent = d.ramPct != null ? ("RAM " + d.ramPct + "%") : "";
       appEl.textContent = d.app || d.status || "Bureau";
+
+      /* hide empty optional metrics even if checkbox on */
+      setVisible(ftEl, CFG.show.frametime !== false && !!ftEl.textContent);
+      setVisible(oplEl, CFG.show.onePercentLow !== false && !!oplEl.textContent);
+      setVisible(cpuEl, CFG.show.cpu !== false && !!cpuEl.textContent);
+      setVisible(cpuTEl, CFG.show.cpuTemp !== false && !!cpuTEl.textContent);
+      setVisible(gpuEl, CFG.show.gpu !== false && !!gpuEl.textContent);
+      setVisible(gpuTEl, CFG.show.gpuTemp !== false && !!gpuTEl.textContent);
+      setVisible(ramEl, CFG.show.ram !== false && !!ramEl.textContent);
+      setVisible(fpsEl, CFG.show.fps !== false);
+      setVisible(appEl, CFG.show.app !== false);
+      setVisible(document.getElementById("mBrand"), CFG.show.brand !== false);
+      refreshSeparators();
     }
+
+    applyOverlayConfig(CFG);
   </script>
 </body>
 </html>

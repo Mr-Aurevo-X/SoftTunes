@@ -286,12 +286,29 @@ class PresentMonSession:
         if fps is None or fps < 1 or fps > 10000:
             return _empty("Échantillon invalide", captureActive=True, app=app)
 
+        one_pct = None
+        fps_min = None
+        fps_max = None
+        if len(recent) >= 20:
+            ordered = sorted(recent)
+            # 99th percentile frametime -> 1% low FPS
+            idx = min(len(ordered) - 1, max(0, int(len(ordered) * 0.99) - 1))
+            p99_ms = ordered[idx]
+            if p99_ms > 0:
+                one_pct = round(1000.0 / p99_ms, 1)
+            frame_fps = [round(1000.0 / ms, 1) for ms in recent if ms > 0]
+            if frame_fps:
+                fps_min = min(frame_fps)
+                fps_max = max(frame_fps)
+
         return {
             "ok": True,
             "available": True,
             "fps": fps,
             "frametimeMs": frametime_ms,
-            "onePercentLow": None,
+            "onePercentLow": one_pct,
+            "fpsMin": fps_min,
+            "fpsMax": fps_max,
             "app": app,
             "error": None,
             "source": "presentmon",

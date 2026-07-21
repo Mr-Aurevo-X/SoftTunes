@@ -334,6 +334,28 @@
               <input type="checkbox" id="chkFpsOverlay" />
               <label for="chkFpsOverlay" data-i18n="chkFpsOverlay">Overlay FPS léger (déplaçable, toujours visible)</label>
             </div>
+            <div id="overlayOptions" class="overlay-options" style="margin-top:10px">
+              <p class="help-text" data-i18n="overlayHelp">Petit HUD — glissez Opti pour déplacer. Layout et métriques mémorisés.</p>
+              <div class="switch-row" style="margin-top:8px">
+                <label for="selOverlayLayout" data-i18n="overlayLayout">Layout</label>
+                <select id="selOverlayLayout" style="margin-left:8px">
+                  <option value="line" data-i18n="overlayLayoutLine">Ligne</option>
+                  <option value="card" data-i18n="overlayLayoutCard">Carte</option>
+                </select>
+              </div>
+              <div class="overlay-metrics" style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px">
+                <label class="switch-row"><input type="checkbox" id="chkOvBrand" data-ov="brand" checked /><span data-i18n="ovBrand">Brand</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvFps" data-ov="fps" checked /><span>FPS</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvFt" data-ov="frametime" checked /><span>Frametime</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvOpl" data-ov="onePercentLow" checked /><span data-i18n="ovOpl">1% low</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvApp" data-ov="app" checked /><span data-i18n="ovApp">App</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvCpu" data-ov="cpu" checked /><span data-i18n="ovCpu">CPU %</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvCpuTemp" data-ov="cpuTemp" checked /><span data-i18n="ovCpuTemp">CPU °C</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvGpu" data-ov="gpu" checked /><span data-i18n="ovGpu">GPU %</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvGpuTemp" data-ov="gpuTemp" checked /><span data-i18n="ovGpuTemp">GPU °C</span></label>
+                <label class="switch-row"><input type="checkbox" id="chkOvRam" data-ov="ram" checked /><span data-i18n="ovRam">RAM %</span></label>
+              </div>
+            </div>
             <div class="btn-row">
               <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
               <button type="button" class="btn" id="btnMonHelp" data-i18n="btnMonHelp">Aide capture FPS</button>

@@ -13,6 +13,9 @@ if not exist "%ROOT%\.venv\Scripts\python.exe" (
 call "%ROOT%\tools\download_presentmon.bat"
 if errorlevel 1 exit /b 1
 
+call "%ROOT%\tools\download_lhm.bat"
+if errorlevel 1 exit /b 1
+
 "%ROOT%\.venv\Scripts\python" -m PyInstaller --noconfirm --clean --onedir --windowed --noupx ^
   --name "Opti" ^
   --paths "%ROOT%\host" ^
@@ -24,6 +27,7 @@ if errorlevel 1 exit /b 1
   --hidden-import "presentmon_reader" ^
   --hidden-import "fps_worker_manager" ^
   --hidden-import "fps_overlay" ^
+  --hidden-import "system_stats" ^
   --distpath "%ROOT%\dist" ^
   --workpath "%ROOT%\host\build" ^
   --specpath "%ROOT%\host" ^
