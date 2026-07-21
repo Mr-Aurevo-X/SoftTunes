@@ -503,8 +503,8 @@
     if (page === "monitor") { startMonitorPoll(); refreshMonitor().catch(() => {}); } else { stopMonitorPoll(); }
   }
 
-  async function refreshHealth() {
-    const h = await runJob("getHealth", {});
+  function renderHealth(h) {
+    if (!h) return;
     const score = h.score || 0;
     const grade = h.grade || "poor";
     const label = lang === "en" ? (h.labelEn || grade) : (h.labelFr || grade);
@@ -570,6 +570,12 @@
       }
     }
     log(`Score: ${score} (${label})`, "ok");
+  }
+
+  async function refreshHealth(prefetched) {
+    const h = prefetched || (await runJob("getHealth", {}));
+    renderHealth(h);
+    return h;
   }
 
   function applyAdvancedMode(on) {
@@ -902,10 +908,18 @@
         log(r.Message || "Preset OK", "ok");
         if (r && (r.before || r.after)) {
           const d = r.delta != null ? r.delta : 0;
-          lastPresetDelta =
+          let deltaLine =
             lang === "en"
               ? `Before ${r.before && r.before.score} → after ${r.after && r.after.score} (${d >= 0 ? "+" : ""}${d})`
               : `Avant ${r.before && r.before.score} → après ${r.after && r.after.score} (${d >= 0 ? "+" : ""}${d})`;
+          if (r.settingsDelta > 0 && d < 0) {
+            deltaLine +=
+              lang === "en"
+                ? ` · Settings +${r.settingsDelta} pts`
+                : ` · Réglages +${r.settingsDelta} pts`;
+          }
+          const note = lang === "en" ? r.scoreNoteEn || r.scoreNoteFr : r.scoreNoteFr || r.scoreNoteEn;
+          lastPresetDelta = note ? `${deltaLine}\n${note}` : deltaLine;
           const deltaPanel = $("#deltaPanel");
           const deltaText = $("#deltaText");
           if (deltaPanel && deltaText) {
@@ -913,7 +927,11 @@
             deltaText.textContent = lastPresetDelta;
           }
         }
-        await refreshHealth();
+        if (r && r.afterHealth) {
+          await refreshHealth(r.afterHealth);
+        } else {
+          await refreshHealth();
+        }
       } catch (e) {
         log(String(e.message || e), "err");
       }

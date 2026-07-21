@@ -293,11 +293,24 @@ try {
             $bo = Start-OptiBoostSession -KillOverlays $true -LogPath $Global:OptiCurrentLog
 
             Write-OptiProgress -Percent 95 -Phase 'Preset' -Detail 'Score après...'
-            $afterHealth = Get-OptiGamingHealth
+            $afterHealth = Get-OptiGamingHealth -SettleFirst
             $afterSnap = Save-OptiScoreSnapshot -Score ([int]$afterHealth.score) -Grade ([string]$afterHealth.grade) -LabelFr ([string]$afterHealth.labelFr) -Context 'after-preset'
 
             $delta = [int]$afterHealth.score - [int]$beforeHealth.score
+            $settingsDelta = [int][math]::Round(
+                (([int]$afterHealth.breakdown.power - [int]$beforeHealth.breakdown.power) * 0.2) +
+                (([int]$afterHealth.breakdown.game - [int]$beforeHealth.breakdown.game) * 0.15)
+            )
             $deltaLabel = if ($delta -ge 0) { "+$delta" } else { "$delta" }
+            $scoreNoteFr = $null
+            $scoreNoteEn = $null
+            if ($delta -lt 0 -and $settingsDelta -gt 0) {
+                $scoreNoteFr = 'Réglages appliqués (alimentation / Game Mode). La baisse vient surtout de la charge CPU/RAM pendant l''opération — rafraîchissez dans quelques secondes.'
+                $scoreNoteEn = 'Settings applied (power / Game Mode). The drop is mostly from temporary CPU/RAM load — refresh in a few seconds.'
+            } elseif ($delta -lt 0) {
+                $scoreNoteFr = 'Charge système élevée pendant l''optimisation (point de restauration, etc.). Rafraîchissez dans quelques secondes pour un score stable.'
+                $scoreNoteEn = 'System load was high during optimization (restore point, etc.). Refresh in a few seconds for a stable score.'
+            }
             $r = @{
                 Success = $true
                 Message = ('Preset OK - score {0} -> {1} ({2})' -f $beforeHealth.score, $afterHealth.score, $deltaLabel)
@@ -308,7 +321,12 @@ try {
                 boost = $bo
                 before = $beforeSnap
                 after = $afterSnap
+                beforeHealth = $beforeHealth
+                afterHealth = $afterHealth
                 delta = $delta
+                settingsDelta = $settingsDelta
+                scoreNoteFr = $scoreNoteFr
+                scoreNoteEn = $scoreNoteEn
             }
             Add-OptiSession -Action 'applyGamingPreset' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
             Ok $r

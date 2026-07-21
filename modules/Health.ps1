@@ -32,11 +32,40 @@ function Get-OptiDiskInfo {
     return $disks
 }
 
-function Get-OptiCpuLoad {
+function Get-OptiCpuLoadSample {
     try {
         $c = Get-CimInstance Win32_Processor | Select-Object -First 1
-        return [int]($c.LoadPercentage)
+        $v = [int]$c.LoadPercentage
+        if ($v -lt 0) { return 0 }
+        return $v
     } catch { return 0 }
+}
+
+function Get-OptiCpuLoad {
+    param(
+        [int]$Samples = 4,
+        [int]$DelayMs = 400
+    )
+    $readings = @()
+    for ($i = 0; $i -lt $Samples; $i++) {
+        $readings += Get-OptiCpuLoadSample
+        if ($i -lt ($Samples - 1)) { Start-Sleep -Milliseconds $DelayMs }
+    }
+    if ($readings.Count -eq 0) { return 0 }
+    return [int][math]::Round(($readings | Measure-Object -Average).Average)
+}
+
+function Wait-OptiMetricsSettle {
+    param([int]$Seconds = 3)
+    Start-Sleep -Seconds $Seconds
+}
+
+function Get-OptiPowerScore {
+    param([string]$PowerName)
+    if ("$PowerName" -match '(?i)High|Ultimate|Hautes\s*perf|Performances\s*maximales|Performances\s*élevées|Maximale') {
+        return 100
+    }
+    return 55
 }
 
 function Get-OptiPowerSchemeName {
@@ -56,12 +85,19 @@ function Get-OptiGameModeState {
 }
 
 function Get-OptiGamingHealth {
+    param([switch]$SettleFirst)
+
+    if ($SettleFirst) {
+        Write-OptiProgress -Percent 8 -Phase 'Santé' -Detail 'Stabilisation...'
+        Wait-OptiMetricsSettle -Seconds 3
+    }
+
     Write-OptiProgress -Percent 10 -Phase 'Santé' -Detail 'RAM...'
     $ram = Get-OptiRamInfo
     Write-OptiProgress -Percent 30 -Phase 'Santé' -Detail 'Disques...'
     $disks = @(Get-OptiDiskInfo)
     Write-OptiProgress -Percent 50 -Phase 'Santé' -Detail 'CPU...'
-    $cpu = Get-OptiCpuLoad
+    $cpu = if ($SettleFirst) { Get-OptiCpuLoad -Samples 5 -DelayMs 500 } else { Get-OptiCpuLoad }
     Write-OptiProgress -Percent 70 -Phase 'Santé' -Detail 'Power / Game Mode...'
     $power = Get-OptiPowerSchemeName
     $gameMode = Get-OptiGameModeState
@@ -73,7 +109,7 @@ function Get-OptiGamingHealth {
     }
     $ramScore = [math]::Max(0, 100 - [int]$ram.usedPercent)
     $cpuScore = [math]::Max(0, 100 - $cpu)
-    $powerScore = if ($power -match 'High|Ultimate|Hautes|Performances maximales|Performances élevées') { 100 } else { 55 }
+    $powerScore = Get-OptiPowerScore -PowerName $power
     $gmScore = if ($gameMode) { 100 } else { 40 }
 
     $score = [int][math]::Round(($ramScore * 0.25) + ($diskFreeScore * 0.2) + ($cpuScore * 0.2) + ($powerScore * 0.2) + ($gmScore * 0.15))
