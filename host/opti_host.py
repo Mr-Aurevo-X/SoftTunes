@@ -464,13 +464,22 @@ class Api:
             return {"ok": False, "error": str(exc)}
 
 
+def require_admin() -> None:
+    """Opti must run elevated (PresentMon ETW + system tweaks)."""
+    if is_admin():
+        return
+    elevate_self()
+    sys.exit(0)
+
+
 def main() -> None:
     if "--fps-worker" in sys.argv:
         from fps_worker import main as fps_worker_main
 
         raise SystemExit(fps_worker_main())
 
-    # Lazy UAC: do not elevate on every launch. User can request via UI.
+    require_admin()
+
     if "--elevate" in sys.argv:
         if elevate_self():
             sys.exit(0)
@@ -493,8 +502,8 @@ def main() -> None:
         hud = webview.create_window(
             OVERLAY_TITLE,
             overlay_html.as_uri(),
-            width=200,
-            height=72,
+            width=168,
+            height=76,
             frameless=True,
             on_top=True,
             transparent=True,
