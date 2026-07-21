@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
@@ -66,9 +66,9 @@
 </head>
 <body>
   <div class="hud">
-    <div class="brand" title="Glisser pour déplacer">Opti · HUD</div>
+    <div class="brand" title="Glisser pour deplacer">Opti</div>
     <div class="row">
-      <span class="fps" id="fpsVal">— FPS</span>
+      <span class="fps" id="fpsVal">-- FPS</span>
       <span class="ft" id="ftVal"></span>
     </div>
     <div class="app" id="appVal">En attente</div>
@@ -83,7 +83,7 @@
         fpsEl.textContent = String(d.fps) + " FPS";
         fpsEl.classList.add("live");
       } else {
-        fpsEl.textContent = "— FPS";
+        fpsEl.textContent = "-- FPS";
         fpsEl.classList.remove("live");
       }
       ftEl.textContent = d.frametimeMs != null ? (d.frametimeMs + " ms") : "";

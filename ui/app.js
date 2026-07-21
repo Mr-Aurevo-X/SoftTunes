@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.4.4";
+  const APP_VERSION = "1.4.5";
   const OVERLAY_KEY = "opti-fps-overlay";
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;

@@ -15,6 +15,7 @@ if errorlevel 1 exit /b 1
 
 "%ROOT%\.venv\Scripts\python" -m PyInstaller --noconfirm --clean --onedir --windowed --noupx ^
   --name "Opti" ^
+  --paths "%ROOT%\host" ^
   --icon "%ROOT%\logo-opti.ico" ^
   --version-file "%ROOT%\tools\file_version_info.txt" ^
   --add-data "%ROOT%\build\ui_stage;ui" ^

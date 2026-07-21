@@ -55,7 +55,7 @@ class FpsOverlay:
     def _default_position(self) -> tuple[int, int]:
         user32 = ctypes.windll.user32
         sw = user32.GetSystemMetrics(0)
-            w = int(getattr(self._window, "width", 168) or 168)
+        w = int(getattr(self._window, "width", 168) or 168)
         return max(8, sw - w - 16), 16
 
     def _load_position(self) -> tuple[int, int] | None:
@@ -133,7 +133,7 @@ class FpsOverlay:
             if err:
                 payload["status"] = err[:48]
             elif sample.get("captureActive"):
-                payload["status"] = "Jeu…"
+                payload["status"] = "Jeu..."
             else:
                 payload["status"] = "Bureau"
         try:
