@@ -25,6 +25,26 @@ MIN_ENTRY_SIZE = 284
 
 kernel32 = ctypes.windll.kernel32
 
+# 64-bit: default ctypes restype truncates MapViewOfFile pointers -> access violation.
+kernel32.OpenFileMappingW.restype = ctypes.c_void_p
+kernel32.OpenFileMappingW.argtypes = [ctypes.c_ulong, ctypes.c_bool, ctypes.c_wchar_p]
+kernel32.MapViewOfFile.restype = ctypes.c_void_p
+kernel32.MapViewOfFile.argtypes = [
+    ctypes.c_void_p,
+    ctypes.c_ulong,
+    ctypes.c_ulong,
+    ctypes.c_ulong,
+    ctypes.c_size_t,
+]
+kernel32.UnmapViewOfFile.argtypes = [ctypes.c_void_p]
+kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+
+
+def _view_ptr(addr: int | ctypes.c_void_p) -> int:
+    if isinstance(addr, ctypes.c_void_p):
+        return int(addr.value or 0)
+    return int(addr)
+
 
 def _empty(error: str | None, available: bool = False, **extra: Any) -> dict[str, Any]:
     out: dict[str, Any] = {
@@ -102,10 +122,9 @@ def _open_rtss_view() -> tuple[int, int, int] | None:
         kernel32.CloseHandle(handle)
         return None
     try:
-        header = (ctypes.c_char * 32).from_address(addr)
-        h = bytes(header)
+        h = ctypes.string_at(_view_ptr(addr), 32)
         if len(h) < 20:
-            kernel32.UnmapViewOfFile(ctypes.c_void_p(addr))
+            kernel32.UnmapViewOfFile(ctypes.c_void_p(_view_ptr(addr)))
             kernel32.CloseHandle(handle)
             return None
         _sig, _ver, entry_size, arr_offset, arr_size = struct.unpack_from("<IIIII", h, 0)
@@ -116,12 +135,12 @@ def _open_rtss_view() -> tuple[int, int, int] | None:
             total = 16 * 1024 * 1024
     except Exception:
         total = 65536
-    kernel32.UnmapViewOfFile(ctypes.c_void_p(addr))
+    kernel32.UnmapViewOfFile(ctypes.c_void_p(_view_ptr(addr)))
     addr2 = kernel32.MapViewOfFile(handle, FILE_MAP_READ, 0, 0, total)
     if not addr2:
         kernel32.CloseHandle(handle)
         return None
-    return int(addr2), int(handle), int(total)
+    return _view_ptr(addr2), _view_ptr(handle), int(total)
 
 
 def _close_rtss_view(addr: int, handle: int) -> None:
@@ -136,8 +155,7 @@ def _close_rtss_view(addr: int, handle: int) -> None:
 
 
 def _read_at(addr: int, offset: int, size: int) -> bytes:
-    buf = (ctypes.c_char * size).from_address(addr + offset)
-    return bytes(buf)
+    return ctypes.string_at(addr + offset, size)
 
 
 def _fps_from_entry(blob: bytes, entry_size: int) -> dict[str, Any] | None:
