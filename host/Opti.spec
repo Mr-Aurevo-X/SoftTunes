@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti-src-temp\\host\\opti_host.py'],
-    pathex=['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti-src-temp\\host'],
+    ['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\host\\opti_host.py'],
+    pathex=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\host'],
     binaries=[],
-    datas=[('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti-src-temp\\build\\ui_stage', 'ui')],
+    datas=[('C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\build\\ui_stage', 'ui')],
     hiddenimports=['clr', 'fps_worker', 'presentmon_reader', 'fps_worker_manager', 'fps_overlay', 'system_stats'],
     hookspath=[],
     hooksconfig={},
@@ -32,8 +32,8 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    version='C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti-src-temp\\tools\\file_version_info.txt',
-    icon=['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti-src-temp\\logo-opti.ico'],
+    version='C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\tools\\file_version_info.txt',
+    icon=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\logo-opti.ico'],
 )
 coll = COLLECT(
     exe,

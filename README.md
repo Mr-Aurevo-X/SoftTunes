@@ -9,27 +9,25 @@ Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale compl
 - Install : `OptiSetup.exe` → `%LOCALAPPDATA%\Programs\Opti\`
 - Mode Avancé : **Power Limit / Soft**, **Soft OC** (clocks NVIDIA bornés), **Monitor FPS** (PresentMon intégré, sans RTSS) + **overlay HUD** léger (toujours visible, clic traversant)
 
-## Emplacement Suite (Opti vs Opti-src-temp)
+## Emplacement (Dev Central Tree)
 
-Sous `Suite Mr-Aurevo-X\` :
+| Chemin | Rôle |
+|--------|------|
+| **`Dev Central Tree\Opti\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
+| **`Dev Central Tree\builds\Opti\`** | Distribution / setup (`OptiSetup.exe`, copies runtime) |
 
-| Dossier | Rôle |
-|---------|------|
-| **`Opti-src-temp\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
-| **`Opti\`** | Copie **runtime** orpheline (souvent juste `Opti.exe` + assets) pour lancement local — **ne pas** y committer ; ne pas la supprimer si vous utilisez encore cet exe |
-
-Le Launcher masque les deux (`excludeDirs` / `hiddenApps`). Les scripts de release (`MrAurevoX-Releases`) les excluent aussi. Après un build réussi depuis ce repo, vous pouvez recopier l’exe vers `..\Opti\Opti.exe` si besoin, sans toucher au layout runtime existant.
+Opti n’est **pas** un outil Suite. Le Launcher et les scripts de release l’excluent du catalogue hub.
 
 ## Lancer
 
-- Installateur : `OptiSetup.exe`
+- Installateur : `OptiSetup.exe` (ou sous `..\builds\Opti\`)
 - Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
-- Suite runtime : `..\Opti\Opti.exe` (copie locale, hors Git)
+- Dev : `Opti.exe` à la racine de ce repo après build
 
 Dev :
 
 ```powershell
-cd <repo>   # Opti-src-temp sous la Suite
+cd "C:\Users\aurel\Documents\Dev Central Tree\Opti"
 python -m venv .venv
 .\.venv\Scripts\pip install -r requirements.txt
 .\.venv\Scripts\python host\opti_host.py
@@ -44,4 +42,4 @@ tools\build_setup.bat
 
 ## Sync GitHub
 
-Les modifications se font ici (`Opti-src-temp`), puis `git push` vers https://github.com/Mr-Aurevo-X/Opti (sauvegarde). L’app installée chez l’utilisateur ne se met pas à jour seule.
+Les modifications se font ici (`Dev Central Tree\Opti`), puis `git push` vers https://github.com/Mr-Aurevo-X/Opti (sauvegarde). L’app installée chez l’utilisateur ne se met pas à jour seule.

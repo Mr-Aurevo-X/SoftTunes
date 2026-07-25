@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\host\\opti_setup.py'],
+    ['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\host\\opti_setup.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\Opti-dist', 'Opti-dist')],
+    datas=[('C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\Opti-dist', 'Opti-dist')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,6 +35,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    version='C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\tools\\file_version_info.txt',
-    icon=['C:\\Users\\aurel\\Desktop\\Suite Mr-Aurevo-X\\Opti\\logo-opti.ico'],
+    version='C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\tools\\file_version_info.txt',
+    icon=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\logo-opti.ico'],
 )
