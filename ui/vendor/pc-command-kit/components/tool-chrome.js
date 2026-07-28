@@ -47,8 +47,9 @@
 
     const titleEl = document.getElementById("toolTitleText");
     if (titleEl && !titleEl.dataset.locked) {
-      // Opti override: product name only (no suite subtitle)
-      titleEl.textContent = toolLabel();
+      const name = toolLabel();
+      titleEl.innerHTML =
+        name + ' <em>L\'Atelier PC Command</em>';
     }
 
     if (!document.querySelector(".tool-resize-edges")) {
