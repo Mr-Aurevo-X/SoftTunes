@@ -16,6 +16,27 @@ import webview
 from fps_worker_manager import FpsWorkerManager
 from fps_overlay import FpsOverlay, OVERLAY_TITLE
 
+_DENIED_OPEN_EXTS = {
+    ".exe", ".cmd", ".bat", ".ps1", ".vbs", ".msi", ".com", ".scr", ".js", ".jse", ".wsf",
+}
+
+
+def _safe_open_path(path: str, *, deny_exec: bool = True) -> tuple[Path | None, str]:
+    raw = str(path or "").strip()
+    if not raw:
+        return None, "empty path"
+    if raw.startswith("\\\\"):
+        return None, "UNC rejected"
+    try:
+        p = Path(raw).expanduser().resolve()
+    except OSError:
+        return None, "invalid path"
+    if not p.exists():
+        return None, "path not found"
+    if deny_exec and p.is_file() and p.suffix.lower() in _DENIED_OPEN_EXTS:
+        return None, f"executable extension blocked: {p.suffix.lower()}"
+    return p, ""
+
 
 def app_dir() -> Path:
     if getattr(sys, "frozen", False):
@@ -471,7 +492,10 @@ class Api:
 
     def open_path(self, path: str) -> dict:
         try:
-            os.startfile(path)  # type: ignore[attr-defined]
+            safe, err = _safe_open_path(path, deny_exec=True)
+            if safe is None:
+                return {"ok": False, "error": err or "Chemin refuse"}
+            os.startfile(str(safe))  # type: ignore[attr-defined]
             return {"ok": True}
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
