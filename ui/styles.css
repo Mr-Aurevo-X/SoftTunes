@@ -1,24 +1,19 @@
-﻿/* Opti — professional gaming optimizer UI */
+﻿/* Opti — professional gaming optimizer UI (PC Command kit tokens) */
 :root {
-  --bg0: #0b0b0d;
-  --bg1: #141416;
-  --bg2: #1c1c20;
-  --border: rgba(255, 255, 255, 0.07);
+  /* Aliases for Opti-local selectors; kit sets --bg/--panel/--text/--accent via base.css */
+  --bg0: var(--bg);
+  --bg1: var(--panel);
+  --bg2: var(--panel2);
+  --border: var(--line);
   --border-strong: rgba(255, 255, 255, 0.12);
-  --text: #f0f0f2;
-  --muted: #9a9aa3;
-  --accent: #e03545;
-  --accent-dim: rgba(224, 53, 69, 0.2);
+  --accent-dim: var(--accent-soft);
   --accent-glow: rgba(224, 53, 69, 0.4);
-  --warn: #e0a84a;
-  --danger: #e03545;
-  --ok: #5a9e72;
-  --info: #5b8fd6;
+  --danger: var(--accent);
+  --info: var(--cyan);
   --card-hover: #242428;
   --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  --radius: 16px;
-  --font: "Outfit", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --font: var(--font-ui);
+  --mono: var(--font-mono);
   --sidebar: 216px;
 }
 
@@ -45,7 +40,8 @@ body {
   display: grid;
   grid-template-columns: var(--sidebar) 1fr;
   grid-template-rows: 1fr auto;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
 }
 
 /* ---------- Sidebar ---------- */

@@ -4,12 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Opti</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        if (/(?:^|[?&])embed=1(?:&|$)/.test(location.search || "")) {
+          document.documentElement.classList.add("pcd-embed");
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="vendor/pc-command-kit/tokens/kit.css" />
+  <link rel="stylesheet" href="vendor/pc-command-kit/components/embed.css" />
+  <link rel="stylesheet" href="vendor/pc-command-kit/components/standalone.css" />
+  <link rel="stylesheet" href="vendor/pc-command-kit/components/tool-chrome.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="theme-pc-command" data-tool-title="Opti">
+  <script>
+    (function () {
+      try {
+        if (document.documentElement.classList.contains("pcd-embed")) {
+          document.body.classList.add("pcd-embed");
+        }
+      } catch (_) {}
+    })();
+  </script>
   <div class="bg" aria-hidden="true"></div>
   <div class="shell">
     <aside class="sidebar">
@@ -442,6 +461,7 @@
     </div>
   </div>
   <script src="suite-boot.js"></script>
+  <script src="vendor/pc-command-kit/components/tool-chrome.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

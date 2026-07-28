@@ -15,6 +15,7 @@ import webview
 
 from fps_worker_manager import FpsWorkerManager
 from fps_overlay import FpsOverlay, OVERLAY_TITLE
+from window_chrome import WindowChromeMixin, create_tool_window
 
 _DENIED_OPEN_EXTS = {
     ".exe", ".cmd", ".bat", ".ps1", ".vbs", ".msi", ".com", ".scr", ".js", ".jse", ".wsf",
@@ -154,7 +155,7 @@ def resolve_suite_language(default: str = "fr") -> str:
 
 
 
-class Api:
+class Api(WindowChromeMixin):
     def __init__(self, root: Path) -> None:
         self.root = root
         self.api_ps1 = root / "api" / "Invoke-OptiApi.ps1"
@@ -551,14 +552,11 @@ def main() -> None:
         )
         api.attach_overlay(hud)
 
-    webview.create_window(
+    create_tool_window(
         title=f"Opti {ver}",
         url=index.as_uri(),
         js_api=api,
-        width=1180,
-        height=780,
-        min_size=(900, 600),
-        background_color="#0b0b0d",
+        background_color="#06070c",
     )
     webview.start(gui="edgechromium", debug=False)
 
