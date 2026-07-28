@@ -8,6 +8,13 @@
   const ADV_KEY = "opti-advanced-mode";
   let lastPresetDelta = null;
 
+  function esc(value) {
+    return String(value == null ? "" : value).replace(
+      /[&<>"']/g,
+      (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]
+    );
+  }
+
   const SUITE_I18N = {
     fr: {
       tagline: "Indépendant · 100 % gratuit · version finale",
@@ -580,8 +587,8 @@
     if (badges) {
       badges.innerHTML = `
         <span class="risk ${h.gameMode ? "ok" : "warn"}">Game Mode ${h.gameMode ? "ON" : "OFF"}</span>
-        <span class="risk ok">${(h.powerPlan || "Power").toString().slice(0, 28)}</span>
-        <span class="risk ok">v${APP_VERSION}</span>`;
+        <span class="risk ok">${esc((h.powerPlan || "Power").toString().slice(0, 28))}</span>
+        <span class="risk ok">v${esc(APP_VERSION)}</span>`;
     }
     const ramPct = h.ram ? h.ram.usedPercent : "—";
     const power = h.powerPlan || "—";
@@ -589,7 +596,7 @@
     $("#dashStats").innerHTML = `
       <div class="stat"><div class="label">RAM</div><div class="value">${ramPct}%</div></div>
       <div class="stat blue"><div class="label">CPU</div><div class="value">${h.cpuLoad || 0}%</div></div>
-      <div class="stat ok"><div class="label">Power</div><div class="value" style="font-size:0.95rem">${power}</div></div>
+      <div class="stat ok"><div class="label">Power</div><div class="value" style="font-size:0.95rem">${esc(power)}</div></div>
       <div class="stat warn"><div class="label">Game Mode</div><div class="value">${gm}</div></div>`;
 
     const deltaPanel = $("#deltaPanel");
@@ -638,7 +645,7 @@
       box.innerHTML = items
         .map(
           (t) =>
-            `<article class="tip-card"><h3>${t.title}</h3><p>${t.body}</p></article>`
+            `<article class="tip-card"><h3>${esc(t.title)}</h3><p>${esc(t.body)}</p></article>`
         )
         .join("");
     } catch (_) {
@@ -650,7 +657,7 @@
     const d = await run("getPowerPlans", {});
     const plans = d.plans || [];
     $("#powerList").innerHTML = plans.length
-      ? plans.map((p) => `<li>${p.active ? "★ " : ""}${p.name} <span class="muted">${p.guid}</span></li>`).join("")
+      ? plans.map((p) => `<li>${p.active ? "★ " : ""}${esc(p.name)} <span class="muted">${esc(p.guid)}</span></li>`).join("")
       : '<li class="muted">—</li>';
   }
 
@@ -939,8 +946,8 @@
     $("#stEst").textContent = d.totalSize || "—";
     $("#cleanCats").innerHTML = items
       .map(
-        (it) => `<label class="check-item"><input type="checkbox" data-id="${it.id}" ${it.exists && it.bytes > 0 ? "checked" : ""}/>
-        <div><div class="t">${it.name}</div><div class="d">${it.size} — ${it.path}</div></div></label>`
+        (it) => `<label class="check-item"><input type="checkbox" data-id="${esc(it.id)}" ${it.exists && it.bytes > 0 ? "checked" : ""}/>
+        <div><div class="t">${esc(it.name)}</div><div class="d">${esc(it.size)} — ${esc(it.path)}</div></div></label>`
       )
       .join("");
     log(`Cleanup scan: ${d.totalSize}`, "ok");
@@ -950,7 +957,7 @@
     const d = await run("getDnsPresets", {});
     const sel = $("#dnsPreset");
     sel.innerHTML = (d.presets || [])
-      .map((p) => `<option value="${p.id}">${p.name}</option>`)
+      .map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`)
       .join("");
   }
 
@@ -958,8 +965,8 @@
     const d = await run("getServices", {});
     $("#svcList").innerHTML = (d.items || [])
       .map(
-        (it) => `<label class="check-item"><input type="checkbox" data-name="${it.Name}" ${it.Status === "Running" ? "checked" : ""}/>
-        <div><div class="t">${it.DisplayName || it.Name}</div><div class="d">${it.Name} — ${it.Status} / ${it.StartType}</div></div></label>`
+        (it) => `<label class="check-item"><input type="checkbox" data-name="${esc(it.Name)}" ${it.Status === "Running" ? "checked" : ""}/>
+        <div><div class="t">${esc(it.DisplayName || it.Name)}</div><div class="d">${esc(it.Name)} — ${esc(it.Status)} / ${esc(it.StartType)}</div></div></label>`
       )
       .join("") || '<div class="muted">—</div>';
   }
@@ -969,7 +976,7 @@
     $("#startupList").innerHTML = (d.items || [])
       .map(
         (it) => `<label class="check-item"><input type="checkbox" data-name="${encodeURIComponent(it.Name)}" data-hive="${encodeURIComponent(it.Hive)}" data-cmd="${encodeURIComponent(it.Command || "")}" ${it.Protected ? "disabled" : ""}/>
-        <div><div class="t">${it.Name}${it.Protected ? " 🔒" : ""}</div><div class="d">${it.Hive}</div></div></label>`
+        <div><div class="t">${esc(it.Name)}${it.Protected ? " 🔒" : ""}</div><div class="d">${esc(it.Hive)}</div></div></label>`
       )
       .join("") || '<div class="muted">—</div>';
   }
@@ -978,8 +985,8 @@
     const d = await runJob("scanBloat", {});
     $("#bloatList").innerHTML = (d.apps || [])
       .map(
-        (a) => `<label class="check-item"><input type="checkbox" data-pfn="${a.PackageFullName}" checked/>
-        <div><div class="t">${a.Name}</div><div class="d">${a.Version}</div></div></label>`
+        (a) => `<label class="check-item"><input type="checkbox" data-pfn="${esc(a.PackageFullName)}" checked/>
+        <div><div class="t">${esc(a.Name)}</div><div class="d">${esc(a.Version)}</div></div></label>`
       )
       .join("") || `<div class="muted">${(SUITE_I18N[lang] || SUITE_I18N.fr).emptyBloat || "—"}</div>`;
   }
@@ -991,7 +998,7 @@
       ? profiles
           .map(
             (p) =>
-              `<li><button type="button" class="btn accent" style="height:28px;font-size:0.75rem;margin-right:8px" data-apply="${p.name}" title="${(SUITE_I18N[lang] || SUITE_I18N.fr).profileApplyTitle || "Apply"}">▶</button>${p.name} <span class="muted">${p.exePath || ""}</span></li>`
+              `<li><button type="button" class="btn accent" style="height:28px;font-size:0.75rem;margin-right:8px" data-apply="${esc(p.name)}" title="${esc((SUITE_I18N[lang] || SUITE_I18N.fr).profileApplyTitle || "Apply")}">▶</button>${esc(p.name)} <span class="muted">${esc(p.exePath || "")}</span></li>`
           )
           .join("")
       : '<li class="muted">—</li>';
@@ -1010,13 +1017,13 @@
   async function refreshSessions() {
     const d = await run("getSessions", {});
     $("#sessionList").innerHTML = (d.sessions || [])
-      .map((s) => `<li>${s.createdAt || ""} — ${s.action}: ${s.summary || ""}</li>`)
+      .map((s) => `<li>${esc(s.createdAt || "")} — ${esc(s.action)}: ${esc(s.summary || "")}</li>`)
       .join("") || '<li class="muted">—</li>';
     const u = await run("getUndoList", {});
     $("#undoList").innerHTML = (u.items || [])
       .map(
         (it) =>
-          `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-undo="${it.id}" title="${it.name}">Undo</button><span class="t">${it.name}</span> <span class="muted">${it.createdAt || ""}${it.summary ? " · " + it.summary : ""}</span></li>`
+          `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-undo="${esc(it.id)}" title="${esc(it.name)}">Undo</button><span class="t">${esc(it.name)}</span> <span class="muted">${esc(it.createdAt || "")}${it.summary ? " · " + esc(it.summary) : ""}</span></li>`
       )
       .join("") || '<li class="muted">—</li>';
     $$("#undoList [data-undo]").forEach((btn) => {
@@ -1420,7 +1427,7 @@
           ? games
               .map(
                 (g) =>
-                  `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-save="${encodeURIComponent(g.name)}" data-path="${encodeURIComponent(g.path)}" title="${(SUITE_I18N[lang] || SUITE_I18N.fr).profileSaveTitle || "Save"}">+</button>${g.name}</li>`
+                  `<li><button type="button" class="btn" style="height:28px;font-size:0.75rem;margin-right:8px" data-save="${encodeURIComponent(g.name)}" data-path="${encodeURIComponent(g.path)}" title="${esc((SUITE_I18N[lang] || SUITE_I18N.fr).profileSaveTitle || "Save")}">+</button>${esc(g.name)}</li>`
               )
               .join("")
           : `<li class="muted">${lang === "en" ? "No game found" : "Aucun jeu trouvé"}</li>`;

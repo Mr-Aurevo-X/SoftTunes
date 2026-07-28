@@ -1,0 +1,15 @@
+{
+  "layout": "line",
+  "show": {
+    "brand": true,
+    "fps": true,
+    "frametime": true,
+    "onePercentLow": true,
+    "app": true,
+    "cpu": true,
+    "cpuTemp": true,
+    "gpu": true,
+    "gpuTemp": true,
+    "ram": true
+  }
+}
