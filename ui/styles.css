@@ -404,6 +404,10 @@ select.opti-select {
   border: 1px solid var(--border); background: var(--bg2); color: var(--text);
   font: inherit; min-width: 180px;
 }
+select.opti-select option {
+  background: #12161f;
+  color: #eef2f8;
+}
 
 /* Hero dashboard + helps + risk badges */
 .hero-perf {

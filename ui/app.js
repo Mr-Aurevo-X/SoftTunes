@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "1.5.2";
+  const APP_VERSION = "1.5.3";
   const OVERLAY_KEY = "opti-fps-overlay";
   const OVERLAY_CFG_KEY = "opti-overlay-config";
   const ADV_KEY = "opti-advanced-mode";
@@ -533,6 +533,7 @@
       loadLegal(activeTab ? activeTab.dataset.doc : "terms").catch(() => {});
     }
     if (page === "tips") loadTips().catch(() => {});
+    if (page === "net") refreshDns().catch(() => {});
     if (page === "softperf") refreshSoftPerf().catch(() => {});
     if (page === "softoc") refreshSoftOc().catch(() => {});
     if (page === "monitor") {
@@ -953,12 +954,31 @@
     log(`Cleanup scan: ${d.totalSize}`, "ok");
   }
 
+  const DNS_PRESETS_FALLBACK = [
+    { id: "cloudflare", name: "Cloudflare" },
+    { id: "google", name: "Google" },
+    { id: "quad9", name: "Quad9" },
+    { id: "dhcp", name: "Automatique (DHCP)" },
+  ];
+
   async function refreshDns() {
-    const d = await run("getDnsPresets", {});
     const sel = $("#dnsPreset");
-    sel.innerHTML = (d.presets || [])
-      .map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`)
+    if (!sel) return;
+    const prev = sel.value || "cloudflare";
+    let presets = DNS_PRESETS_FALLBACK;
+    try {
+      const d = await run("getDnsPresets", {});
+      if (d && Array.isArray(d.presets) && d.presets.length) {
+        presets = d.presets.filter((p) => p && p.id);
+      }
+    } catch (_) {
+      /* keep HTML / fallback presets */
+    }
+    sel.innerHTML = presets
+      .map((p) => `<option value="${esc(p.id)}">${esc(p.name || p.id)}</option>`)
       .join("");
+    if ([].some.call(sel.options, (o) => o.value === prev)) sel.value = prev;
+    else if (sel.options.length) sel.selectedIndex = 0;
   }
 
   async function refreshServices() {

@@ -201,7 +201,12 @@
           <div class="panel">
             <div class="panel-head"><h3 data-i18n="netTitle">DNS & latence</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
             <div class="field">
-              <select class="opti-select" id="dnsPreset"></select>
+              <select class="opti-select" id="dnsPreset">
+                <option value="cloudflare">Cloudflare</option>
+                <option value="google">Google</option>
+                <option value="quad9">Quad9</option>
+                <option value="dhcp">Automatique (DHCP)</option>
+              </select>
               <button type="button" class="btn accent" id="btnSetDns" data-i18n="btnSetDns">Appliquer DNS</button>
               <button type="button" class="btn" id="btnFlushDns" data-i18n="btnFlushDns">Flush DNS</button>
             </div>
