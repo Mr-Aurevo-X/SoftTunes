@@ -1,5 +1,5 @@
 Politique de confidentialité / RGPD — Suite Mr-Aurevo-X (Atelier)
-Éditeur : Mr-Aurevo-X · Produit d’entrée : Atelier (Atelier)
+Éditeur : Mr-Aurevo-X · Produit d’entrée : Atelier (Opti)
 
 1. Périmètre
 Cette politique couvre Atelier et **tous les outils de la Suite** disponibles via Atelier. Elle remplace tout « À propos » légal autrefois présent dans les apps individuelles. Les apps conservent un **copyright visible** et renvoient aux CGU / RGPD d’Atelier.

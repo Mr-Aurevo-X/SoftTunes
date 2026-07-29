@@ -1,5 +1,5 @@
 Mentions légales — Suite Mr-Aurevo-X
-Produit d’entrée : Atelier (Atelier)
+Produit d’entrée : Atelier (Opti)
 Éditeur : Mr-Aurevo-X
 Copyright © 2026 Mr-Aurevo-X. Tous droits réservés.
 

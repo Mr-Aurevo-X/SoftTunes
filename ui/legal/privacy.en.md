@@ -1,5 +1,5 @@
 Privacy Policy / GDPR — Mr-Aurevo-X Suite (Atelier)
-Publisher: Mr-Aurevo-X · Entry product: Atelier (Atelier)
+Publisher: Mr-Aurevo-X · Entry product: Atelier (Opti)
 
 1. Scope
 This policy covers Atelier and **all Suite tools** available through Atelier. It replaces any former in-app legal “About” panels. Apps keep a **visible copyright** and refer to Atelier for Terms / Privacy.

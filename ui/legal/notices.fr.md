@@ -1,4 +1,4 @@
-Licences / notices — Suite Mr-Aurevo-X (Atelier / Atelier)
+Licences / notices — Suite Mr-Aurevo-X (Atelier / Opti)
 
 Ce document s’applique à Atelier et aux outils de la Suite fournis avec ou via Atelier.
 

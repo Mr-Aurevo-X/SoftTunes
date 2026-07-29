@@ -1,6 +1,6 @@
 Conditions générales d’utilisation — Suite Mr-Aurevo-X (Atelier)
 Éditeur : Mr-Aurevo-X
-Produit d’entrée : Atelier (Atelier)
+Produit d’entrée : Atelier (Opti)
 
 1. Périmètre
 Les présentes CGU s’appliquent à Atelier et à **tous les outils de la Suite Mr-Aurevo-X** disponibles via Atelier (installés localement ou fournis avec la Suite), y compris ceux ajoutés ultérieurement au catalogue tant qu’ils portent la marque Mr-Aurevo-X. Chaque outil peut afficher un copyright local ; le détail légal (CGU, confidentialité, mentions, licences) est **centralisé dans Atelier → À propos**.

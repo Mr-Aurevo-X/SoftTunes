@@ -1,6 +1,6 @@
 Terms of Use — Mr-Aurevo-X Suite (Atelier)
 Publisher: Mr-Aurevo-X
-Entry product: Atelier (Atelier)
+Entry product: Atelier (Opti)
 
 1. Scope
 These terms apply to Atelier and to **all Mr-Aurevo-X Suite tools** available through Atelier (locally installed or shipped with the Suite), including tools added later to the catalog while branded Mr-Aurevo-X. Each tool may show a local copyright; full legal text (Terms, Privacy, Legal notice, Licenses) is **centralized in Atelier → About**.

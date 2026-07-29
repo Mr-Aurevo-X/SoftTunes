@@ -1,4 +1,4 @@
-Licenses / notices — Mr-Aurevo-X Suite (Atelier / Atelier)
+Licenses / notices — Mr-Aurevo-X Suite (Atelier / Opti)
 
 This notice applies to Atelier and Suite tools shipped with or through Atelier.
 

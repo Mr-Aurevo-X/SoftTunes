@@ -1,5 +1,5 @@
 Legal notice — Mr-Aurevo-X Suite
-Entry product: Atelier (Atelier)
+Entry product: Atelier (Opti)
 Publisher: Mr-Aurevo-X
 Copyright © 2026 Mr-Aurevo-X. All rights reserved.
 
