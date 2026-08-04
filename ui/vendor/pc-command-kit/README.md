@@ -2,6 +2,8 @@
 
 Source of truth for the Mr-Aurevo-X / L'Atelier Windows visual system.
 
+**Not** an npm/NuGet package: apps vendor a file copy (PyInstaller-friendly). Hub sync: `..\scripts\Sync-All-UiKit.ps1`. Migration checklist: `..\docs\migrate-ui-proprietaire.md`.
+
 ## Layout
 
 | Path | Role |
@@ -11,6 +13,7 @@ Source of truth for the Mr-Aurevo-X / L'Atelier Windows visual system.
 | `fonts/` | Outfit + JetBrains Mono (local woff2) |
 | `brand/` | PC Command icon (ico/png) |
 | `scripts/sync-ui-kit.ps1` | Copy kit → `ui/vendor/pc-command-kit/` for PyInstaller |
+| `scripts/patch-tool-chrome.ps1` | Strip Atelier hub branding from vendored `tool-chrome.js` (standalones) |
 
 ## Dev vs release
 
