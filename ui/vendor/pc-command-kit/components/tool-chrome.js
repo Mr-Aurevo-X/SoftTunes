@@ -56,8 +56,15 @@
     const titleEl = document.getElementById("toolTitleText");
     if (titleEl && !titleEl.dataset.locked) {
       const name = toolLabel();
-      titleEl.innerHTML =
-        name + ' <em>L\'Atelier PC Command</em>';
+      const sub =
+        ((document.body && document.body.getAttribute("data-tool-subtitle")) || "").trim() ||
+        "L'Atelier PC Command";
+      const safeSub = String(sub)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+      titleEl.innerHTML = name + " <em>" + safeSub + "</em>";
     }
 
     if (!document.querySelector(".tool-resize-edges")) {
