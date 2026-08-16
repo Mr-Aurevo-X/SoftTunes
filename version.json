@@ -1,16 +1,7 @@
 {
-
   "version": "1.5.3",
-
   "channel": "final",
-
   "product": "Opti",
-
   "standalone": true,
-
-  "free": true,
-
-  "autoUpdate": false
-
+  "free": true
 }
-
