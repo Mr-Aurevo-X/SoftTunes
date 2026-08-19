@@ -1,4 +1,9 @@
 /**
+ * Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
+ * SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+ * Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
+ */
+/**
  * Suite boot helpers: accent + language from Launcher.
  * Expects pywebview api.get_suite_settings() -> { ok, accent, language }
  * or get_suite_accent / get_suite_language.

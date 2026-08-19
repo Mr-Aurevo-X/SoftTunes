@@ -1,4 +1,9 @@
-﻿/* Opti — professional gaming optimizer UI (PC Command kit tokens) */
+/**
+ * Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
+ * SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+ * Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
+ */
+/* Opti — professional gaming optimizer UI (PC Command kit tokens) */
 :root {
   /* Aliases for Opti-local selectors; kit sets --bg/--panel/--text/--accent via base.css */
   --bg0: var(--bg);

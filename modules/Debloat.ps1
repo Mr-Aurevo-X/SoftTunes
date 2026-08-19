@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+# Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
+
 #Requires -Version 5.1
 # Debloat.ps1 — optional AppX removal for gaming-irrelevant packages (keep-list)
 

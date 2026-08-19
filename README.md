@@ -1,4 +1,6 @@
-﻿# Opti
+﻿[Français](README.md) · [English](README.en.md)
+
+# Opti
 
 Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.6.0).
 
@@ -24,6 +26,8 @@ Opti n’est **pas** un outil Suite. Le canal Releases `PCCommand-Releases` le l
 - Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
 - Dev : `Lancer.cmd` à la racine de ce repo
 
+Windows peut afficher « potentiellement dangereux » : les binaires ne sont pas signés Authenticode (pas de certificat éditeur payant). C’est un avertissement de réputation SmartScreen, pas un verdict antivirus.
+
 Dev :
 
 ```powershell
@@ -48,5 +52,10 @@ Les modifications se font ici (`Dev Central Tree\Opti`), puis `git push` vers ht
 
 Coups de pouce volontaires (Opti reste gratuit) :
 
+[![Discord](https://img.shields.io/badge/Discord-Mr--Aurevo--X-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=050807)](https://discord.com/users/406891052516114442)
 [![PayPal](https://img.shields.io/badge/PayPal-Donate-39ff14?style=for-the-badge&logo=paypal&logoColor=00f0ff&labelColor=050807)](https://www.paypal.com/paypalme/aurevo1)
 [![Revolut](https://img.shields.io/badge/Revolut-mr__aurevo__x-00f0ff?style=for-the-badge&logo=revolut&logoColor=39ff14&labelColor=050807)](https://revolut.me/mr_aurevo_x)
+
+---
+
+Rêvée par **Mr-Aurevo-X**. Cursor a réalisé le rêve.

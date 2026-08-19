@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+# Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
+
 """FPS / frametime via PresentMon ETW (no RTSS). Runs only inside fps_worker subprocess."""
 from __future__ import annotations
 

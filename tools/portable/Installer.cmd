@@ -1,3 +1,7 @@
+:: Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
+:: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+:: Author: Mr-Aurevo-X
+
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
