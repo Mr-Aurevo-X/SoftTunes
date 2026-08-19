@@ -1,5 +1,5 @@
-Politique de confidentialité / RGPD — PC Command / Suite Mr-Aurevo-X
-Éditeur : Mr-Aurevo-X · Produit : Opti
+﻿Politique de confidentialité / RGPD — PC Command / Suite Mr-Aurevo-X
+Éditeur : Mr-Aurevo-X · Produit : SoftTunes
 Copyright © 2026 Mr-Aurevo-X. Tous droits réservés.
 
 1. Collecte par l’éditeur : aucune

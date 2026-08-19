@@ -1,14 +1,16 @@
 [Français](README.md) · [English](README.en.md)
 
-# Opti
+# SoftTunes
 
-Independent **Windows session prep + FPS meter**, **100% free** (v1.6.0). Not a “+500 FPS booster”.
+Independent **Windows session prep + FPS meter**, **100% free** (v1.6.0, product name **SoftTunes**). Not a “+500 FPS booster”.
 
-Publisher: Mr-Aurevo-X. Opti is **not** part of the PC Command hub catalog.
+Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
+
+> GitHub repo and binary still use `Opti` / `Opti.exe` for now (technical rename later).
 
 - Prepares Windows for a play session (power plan, Game Mode, Xbox overlays, caches)
 - Meters real FPS via **PresentMon** (HUD overlay) — does not promise extra frames
-- NVIDIA-only Soft OC (bounded clock locks, not undervolt)
+- NVIDIA-only clock locks (bounded, not undervolt)
 - Local processing — no publisher collection
 - Newer GitHub release: in-app notice + browser button (no auto-download)
 

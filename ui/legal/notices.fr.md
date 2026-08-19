@@ -1,4 +1,4 @@
-Licences / notices — PC Command / Suite Mr-Aurevo-X (Opti)
+﻿Licences / notices — PC Command / Suite Mr-Aurevo-X (SoftTunes)
 
 Code Mr-Aurevo-X : PolyForm Noncommercial License 1.0.0 (`LICENSE`). Marque : `TRADEMARK.md`.
 

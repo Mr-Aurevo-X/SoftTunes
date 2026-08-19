@@ -1,14 +1,16 @@
 ﻿[Français](README.md) · [English](README.en.md)
 
-# Opti
+# SoftTunes
 
-Optimiseur PC gaming **indépendant** et **gratuit** (v1.6.0). Ce n’est **pas** un « booster FPS +500 ».
+Préparation de session Windows **indépendante** et **gratuite** (v1.6.0, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
 
-Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite PC Command.
+Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
+
+> Dépôt GitHub et binaire : toujours `Opti` / `Opti.exe` pour l’instant (renommage technique plus tard).
 
 - Prépare Windows pour une **session de jeu** (plan d’alimentation, Game Mode, overlays Xbox, caches)
 - Mesure le FPS réel via **PresentMon** (overlay HUD) — sans garantir un gain de frames
-- Soft OC **NVIDIA uniquement** (locks clocks bornés, pas d’undervolt)
+- Soft OC **NVIDIA uniquement** → verrous horloge bornés (pas d’undervolt)
 - 100 % local — aucune collecte
 - Si une release GitHub est plus récente : notification in-app + bouton vers la page (pas de téléchargement auto)
 
@@ -19,7 +21,7 @@ Optimiseur PC gaming **indépendant** et **gratuit** (v1.6.0). Ce n’est **pas*
 | **`Dev Central Tree\Opti\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
 | **`Dev Central Tree\builds\Opti\`** | Distribution / setup (`OptiSetup.exe`, copies runtime) |
 
-Opti n’est **pas** un outil Suite. Le canal Releases `PCCommand-Releases` le livre en pack `Opti.zip` (Install-Easy).
+Opti n’est **pas** un outil Suite. Le canal Releases `PCCommand-Releases` le livre en pack `Opti.zip` (Install-Easy). **Nom affiché : SoftTunes.**
 
 ## Lancer
 
@@ -51,7 +53,7 @@ Les mises à jour se prennent **manuellement** (clone GitHub ou zip de release).
 
 ## Soutien
 
-Coups de pouce volontaires (Opti reste gratuit) :
+Coups de pouce volontaires (SoftTunes reste gratuit) :
 
 [![Discord](https://img.shields.io/badge/Discord-Mr--Aurevo--X-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=050807)](https://discord.com/users/406891052516114442)
 [![PayPal](https://img.shields.io/badge/PayPal-Donate-39ff14?style=for-the-badge&logo=paypal&logoColor=00f0ff&labelColor=050807)](https://www.paypal.com/paypalme/aurevo1)

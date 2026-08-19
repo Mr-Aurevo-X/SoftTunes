@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 # Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
 
-"""Opti — host WebView2 (UI HTML, pont PowerShell JSON + progression %)."""
+"""SoftTunes — host WebView2 (UI HTML, pont PowerShell JSON + progression %). Repo/build: Opti."""
 from __future__ import annotations
 
 import ctypes
@@ -244,7 +244,7 @@ class Api(WindowChromeMixin):
         if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
-                "error": "Admin required. Click Elevate in Opti, then retry.",
+                "error": "Admin required. Click Elevate in SoftTunes, then retry.",
                 "data": {"needsAdmin": True},
             }
         if not self.api_ps1.is_file():
@@ -383,7 +383,7 @@ class Api(WindowChromeMixin):
         if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
-                "error": "Admin required. Click Elevate in Opti, then retry.",
+                "error": "Admin required. Click Elevate in SoftTunes, then retry.",
                 "data": {"needsAdmin": True},
             }
         with self._job_lock:
@@ -539,7 +539,7 @@ class Api(WindowChromeMixin):
 
 
 def require_admin() -> None:
-    """Opti must run elevated (PresentMon ETW + system tweaks)."""
+    """SoftTunes must run elevated (PresentMon ETW + system tweaks)."""
     if is_admin():
         return
     elevate_self()
@@ -589,7 +589,7 @@ def main() -> None:
         api.attach_overlay(hud)
 
     create_tool_window(
-        title=f"Opti {ver}",
+        title=f"SoftTunes {ver}",
         url=index.as_uri(),
         js_api=api,
         background_color="#06070c",

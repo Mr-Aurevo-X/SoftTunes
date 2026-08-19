@@ -235,7 +235,7 @@ class PresentMonSession:
                     if err.strip() and not self._start_error:
                         low = err.lower()
                         if "access" in low or "denied" in low or "privilege" in low:
-                            self._start_error = "Accès ETW refusé — lancez Opti en admin"
+                            self._start_error = "Accès ETW refusé — lancez SoftTunes en admin"
                 except Exception:
                     pass
 
@@ -245,8 +245,8 @@ class PresentMonSession:
             return _empty(
                 self._start_error,
                 needsAdmin=needs_admin,
-                hintFr="Élevez Opti (admin) pour une capture fiable.",
-                hintEn="Run Opti as administrator for reliable capture.",
+                hintFr="Élevez SoftTunes (admin) pour une capture fiable.",
+                hintEn="Run SoftTunes as administrator for reliable capture.",
             )
         if self._proc is None or self._proc.poll() is not None:
             code = self._proc.returncode if self._proc else None
@@ -266,8 +266,8 @@ class PresentMonSession:
             return _empty(
                 "Lancez un jeu au premier plan",
                 captureActive=True,
-                hintFr="Le bureau ou Opti est actif — lancez un jeu en plein écran ou fenêtré.",
-                hintEn="Desktop or Opti is focused — launch a game.",
+                hintFr="Le bureau ou SoftTunes est actif — lancez un jeu en plein écran ou fenêtré.",
+                hintEn="Desktop or SoftTunes is focused — launch a game.",
             )
 
         with self._lock:

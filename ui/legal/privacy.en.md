@@ -1,5 +1,5 @@
-Privacy Policy / GDPR — PC Command / Mr-Aurevo-X Suite
-Publisher: Mr-Aurevo-X · Product: Opti
+﻿Privacy Policy / GDPR — PC Command / Mr-Aurevo-X Suite
+Publisher: Mr-Aurevo-X · Product: SoftTunes
 Copyright © 2026 Mr-Aurevo-X. All rights reserved.
 
 1. Publisher collection: none

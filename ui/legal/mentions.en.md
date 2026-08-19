@@ -1,5 +1,5 @@
-Legal notice — PC Command / Mr-Aurevo-X Suite
-Product: Opti
+﻿Legal notice — PC Command / Mr-Aurevo-X Suite
+Product: SoftTunes
 Publisher: Mr-Aurevo-X
 Copyright © 2026 Mr-Aurevo-X. All rights reserved.
 

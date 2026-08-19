@@ -18,7 +18,7 @@ from system_stats import HardwareStatsSampler
 if TYPE_CHECKING:
     from fps_worker_manager import FpsWorkerManager
 
-OVERLAY_TITLE = "Opti HUD"
+OVERLAY_TITLE = "SoftTunes HUD"
 GWL_EXSTYLE = -20
 WS_EX_TOOLWINDOW = 0x00000080
 

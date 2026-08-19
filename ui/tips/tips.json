@@ -2,38 +2,38 @@
   "fr": [
     {
       "id": "score",
-      "title": "Comment lire le score",
-      "body": "Le score (0–100) mesure si le PC est prêt à jouer maintenant : RAM/CPU/disque libres + plan High/Ultimate + Game Mode. Ce n’est pas un FPS estimé. 80+ Excellent, 60–79 Bon, 40–59 Moyen, sous 40 Faible."
+      "title": "Comment lire l'état de préparation",
+      "body": "L'indicateur (0–100) mesure si le PC est prêt à jouer maintenant : RAM/CPU/disque libres + plan High/Ultimate + Game Mode. Ce n'est pas un FPS estimé. 80+ Prêt, 60–79 Correct, 40–59 Moyen, sous 40 Faible."
     },
     {
       "id": "stutter",
       "title": "Stutter / micro-freezes",
-      "body": "Souvent liés à overlays, captures Game Bar, disque plein, ou plan d’alimentation économe. Essayez Cleanup shaders, Boost overlays, et Hautes perfs avant d’activer le timer (avancé)."
+      "body": "Souvent liés à overlays, captures Game Bar, disque plein, ou plan d'alimentation économe. Essayez Cleanup shaders, fermer Game Bar, et Hautes perfs avant d'activer le timer (avancé)."
     },
     {
       "id": "fps-frametime",
       "title": "FPS vs frametime",
-      "body": "Le FPS moyen cache les à-coups. Le frametime (ms entre frames) montre la régularité : 16,7 ms ≈ 60 FPS stables. Surveillez les pics (Monitor FPS intégré) plutôt qu’un seul chiffre moyen."
+      "body": "Le FPS moyen cache les à-coups. Le frametime (ms entre frames) montre la régularité : 16,7 ms ≈ 60 FPS stables. Surveillez les pics (compteur FPS intégré) plutôt qu'un seul chiffre moyen."
     },
     {
       "id": "bottleneck",
       "title": "Goulot CPU / GPU",
-      "body": "CPU saturé + GPU bas = bottleneck CPU (réduisez overlays / effets). GPU à 99 % = limite carte (baissez les réglages in-game). Opti prépare Windows ; il ne remplace pas un upgrade."
+      "body": "CPU saturé + GPU bas = bottleneck CPU (réduisez overlays / effets). GPU à 99 % = limite carte (baissez les réglages in-game). SoftTunes prépare Windows ; il ne remplace pas un upgrade."
     },
     {
       "id": "vram",
       "title": "VRAM saturée",
-      "body": "Textures trop hautes / mods peuvent saturer la VRAM et provoquer stutter. Baissez les textures avant de toucher Soft OC ou Timer."
+      "body": "Textures trop hautes / mods peuvent saturer la VRAM et provoquer stutter. Baissez les textures avant de toucher verrous horloge NVIDIA ou Timer."
     },
     {
       "id": "thermals",
       "title": "Chauffe / thermal throttle",
-      "body": "Si le GPU/CPU downgrade sous charge, le Soft OC ne aidera pas. Nettoyez les poussières, vérifiez la pâte, limitez PL (Eco soft) pour baisser chaleur."
+      "body": "Si le GPU/CPU downgrade sous charge, les verrous horloge ne aideront pas. Nettoyez les poussières, vérifiez la pâte, limitez PL (Eco soft) pour baisser chaleur."
     },
     {
       "id": "overlays",
       "title": "Overlays",
-      "body": "Discord / NVIDIA / AMD / Xbox Game Bar consomment CPU et peuvent ajouter de l’input lag. Le Boost session les coupe temporairement (opt-in pour Discord et overlays GPU)."
+      "body": "Discord / NVIDIA / AMD / Xbox Game Bar consomment CPU et peuvent ajouter de l'input lag. Page Game Bar & Xbox : coche les processus, puis « Arrêter la sélection ». Aucun gain FPS garanti."
     },
     {
       "id": "anticheat",
@@ -43,49 +43,49 @@
     {
       "id": "softperf",
       "title": "Power Limit / Soft vs undervolt",
-      "body": "Mode Avancé → Power Limit / Soft : powercfg + PL NVIDIA soft. Soft OC : locks clocks bornés. Opti ne touche jamais aux voltages. Undervolt réel : Afterburner (NVIDIA) ou Adrenalin (AMD)."
+      "body": "Mode Avancé → Power Limit / Soft : powercfg + PL NVIDIA soft. Verrous horloge NVIDIA : locks bornés. SoftTunes ne touche jamais aux voltages. Undervolt réel : Afterburner (NVIDIA) ou Adrenalin (AMD)."
     },
     {
       "id": "soft-vs-ab",
-      "title": "Soft OC Opti vs Afterburner",
-      "body": "Opti Soft OC = petits locks nvidia-smi (+50/+100). Afterburner = courbes voltage, fans, profiles par jeu. Pour UV sérieux, ouvrez Afterburner depuis Soft OC ; testez la stabilité longtemps."
+      "title": "Verrous horloge SoftTunes vs Afterburner",
+      "body": "SoftTunes = petits locks nvidia-smi (+50/+100). Afterburner = courbes voltage, fans, profiles par jeu. Pour UV sérieux, ouvrez Afterburner depuis la page Undervolt ; testez la stabilité longtemps."
     }
   ],
   "en": [
     {
       "id": "score",
-      "title": "How to read the score",
-      "body": "The 0–100 score is readiness now (free RAM/CPU/disk + High/Ultimate power + Game Mode). It is not estimated FPS. 80+ Excellent, 60–79 Good, 40–59 Fair, under 40 Poor."
+      "title": "How to read readiness state",
+      "body": "The 0–100 indicator is readiness now (free RAM/CPU/disk + High/Ultimate power + Game Mode). It is not estimated FPS. 80+ Ready, 60–79 OK, 40–59 Fair, under 40 Low."
     },
     {
       "id": "stutter",
       "title": "Stutter / micro-freezes",
-      "body": "Often overlays, Game Bar capture, full disk, or power-saving plans. Try shader cleanup, overlay Boost, and High performance before enabling the timer (advanced)."
+      "body": "Often overlays, Game Bar capture, full disk, or power-saving plans. Try shader cleanup, close Game Bar, and High performance before enabling the timer (advanced)."
     },
     {
       "id": "fps-frametime",
       "title": "FPS vs frametime",
-      "body": "Average FPS hides hitching. Frametime (ms between frames) shows smoothness: 16.7 ms ≈ steady 60 FPS. Watch spikes (built-in Monitor FPS) instead of one average number."
+      "body": "Average FPS hides hitching. Frametime (ms between frames) shows smoothness: 16.7 ms ≈ steady 60 FPS. Watch spikes (built-in FPS counter) instead of one average number."
     },
     {
       "id": "bottleneck",
       "title": "CPU / GPU bottleneck",
-      "body": "Pegged CPU + low GPU = CPU bottleneck (cut overlays/effects). GPU at 99% = GPU limit (lower in-game settings). Opti prepares Windows; it is not an upgrade."
+      "body": "Pegged CPU + low GPU = CPU bottleneck (cut overlays/effects). GPU at 99% = GPU limit (lower in-game settings). SoftTunes prepares Windows; it is not an upgrade."
     },
     {
       "id": "vram",
       "title": "VRAM saturated",
-      "body": "High textures/mods can fill VRAM and cause stutter. Lower textures before Soft OC or Timer."
+      "body": "High textures/mods can fill VRAM and cause stutter. Lower textures before NVIDIA clock locks or Timer."
     },
     {
       "id": "thermals",
       "title": "Heat / thermal throttle",
-      "body": "If GPU/CPU clocks drop under load, Soft OC will not help. Clean dust, check paste, use Eco soft PL to cut heat."
+      "body": "If GPU/CPU clocks drop under load, clock locks will not help. Clean dust, check paste, use Eco soft PL to cut heat."
     },
     {
       "id": "overlays",
       "title": "Overlays",
-      "body": "Discord / NVIDIA / AMD / Xbox Game Bar use CPU and can add input lag. Boost session stops them temporarily (Discord and GPU overlays are opt-in)."
+      "body": "Discord / NVIDIA / AMD / Xbox Game Bar use CPU and can add input lag. Game Bar & Xbox page: check processes, then “Stop selection”. No guaranteed FPS gain."
     },
     {
       "id": "anticheat",
@@ -95,12 +95,12 @@
     {
       "id": "softperf",
       "title": "Power Limit / Soft vs undervolt",
-      "body": "Advanced → Power Limit / Soft: powercfg + soft NVIDIA PL. Soft OC: bounded clock locks. Opti never touches voltages. Real UV: Afterburner (NVIDIA) or Adrenalin (AMD)."
+      "body": "Advanced → Power Limit / Soft: powercfg + soft NVIDIA PL. NVIDIA clock locks: bounded locks. SoftTunes never touches voltages. Real UV: Afterburner (NVIDIA) or Adrenalin (AMD)."
     },
     {
       "id": "soft-vs-ab",
-      "title": "Opti Soft OC vs Afterburner",
-      "body": "Opti Soft OC = small nvidia-smi locks (+50/+100). Afterburner = voltage curves, fans, per-game profiles. For serious UV, open Afterburner from Soft OC and stability-test for a long session."
+      "title": "SoftTunes clock locks vs Afterburner",
+      "body": "SoftTunes = small nvidia-smi locks (+50/+100). Afterburner = voltage curves, fans, per-game profiles. For serious UV, open Afterburner from the Undervolt page and stability-test for a long session."
     }
   ]
 }

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Opti</title>
+  <title>SoftTunes</title>
   <script>
     (function () {
       try {
@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="vendor/pc-command-kit/components/tool-chrome.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="theme-pc-command" data-tool-title="Opti" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="1.6.0">
+<body class="theme-pc-command" data-tool-title="SoftTunes" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="1.6.0">
   <script>
     (function () {
       try {
@@ -34,9 +34,9 @@
   <div class="shell">
     <aside class="sidebar">
       <div class="brand">
-        <img class="brand-mark" src="logo-opti.png" width="40" height="40" alt="Opti" />
+        <img class="brand-mark" src="logo-opti.png" width="40" height="40" alt="SoftTunes" />
         <div class="brand-text">
-          <h1>Opti</h1>
+          <h1>SoftTunes</h1>
           <p data-i18n="tagline">Prépare Windows pour jouer · mesures FPS</p>
         </div>
       </div>
@@ -56,7 +56,7 @@
           <button type="button" class="nav-btn active" data-page="dash" data-i18n="navDash">Dashboard</button>
           <button type="button" class="nav-btn" data-page="power" data-i18n="navPower">Power</button>
           <button type="button" class="nav-btn" data-page="gamemode" data-i18n="navGameMode">Game Mode</button>
-          <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Boost</button>
+          <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Game Bar & Xbox</button>
         </div>
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupTools">Outils</div>
@@ -70,8 +70,8 @@
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupAdvanced">Avancé</div>
           <button type="button" class="nav-btn" data-page="softperf" data-page-mode="adv" data-i18n="navSoftPerf">Power Limit / Soft</button>
-          <button type="button" class="nav-btn" data-page="softoc" data-page-mode="adv" data-i18n="navSoftOc">Soft OC</button>
-          <button type="button" class="nav-btn" data-page="monitor" data-page-mode="adv" data-i18n="navMonitor">Monitor FPS</button>
+          <button type="button" class="nav-btn" data-page="softoc" data-page-mode="adv" data-i18n="navSoftOc">Verrous horloge NVIDIA</button>
+          <button type="button" class="nav-btn" data-page="monitor" data-page-mode="adv" data-i18n="navMonitor">Compteur FPS</button>
           <button type="button" class="nav-btn" data-page="timer" data-page-mode="adv" data-i18n="navTimer">Timer / Prio</button>
           <button type="button" class="nav-btn" data-page="services" data-page-mode="adv" data-i18n="navServices">Services</button>
           <button type="button" class="nav-btn" data-page="debloat" data-page-mode="adv" data-i18n="navDebloat">Debloat</button>
@@ -105,18 +105,18 @@
           <div class="hero-perf">
             <div class="score-ring" id="scoreRing" style="--score:0"><span id="scoreVal">—</span></div>
             <div class="hero-copy">
-              <h3 id="scoreGradeLabel" data-i18n="scoreLabel">Score de préparation</h3>
+              <h3 id="scoreGradeLabel" data-i18n="scoreLabel">État de préparation (pas FPS)</h3>
               <p id="scoreGradeText" class="score-grade">—</p>
-              <p data-i18n="dashHelp">Un clic applique le preset recommandé : power, Game Mode, effets, boost overlays. Score = préparation, pas un FPS.</p>
+              <p data-i18n="dashHelp">L'état mesure la préparation du PC (pas un FPS). Preset = power, Game Mode, moins d'animations Windows, fermer Game Bar.</p>
               <ul class="preset-summary" id="presetSummary" aria-label="Preset actions">
                 <li data-i18n="presetActionPower">Plan d'alimentation hautes performances</li>
                 <li data-i18n="presetActionGameMode">Game Mode activé · Game Bar/DVR off</li>
-                <li data-i18n="presetActionVisual">Effets visuels optimisés pour le jeu</li>
-                <li data-i18n="presetActionBoost">Session boost (overlays Xbox / Game Bar)</li>
+                <li data-i18n="presetActionVisual">Moins d'animations et de transparence Windows</li>
+                <li data-i18n="presetActionBoost">Fermer Game Bar et overlays Xbox</li>
               </ul>
               <div class="badge-row" id="dashBadges"></div>
               <div class="btn-row">
-                <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Optimiser pour jouer</button>
+                <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Préparer la session</button>
                 <button type="button" class="btn" id="btnHealthRefresh" data-i18n="btnRefresh">Rafraîchir</button>
               </div>
               <p class="help-text" id="dashSoftHint">
@@ -173,17 +173,17 @@
         </section>
 
         <section class="page" id="page-boost">
-          <p class="help-text" data-i18n="boostHelp">Arrête temporairement les overlays (Game Bar…). Discord / NVIDIA / AMD restent opt-in pour ne pas casser le chat ou l’OSD.</p>
+          <p class="help-text" data-i18n="boostHelp">Coche ce que SoftTunes peut arrêter avant une session. Game Bar / Xbox par défaut ; Discord et OSD GPU seulement si tu coches.</p>
           <div class="guard" data-i18n="guardBoost">Les processus stoppés ne redémarrent pas automatiquement — relance-les après la session.</div>
           <div class="panel">
-            <div class="panel-head"><h3 data-i18n="boostTitle">Session boost</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
-            <div class="switch-row"><input type="checkbox" id="chkKillOv" checked /><label for="chkKillOv" data-i18n="chkKillOv">Stop overlays Xbox / Game Bar</label></div>
+            <div class="panel-head"><h3 data-i18n="boostTitle">Processus ciblés</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
+            <div class="switch-row"><input type="checkbox" id="chkKillOv" checked /><label for="chkKillOv" data-i18n="chkKillOv">Game Bar et overlays Xbox</label></div>
             <div class="switch-row"><input type="checkbox" id="chkDiscord" /><label for="chkDiscord" data-i18n="chkDiscord">Inclure Discord</label></div>
             <div class="switch-row"><input type="checkbox" id="chkGpuOv" /><label for="chkGpuOv" data-i18n="chkGpuOv">Inclure overlay NVIDIA/AMD</label></div>
             <p id="boostStatus" class="muted">—</p>
             <div class="btn-row">
-              <button type="button" class="btn accent" id="btnStartBoost" data-i18n="btnStartBoost">Démarrer boost</button>
-              <button type="button" class="btn" id="btnStopBoost" data-i18n="btnStopBoost">Terminer session</button>
+              <button type="button" class="btn accent" id="btnStartBoost" data-i18n="btnStartBoost">Arrêter la sélection</button>
+              <button type="button" class="btn" id="btnStopBoost" data-i18n="btnStopBoost">Relancer tout</button>
             </div>
           </div>
         </section>
@@ -225,10 +225,10 @@
         </section>
 
         <section class="page" id="page-visual">
-          <p class="help-text" data-i18n="visualHelp">Réduit animations et transparence Windows pour libérer un peu de GPU/CPU desktop. Annulable via Undo.</p>
+          <p class="help-text" data-i18n="visualHelp">Passe Windows en « meilleures performances » : moins d'animations, moins de transparence. Ça allège le bureau, pas les graphismes in-game.</p>
           <div class="panel">
             <div class="panel-head"><h3 data-i18n="visualTitle">Effets Windows</h3><span class="risk ok" data-i18n="badgeRec">Recommandé</span></div>
-            <div class="switch-row"><input type="checkbox" id="chkFx" checked /><label for="chkFx" data-i18n="chkFx">Meilleures performances visuelles</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkFx" checked /><label for="chkFx" data-i18n="chkFx">Moins d'animations et de transparence</label></div>
             <div class="switch-row"><input type="checkbox" id="chkAnim" checked /><label for="chkAnim" data-i18n="chkAnim">Désactiver animations</label></div>
             <div class="switch-row"><input type="checkbox" id="chkTrans" checked /><label for="chkTrans" data-i18n="chkTrans">Désactiver transparence</label></div>
             <div class="btn-row"><button type="button" class="btn accent" id="btnVisual" data-i18n="btnApply">Appliquer</button></div>
@@ -343,7 +343,7 @@
           </div>
           <div class="panel" style="margin-top:14px">
             <div class="panel-head"><h3 data-i18n="afterburnerTitle">Undervolt (externe)</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
-            <p class="help-text" data-i18n="afterburnerHelp">Pour un vrai undervolt, utilisez MSI Afterburner. Opti peut seulement l’ouvrir s’il est installé.</p>
+            <p class="help-text" data-i18n="afterburnerHelp">Pour un vrai undervolt, utilisez MSI Afterburner. SoftTunes peut seulement l'ouvrir s'il est installé.</p>
             <div id="afterburnerStatus" class="muted">—</div>
             <div class="btn-row" style="margin-top:12px">
               <button type="button" class="btn accent" id="btnOpenAfterburner" data-i18n="btnOpenAfterburner">Ouvrir Afterburner</button>
@@ -368,7 +368,7 @@
               <label for="chkFpsOverlay" data-i18n="chkFpsOverlay">Overlay FPS léger (déplaçable, toujours visible)</label>
             </div>
             <div id="overlayOptions" class="overlay-options" style="margin-top:10px">
-              <p class="help-text" data-i18n="overlayHelp">Petit HUD — glissez Opti pour déplacer. Layout et métriques mémorisés.</p>
+              <p class="help-text" data-i18n="overlayHelp">Petit HUD — glissez SoftTunes pour déplacer. Layout et métriques mémorisés.</p>
               <div class="switch-row" style="margin-top:8px">
                 <label for="selOverlayPreset" data-i18n="overlayPreset">Préréglage overlay</label>
                 <select id="selOverlayPreset" style="margin-left:8px">
@@ -438,10 +438,10 @@
 
         <section class="page" id="page-about">
           <div class="about-hero">
-            <img class="about-logo" src="logo-opti.png" width="72" height="72" alt="Opti" />
+            <img class="about-logo" src="logo-opti.png" width="72" height="72" alt="SoftTunes" />
             <div>
-              <h3>Opti</h3>
-              <p data-i18n="tagline">Optimiseur PC gaming · indépendant · 100 % gratuit</p>
+              <h3>SoftTunes</h3>
+              <p data-i18n="tagline">Prépare Windows pour jouer · mesures FPS</p>
               <p class="muted" id="aboutVersion">v1.6.0 · version finale</p>
             </div>
           </div>
@@ -455,7 +455,7 @@
           </div>
           <div class="panel">
             <h3 data-i18n="smartTitle">Windows SmartScreen</h3>
-            <p data-i18n="smartHelp">Sans certificat payant, Windows peut afficher un avertissement. « Informations complémentaires » puis « Exécuter quand même ». Opti est un outil local indépendant, sans collecte.</p>
+            <p data-i18n="smartHelp">Sans certificat payant, Windows peut afficher un avertissement. « Informations complémentaires » puis « Exécuter quand même ». SoftTunes est un outil local indépendant, sans collecte.</p>
           </div>
           <div class="panel">
             <h3 data-i18n="legalTitle">Documents légaux</h3>
