@@ -20,7 +20,7 @@ Opti n’est **pas** un outil Suite. Le canal Releases `PCCommand-Releases` le l
 
 ## Lancer
 
-- Install-Easy : pack Opti → `%LOCALAPPDATA%\MrAurevoX-Opti`
+- Install-Easy : pack Opti → `%LOCALAPPDATA%\OptiBy-Mr-Aurevo-X`
 - Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
 - Dev : `Lancer.cmd` à la racine de ce repo
 
@@ -43,3 +43,10 @@ tools\build_setup.bat
 ## Sync GitHub
 
 Les modifications se font ici (`Dev Central Tree\Opti`), puis `git push` vers https://github.com/Mr-Aurevo-X/Opti. Les mises à jour utilisateur passent par **Install-Easy** / `Opti.zip` sur **PCCommand-Releases** (pas d’auto-update in-app).
+
+## Soutien
+
+Coups de pouce volontaires (Opti reste gratuit) :
+
+[![PayPal](https://img.shields.io/badge/PayPal-Donate-39ff14?style=for-the-badge&logo=paypal&logoColor=00f0ff&labelColor=050807)](https://www.paypal.com/paypalme/aurevo1)
+[![Revolut](https://img.shields.io/badge/Revolut-mr__aurevo__x-00f0ff?style=for-the-badge&logo=revolut&logoColor=39ff14&labelColor=050807)](https://revolut.me/mr_aurevo_x)

@@ -86,6 +86,8 @@ def elevate_self() -> bool:
 DEFAULT_ACCENT = "#e03545"
 ENV_ACCENT = "MRAUREVOX_ACCENT"
 ENV_LANG = "MRAUREVOX_LANG"
+OPTI_INSTALL_DIR = "OptiBy-Mr-Aurevo-X"
+HUB_SETTINGS_DIR = "PCCommand"
 
 # Actions that need elevation (HKLM, services, AppX, restore, softperf HAGS, clocks, etc.)
 ADMIN_ACTIONS = frozenset({
@@ -120,20 +122,35 @@ def action_needs_admin(action: str, payload: dict | None = None) -> bool:
     return False
 
 
+def _localappdata() -> Path:
+    local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+    return Path(local)
+
+
+def _settings_paths() -> list[Path]:
+    root = _localappdata()
+    return [
+        root / OPTI_INSTALL_DIR / "user-settings.json",
+        root / HUB_SETTINGS_DIR / "user-settings.json",
+        root / "MrAurevoX" / "user-settings.json",
+        root / "Mr-Aurevo-X" / "user-settings.json",
+    ]
+
+
 def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
     env = (os.environ.get(ENV_ACCENT) or "").strip()
     if env.startswith("#") and len(env) in (4, 7):
         return env
-    local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    path = Path(local) / "Mr-Aurevo-X" / "user-settings.json"
-    if path.is_file():
+    for path in _settings_paths():
+        if not path.is_file():
+            continue
         try:
             loaded = json.loads(path.read_text(encoding="utf-8-sig"))
             accent = str((loaded or {}).get("accent") or "").strip()
             if accent.startswith("#") and len(accent) in (4, 7):
                 return accent
         except (OSError, json.JSONDecodeError, TypeError):
-            pass
+            continue
     return default
 
 
@@ -141,16 +158,16 @@ def resolve_suite_language(default: str = "fr") -> str:
     env = (os.environ.get(ENV_LANG) or "").strip().lower()
     if env in ("fr", "en"):
         return env
-    local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    path = Path(local) / "Mr-Aurevo-X" / "user-settings.json"
-    if path.is_file():
+    for path in _settings_paths():
+        if not path.is_file():
+            continue
         try:
             loaded = json.loads(path.read_text(encoding="utf-8-sig"))
             lang = str((loaded or {}).get("language") or "").strip().lower()
             if lang in ("fr", "en"):
                 return lang
         except (OSError, json.JSONDecodeError, TypeError):
-            pass
+            continue
     return default if default in ("fr", "en") else "fr"
 
 
