@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="vendor/pc-command-kit/components/tool-chrome.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="theme-pc-command" data-tool-title="Opti" data-tool-subtitle="Gaming optimizer" data-tool-version="1.6.0">
+<body class="theme-pc-command" data-tool-title="Opti" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="1.6.0">
   <script>
     (function () {
       try {
@@ -37,11 +37,11 @@
         <img class="brand-mark" src="logo-opti.png" width="40" height="40" alt="Opti" />
         <div class="brand-text">
           <h1>Opti</h1>
-          <p data-i18n="tagline">Performances gaming</p>
+          <p data-i18n="tagline">Prépare Windows pour jouer · mesures FPS</p>
         </div>
       </div>
       <span id="adminBadge" class="badge warn" data-i18n="elevating">…</span>
-      <p class="privacy-note" id="privacyNote">100 % gratuit · local · version finale</p>
+      <p class="privacy-note" id="privacyNote">Gratuit · local · pas de promesse FPS</p>
       <label class="mode-toggle" title="">
         <input type="checkbox" id="chkAdvanced" />
         <span data-i18n="modeAdvanced">Mode avancé</span>
@@ -94,6 +94,7 @@
     </aside>
 
     <div class="main">
+      <div id="hubReleaseBanner" class="hub-release-banner" hidden></div>
       <div class="page-header">
         <h2 id="pageTitle">Dashboard</h2>
         <p id="pageSub">Score et actions rapides</p>

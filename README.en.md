@@ -2,13 +2,15 @@
 
 # Opti
 
-Independent **PC gaming optimizer**, **100% free**, complete final build (v1.6.0).
+Independent **Windows session prep + FPS meter**, **100% free** (v1.6.0). Not a “+500 FPS booster”.
 
 Publisher: Mr-Aurevo-X. Opti is **not** part of the PC Command hub catalog.
 
+- Prepares Windows for a play session (power plan, Game Mode, Xbox overlays, caches)
+- Meters real FPS via **PresentMon** (HUD overlay) — does not promise extra frames
+- NVIDIA-only Soft OC (bounded clock locks, not undervolt)
 - Local processing — no publisher collection
-- No in-app automatic updates
-- Install / updates: **Install-Easy** → `Opti.zip` on `Mr-Aurevo-X/PCCommand-Releases`
+- Newer GitHub release: in-app notice + browser button (no auto-download)
 
 Read-only public distribution: no PRs or issues (`CONTRIBUTING.md`). License: PolyForm Noncommercial 1.0.0.
 

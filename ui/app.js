@@ -22,9 +22,9 @@
 
   const SUITE_I18N = {
     fr: {
-      tagline: "Indépendant · 100 % gratuit · version finale",
+      tagline: "Prépare Windows pour jouer · mesures FPS",
       copyright: "© 2026 Mr-Aurevo-X · indépendant · gratuit",
-      privacy: "Opti est un logiciel indépendant 100 % gratuit. Traitement local uniquement. Version finale — pas de mise à jour automatique.",
+      privacy: "Opti prépare Windows pour une session de jeu et mesure le FPS (PresentMon). Aucune promesse de FPS. Traitement local. Pas de téléchargement automatique.",
       modeAdvanced: "Mode avancé",
       modeAdvancedHint: "Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
       btnElevate: "Élever (admin)",
@@ -215,9 +215,9 @@
       smartTitle: "Windows a protégé votre PC (SmartScreen)",
     },
     en: {
-      tagline: "Standalone · 100% free · final version",
+      tagline: "Prepares Windows for play · FPS metering",
       copyright: "© 2026 Mr-Aurevo-X · standalone · free",
-      privacy: "Opti is standalone 100% free software. Local processing only. Final version — no automatic updates.",
+      privacy: "Opti prepares Windows for a gaming session and meters FPS (PresentMon). No FPS promise. Local processing. No automatic download.",
       modeAdvanced: "Advanced mode",
       modeAdvancedHint: "Shows: Power Limit, Soft OC, Monitor, Timer, Services, Debloat",
       btnElevate: "Elevate (admin)",
@@ -1589,6 +1589,48 @@
     }
   }
 
+  async function checkReleaseNotice() {
+    if (!api || typeof api.check_latest_release !== "function") return;
+    let info;
+    try {
+      info = await api.check_latest_release();
+    } catch (_) {
+      return;
+    }
+    const bar = document.getElementById("hubReleaseBanner");
+    if (!bar || !info?.ok || !info.updateAvailable) return;
+    const remote = String(info.remote || "");
+    try {
+      if (sessionStorage.getItem("hubReleaseDismissed") === remote) return;
+    } catch (_) {}
+    bar.hidden = false;
+    bar.className = "hub-release-banner";
+    bar.setAttribute("role", "status");
+    const msg = info.message || `Nouvelle version ${remote}`;
+    bar.innerHTML =
+      '<div class="hub-release-text"><strong>Nouvelle version</strong><span></span></div>' +
+      '<div class="hub-release-actions">' +
+      '<button type="button" class="hub-release-btn" id="hubReleaseOpen">Ouvrir la release</button>' +
+      '<button type="button" class="hub-release-dismiss" id="hubReleaseDismiss" aria-label="Fermer">×</button>' +
+      "</div>";
+    const span = bar.querySelector(".hub-release-text span");
+    if (span) span.textContent = msg;
+    document.getElementById("hubReleaseDismiss")?.addEventListener("click", () => {
+      try {
+        sessionStorage.setItem("hubReleaseDismissed", remote);
+      } catch (_) {}
+      bar.hidden = true;
+      bar.innerHTML = "";
+    });
+    document.getElementById("hubReleaseOpen")?.addEventListener("click", async () => {
+      try {
+        if (typeof api.open_release_page === "function") {
+          await api.open_release_page(info.releaseUrl || "");
+        }
+      } catch (_) {}
+    });
+  }
+
   async function boot() {
     api = await waitApi();
     if (!api) {
@@ -1631,6 +1673,7 @@
     refreshHealth().catch(() => {});
     refreshPower().catch(() => {});
     refreshDns().catch(() => {});
+    checkReleaseNotice().catch(() => {});
   }
 
   if (document.readyState === "loading") {

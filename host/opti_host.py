@@ -19,6 +19,7 @@ import webview
 
 from fps_worker_manager import FpsWorkerManager
 from fps_overlay import FpsOverlay, OVERLAY_TITLE
+from release_notice import check_latest, open_release_url
 from window_chrome import WindowChromeMixin, create_tool_window
 
 _DENIED_OPEN_EXTS = {
@@ -203,6 +204,20 @@ class Api(WindowChromeMixin):
 
     def get_suite_language(self) -> dict:
         return {"ok": True, "language": resolve_suite_language()}
+
+    def check_latest_release(self) -> dict:
+        return check_latest(
+            self.root,
+            source_repo="Mr-Aurevo-X/Opti",
+            zip_name="Opti.zip",
+        )
+
+    def open_release_page(self, url: str = "") -> dict:
+        target = (url or "").strip()
+        if not target:
+            info = self.check_latest_release()
+            target = str(info.get("releaseUrl") or "")
+        return open_release_url(target)
 
 
     def _kill_current_proc(self) -> None:

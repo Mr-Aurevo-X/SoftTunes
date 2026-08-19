@@ -2,14 +2,15 @@
 
 # Opti
 
-Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.6.0).
+Optimiseur PC gaming **indépendant** et **gratuit** (v1.6.0). Ce n’est **pas** un « booster FPS +500 ».
 
-Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite d’outils Mr-Aurevo-X / PC Command.
+Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite PC Command.
 
-- Traitement 100 % local — aucune collecte
-- Pas de mise à jour automatique in-app
-- Install / mises à jour : **Install-Easy** → `Opti.zip` sur `Mr-Aurevo-X/PCCommand-Releases`
-- Mode Avancé : **Power Limit / Soft**, **Soft OC** (clocks NVIDIA bornés), **Monitor FPS** (PresentMon intégré, sans RTSS) + **overlay HUD** léger (toujours visible, clic traversant)
+- Prépare Windows pour une **session de jeu** (plan d’alimentation, Game Mode, overlays Xbox, caches)
+- Mesure le FPS réel via **PresentMon** (overlay HUD) — sans garantir un gain de frames
+- Soft OC **NVIDIA uniquement** (locks clocks bornés, pas d’undervolt)
+- 100 % local — aucune collecte
+- Si une release GitHub est plus récente : notification in-app + bouton vers la page (pas de téléchargement auto)
 
 ## Emplacement (Dev Central Tree)
 
@@ -46,7 +47,7 @@ tools\build_setup.bat
 
 ## Sync GitHub
 
-Les modifications se font ici (`Dev Central Tree\Opti`), puis `git push` vers https://github.com/Mr-Aurevo-X/Opti. Les mises à jour utilisateur passent par **Install-Easy** / `Opti.zip` sur **PCCommand-Releases** (pas d’auto-update in-app).
+Les mises à jour se prennent **manuellement** (clone GitHub ou zip de release). L’app peut afficher une notification si GitHub Latest est plus récent.
 
 ## Soutien
 
