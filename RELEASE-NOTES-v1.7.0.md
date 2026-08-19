@@ -18,7 +18,7 @@ Timer/Prio/MMCS · Debloat · TCP gaming tweaks · score breakdown · separate p
 
 ## Install
 
-- Portable: `Opti.zip` on [PCCommand-Releases](https://github.com/Mr-Aurevo-X/PCCommand-Releases/releases)
+- Portable: `Opti.zip` on [this repo's Releases](https://github.com/Mr-Aurevo-X/Opti/releases)
 - Dev: `Lancer.cmd` in this repo
 
 ## Commit
