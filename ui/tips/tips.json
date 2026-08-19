@@ -3,7 +3,7 @@
     {
       "id": "score",
       "title": "Comment lire l'état de préparation",
-      "body": "L'indicateur (0–100) mesure si le PC est prêt à jouer maintenant : RAM/CPU/disque libres + plan High/Ultimate + Game Mode. Ce n'est pas un FPS estimé. 80+ Prêt, 60–79 Correct, 40–59 Moyen, sous 40 Faible."
+      "body": "Les voyants (Power, Game Mode, RAM, CPU) indiquent si Windows est prêt pour une session — pas un FPS estimé. Vert = OK, orange = à revoir. Le compteur FPS est sur la page FPS (PresentMon)."
     },
     {
       "id": "stutter",
@@ -55,7 +55,7 @@
     {
       "id": "score",
       "title": "How to read readiness state",
-      "body": "The 0–100 indicator is readiness now (free RAM/CPU/disk + High/Ultimate power + Game Mode). It is not estimated FPS. 80+ Ready, 60–79 OK, 40–59 Fair, under 40 Low."
+      "body": "The pills (Power, Game Mode, RAM, CPU) show if Windows is ready for a session — not estimated FPS. Green = OK, amber = review. FPS metering is on the FPS page (PresentMon)."
     },
     {
       "id": "stutter",

@@ -2,7 +2,18 @@
 
 # SoftTunes
 
-Independent **Windows session prep + FPS meter**, **100% free** (v1.6.0, product name **SoftTunes**). Not a “+500 FPS booster”.
+Independent **Windows session prep + FPS meter**, **100% free** (v1.7.0, product name **SoftTunes**). Not a “+500 FPS booster”.
+
+## Important
+
+> **SoftTunes does not promise any FPS gain.** It is not a « +500 FPS booster ». It prepares Windows for a session (power plan, Game Mode, lighter desktop, overlays) and **meters** FPS via PresentMon. Frame rates depend on your game, hardware, and in-game settings.
+
+| Does | Does not |
+|------|----------|
+| Perf power plan, Game Mode, desktop effects | Guarantee +XXX FPS |
+| Close overlays (opt-in) | Replace GPU / serious undervolt |
+| Meter FPS / frametime | Auto-download updates |
+| Undo / sessions | Tune in-game graphics |
 
 Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 

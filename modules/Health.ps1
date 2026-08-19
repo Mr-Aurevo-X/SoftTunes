@@ -131,7 +131,11 @@ function Get-OptiGamingHealth {
     }
 
     $stats = Get-OptiSessionStats
-    $last = Get-OptiLastScoreSnapshot
+    $powerOk = $powerScore -ge 100
+    $gameModeOk = [bool]$gameMode
+    $ramOk = [int]$ram.usedPercent -lt 85
+    $cpuOk = $cpu -lt 85
+    $diskOk = if ($sysDisk) { [int]$sysDisk.usedPercent -lt 90 } else { $true }
 
     return @{
         score       = $score
@@ -150,7 +154,13 @@ function Get-OptiGamingHealth {
             power = $powerScore
             game  = $gmScore
         }
-        lastScore   = $last
+        readiness   = @{
+            powerOk    = $powerOk
+            gameModeOk = $gameModeOk
+            ramOk      = $ramOk
+            cpuOk      = $cpuOk
+            diskOk     = $diskOk
+        }
         sessions    = $stats
         admin       = [bool](Test-OptiAdmin)
     }

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2026 Mr-Aurevo-X. All rights reserved. SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0 Author: Mr-Aurevo-X -->
+<!-- Copyright (c) 2026 Mr-Aurevo-X. All rights reserved. SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -20,16 +20,26 @@
   <link rel="stylesheet" href="vendor/pc-command-kit/components/tool-chrome.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="theme-pc-command" data-tool-title="SoftTunes" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="1.6.0">
-  <script>
-    (function () {
-      try {
-        if (document.documentElement.classList.contains("pcd-embed")) {
-          document.body.classList.add("pcd-embed");
-        }
-      } catch (_) {}
-    })();
-  </script>
+<body class="theme-pc-command" data-tool-title="SoftTunes" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="1.7.0">
+  <div id="honestyGate" class="honesty-gate" hidden aria-modal="true" role="dialog" aria-labelledby="honestyTitle">
+    <div class="honesty-card">
+      <h2 id="honestyTitle" data-i18n="honestyTitle">SoftTunes — à quoi ça sert</h2>
+      <p data-i18n="honestyBody">—</p>
+      <label class="honesty-check"><input type="checkbox" id="honestyDontShow" /><span data-i18n="honestyDontShow">Ne plus afficher pour cette version</span></label>
+      <button type="button" class="btn accent" id="honestyAck" data-i18n="honestyAck">J'ai compris</button>
+    </div>
+  </div>
+
+  <div id="tipsModal" class="tips-modal" hidden aria-modal="true" role="dialog">
+    <div class="tips-modal-card">
+      <div class="tips-modal-head">
+        <h3 data-i18n="btnHelp">Aide</h3>
+        <button type="button" class="btn ghost" id="tipsClose" data-i18n="tipsClose">Fermer</button>
+      </div>
+      <div id="tipsModalBody" class="tips-modal-body"></div>
+    </div>
+  </div>
+
   <div class="bg" aria-hidden="true"></div>
   <div class="shell">
     <aside class="sidebar">
@@ -37,48 +47,33 @@
         <img class="brand-mark" src="logo-opti.png" width="40" height="40" alt="SoftTunes" />
         <div class="brand-text">
           <h1>SoftTunes</h1>
-          <p data-i18n="tagline">Prépare Windows pour jouer · mesures FPS</p>
+          <p data-i18n="tagline">Prépare · mesure · pas de promesse FPS</p>
         </div>
       </div>
       <span id="adminBadge" class="badge warn" data-i18n="elevating">…</span>
-      <p class="privacy-note" id="privacyNote">Gratuit · local · pas de promesse FPS</p>
-      <label class="mode-toggle" title="">
+      <p class="privacy-note" id="privacyNote" data-i18n="privacy">—</p>
+      <label class="mode-toggle">
         <input type="checkbox" id="chkAdvanced" />
-        <span data-i18n="modeAdvanced">Mode avancé</span>
+        <span data-i18n="modeAdvanced">Réglages expert</span>
       </label>
-      <p class="mode-hint muted" data-i18n="modeAdvancedHint">Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat</p>
+      <p class="mode-hint muted" data-i18n="modeAdvancedHint">Réseau · NVIDIA · fond Windows</p>
       <button type="button" class="btn ghost" id="btnLang" style="width:100%;margin:0 0 10px" data-i18n="btnLang">English</button>
       <button type="button" class="btn" id="btnElevate" data-i18n="btnElevate" style="width:100%;margin:6px 0 10px">Élever (admin)</button>
 
       <nav class="nav" id="nav">
         <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupEssentials">Essentiels</div>
-          <button type="button" class="nav-btn active" data-page="dash" data-i18n="navDash">Dashboard</button>
-          <button type="button" class="nav-btn" data-page="power" data-i18n="navPower">Power</button>
-          <button type="button" class="nav-btn" data-page="gamemode" data-i18n="navGameMode">Game Mode</button>
-          <button type="button" class="nav-btn" data-page="boost" data-i18n="navBoost">Game Bar & Xbox</button>
+          <div class="nav-label" data-i18n="navGroupMain">Principal</div>
+          <button type="button" class="nav-btn active" data-page="dash" data-i18n="navDash">Accueil</button>
+          <button type="button" class="nav-btn" data-page="session" data-i18n="navSession">Session</button>
+          <button type="button" class="nav-btn" data-page="clean" data-i18n="navClean">Caches</button>
+          <button type="button" class="nav-btn" data-page="fps" data-i18n="navFps">FPS</button>
+          <button type="button" class="nav-btn" data-page="sessions" data-i18n="navSessions">Historique</button>
         </div>
-        <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupTools">Outils</div>
-          <button type="button" class="nav-btn" data-page="clean" data-i18n="navClean">Cleanup</button>
+        <div class="nav-group nav-group-expert" hidden>
+          <div class="nav-label" data-i18n="navGroupExpert">Expert</div>
           <button type="button" class="nav-btn" data-page="net" data-i18n="navNet">Réseau</button>
-          <button type="button" class="nav-btn" data-page="visual" data-i18n="navVisual">Visuel</button>
-          <button type="button" class="nav-btn" data-page="startup" data-i18n="navStartup">Démarrage</button>
-          <button type="button" class="nav-btn" data-page="profiles" data-i18n="navProfiles">Profils</button>
-          <button type="button" class="nav-btn" data-page="tips" data-i18n="navTips">Conseils</button>
-        </div>
-        <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupAdvanced">Avancé</div>
-          <button type="button" class="nav-btn" data-page="softperf" data-page-mode="adv" data-i18n="navSoftPerf">Power Limit / Soft</button>
-          <button type="button" class="nav-btn" data-page="softoc" data-page-mode="adv" data-i18n="navSoftOc">Verrous horloge NVIDIA</button>
-          <button type="button" class="nav-btn" data-page="monitor" data-page-mode="adv" data-i18n="navMonitor">Compteur FPS</button>
-          <button type="button" class="nav-btn" data-page="timer" data-page-mode="adv" data-i18n="navTimer">Timer / Prio</button>
-          <button type="button" class="nav-btn" data-page="services" data-page-mode="adv" data-i18n="navServices">Services</button>
-          <button type="button" class="nav-btn" data-page="debloat" data-page-mode="adv" data-i18n="navDebloat">Debloat</button>
-        </div>
-        <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupHistory">Historique</div>
-          <button type="button" class="nav-btn" data-page="sessions" data-i18n="navSessions">Sessions</button>
+          <button type="button" class="nav-btn" data-page="nvidia" id="navNvidia" data-i18n="navNvidia">NVIDIA</button>
+          <button type="button" class="nav-btn" data-page="background" data-i18n="navBackground">Fond Windows</button>
         </div>
         <div class="nav-group">
           <div class="nav-label" data-i18n="navGroupLegal">Légal</div>
@@ -90,112 +85,108 @@
         <button type="button" class="btn accent" id="btnRestore" data-i18n="btnRestore">Point de restauration</button>
       </div>
       <div class="side-status" id="sideStatus" data-i18n="ready">Prêt</div>
-      <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X · local</p>
+      <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X</p>
     </aside>
 
     <div class="main">
       <div id="hubReleaseBanner" class="hub-release-banner" hidden></div>
       <div class="page-header">
-        <h2 id="pageTitle">Dashboard</h2>
-        <p id="pageSub">Score et actions rapides</p>
+        <div class="page-header-row">
+          <div>
+            <h2 id="pageTitle">Accueil</h2>
+            <p id="pageSub">—</p>
+          </div>
+          <button type="button" class="btn ghost btn-help" id="btnPageHelp" data-i18n="btnHelp" title="Aide">?</button>
+        </div>
       </div>
       <div class="content">
 
         <section class="page active" id="page-dash">
-          <div class="hero-perf">
-            <div class="score-ring" id="scoreRing" style="--score:0"><span id="scoreVal">—</span></div>
-            <div class="hero-copy">
-              <h3 id="scoreGradeLabel" data-i18n="scoreLabel">État de préparation (pas FPS)</h3>
-              <p id="scoreGradeText" class="score-grade">—</p>
-              <p data-i18n="dashHelp">L'état mesure la préparation du PC (pas un FPS). Preset = power, Game Mode, moins d'animations Windows, fermer Game Bar.</p>
-              <ul class="preset-summary" id="presetSummary" aria-label="Preset actions">
-                <li data-i18n="presetActionPower">Plan d'alimentation hautes performances</li>
-                <li data-i18n="presetActionGameMode">Game Mode activé · Game Bar/DVR off</li>
-                <li data-i18n="presetActionVisual">Moins d'animations et de transparence Windows</li>
-                <li data-i18n="presetActionBoost">Fermer Game Bar et overlays Xbox</li>
-              </ul>
-              <div class="badge-row" id="dashBadges"></div>
-              <div class="btn-row">
-                <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Préparer la session</button>
-                <button type="button" class="btn" id="btnHealthRefresh" data-i18n="btnRefresh">Rafraîchir</button>
-              </div>
-              <p class="help-text" id="dashSoftHint">
-                <button type="button" class="linkish" id="btnGotoSoftPerf" data-i18n="dashSoftHint">Power Limit NVIDIA &amp; anti-parking → Mode avancé</button>
-              </p>
-              <p class="help-text" id="dashMonitorHint">
-                <button type="button" class="linkish" id="btnGotoMonitor" data-i18n="dashMonitorHint">FPS en direct + overlay HUD → Mode avancé · Monitor FPS</button>
-              </p>
-              <div class="fps-mini muted" id="dashFpsMini" hidden>—</div>
-              <div class="legend" id="dashLegend">
-                <span class="risk ok" data-i18n="badgeRec">Recommandé</span>
-                <span class="risk warn" data-i18n="badgeOptin">Opt-in</span>
-                <span class="risk adv" data-i18n="badgeAdv">Avancé</span>
-              </div>
-            </div>
-          </div>
-          <div class="panel" id="breakdownPanel">
-            <h3 data-i18n="breakdownTitle">Détail du score</h3>
-            <div class="bars" id="scoreBars"></div>
-          </div>
-          <div class="panel" id="deltaPanel" hidden>
-            <h3 data-i18n="deltaTitle">Avant / après preset</h3>
-            <p id="deltaText" class="help-text">—</p>
+          <p class="honesty-banner" data-i18n="dashBanner">—</p>
+          <div class="readiness-row" id="readinessRow">
+            <span class="ready-pill" id="pillPower" data-i18n="readinessPower">Power</span>
+            <span class="ready-pill" id="pillGameMode" data-i18n="readinessGameMode">Game Mode</span>
+            <span class="ready-pill" id="pillRam" data-i18n="readinessRam">RAM</span>
+            <span class="ready-pill" id="pillCpu" data-i18n="readinessCpu">CPU</span>
           </div>
           <div class="stats" id="dashStats"></div>
+          <ul class="preset-summary" id="presetSummary">
+            <li data-i18n="presetActionPower">Plan hautes performances</li>
+            <li data-i18n="presetActionGameMode">Game Mode · Game Bar off</li>
+            <li data-i18n="presetActionVisual">Moins d'animations Windows</li>
+            <li data-i18n="presetActionBoost">Fermer Game Bar / overlays</li>
+          </ul>
+          <label class="switch-row preset-rp"><input type="checkbox" id="chkCreateRp" /><span data-i18n="chkCreateRp">Créer un point de restauration</span></label>
+          <div class="btn-row">
+            <button type="button" class="btn accent btn-lg" id="btnPreset" data-i18n="btnPreset">Préparer la session</button>
+            <button type="button" class="btn" id="btnHealthRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+          </div>
+          <p class="help-text"><button type="button" class="linkish" id="btnGotoSession" data-i18n="dashGotoSession">Personnaliser → Session</button> · <button type="button" class="linkish" id="btnGotoFps" data-i18n="dashGotoFps">FPS →</button></p>
         </section>
 
-        <section class="page" id="page-power">
-          <p class="help-text" data-i18n="powerHelp">Le plan d’alimentation contrôle CPU/GPU au repos. « Hautes perfs » et « Ultimate » réduisent les latences liées à l’économie d’énergie.</p>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="powerTitle">Plan d’alimentation</h3><span class="risk ok" data-i18n="badgeRec">Recommandé</span></div>
+        <section class="page" id="page-session">
+          <p class="help-text" data-i18n="sessionIntro">—</p>
+          <div class="session-section panel">
+            <h3 data-i18n="powerTitle">Alimentation</h3>
+            <p class="muted help-text" data-i18n="sessionPowerHint">—</p>
             <ul class="list" id="powerList"><li class="muted">—</li></ul>
             <div class="btn-row">
               <button type="button" class="btn" id="btnPowerBalanced" data-i18n="btnBalanced">Équilibré</button>
               <button type="button" class="btn accent" id="btnPowerHigh" data-i18n="btnHigh">Hautes perfs</button>
               <button type="button" class="btn" id="btnPowerUlt" data-i18n="btnUltimate">Ultimate</button>
-              <button type="button" class="btn" id="btnPowerRefresh" data-i18n="btnRefresh">Rafraîchir</button>
             </div>
           </div>
-        </section>
-
-        <section class="page" id="page-gamemode">
-          <p class="help-text" data-i18n="gmHelp">Game Mode priorise le jeu. Désactiver Game Bar/DVR limite les captures en arrière-plan. Focus réduit les notifications.</p>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="gmTitle">Game Mode & Focus</h3><span class="risk ok" data-i18n="badgeRec">Recommandé</span></div>
-            <div class="switch-row"><input type="checkbox" id="chkGameMode" checked /><label for="chkGameMode" data-i18n="chkGameMode">Activer Game Mode</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkDisableBar" checked /><label for="chkDisableBar" data-i18n="chkDisableBar">Désactiver Game Bar / DVR</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkFocus" checked /><label for="chkFocus" data-i18n="chkFocus">Focus Assist / Quiet Hours</label></div>
-            <div class="btn-row">
-              <button type="button" class="btn accent" id="btnApplyGm" data-i18n="btnApply">Appliquer</button>
-              <button type="button" class="btn" id="btnRefreshGm" data-i18n="btnRefresh">Rafraîchir</button>
-            </div>
+          <div class="session-section panel">
+            <h3 data-i18n="gmTitle">Mode jeu</h3>
+            <p class="muted help-text" data-i18n="sessionGmHint">—</p>
+            <div class="switch-row"><input type="checkbox" id="chkGameMode" checked /><label for="chkGameMode" data-i18n="chkGameMode">Game Mode</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkDisableBar" checked /><label for="chkDisableBar" data-i18n="chkDisableBar">Game Bar / DVR off</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkFocus" checked /><label for="chkFocus" data-i18n="chkFocus">Focus</label></div>
+            <button type="button" class="btn" id="btnApplyGm" data-i18n="btnApply">Appliquer</button>
           </div>
-        </section>
-
-        <section class="page" id="page-boost">
-          <p class="help-text" data-i18n="boostHelp">Coche ce que SoftTunes peut arrêter avant une session. Game Bar / Xbox par défaut ; Discord et OSD GPU seulement si tu coches.</p>
-          <div class="guard" data-i18n="guardBoost">Les processus stoppés ne redémarrent pas automatiquement — relance-les après la session.</div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="boostTitle">Processus ciblés</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
-            <div class="switch-row"><input type="checkbox" id="chkKillOv" checked /><label for="chkKillOv" data-i18n="chkKillOv">Game Bar et overlays Xbox</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkDiscord" /><label for="chkDiscord" data-i18n="chkDiscord">Inclure Discord</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkGpuOv" /><label for="chkGpuOv" data-i18n="chkGpuOv">Inclure overlay NVIDIA/AMD</label></div>
+          <div class="session-section panel">
+            <h3 data-i18n="visualTitle">Bureau Windows</h3>
+            <p class="muted help-text" data-i18n="sessionVisualHint">—</p>
+            <div class="switch-row"><input type="checkbox" id="chkFx" checked /><label for="chkFx" data-i18n="chkFx">Moins d'animations</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkAnim" checked /><label for="chkAnim" data-i18n="chkAnim">Animations off</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkTrans" checked /><label for="chkTrans" data-i18n="chkTrans">Transparence off</label></div>
+            <button type="button" class="btn" id="btnVisual" data-i18n="btnApply">Appliquer</button>
+          </div>
+          <div class="session-section panel">
+            <h3 data-i18n="boostTitle">Overlays</h3>
+            <p class="muted help-text" data-i18n="sessionOverlayHint">—</p>
+            <div class="guard" data-i18n="guardBoost">—</div>
+            <div class="switch-row"><input type="checkbox" id="chkKillOv" checked /><label for="chkKillOv" data-i18n="chkKillOv">Game Bar / Xbox</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkDiscord" /><label for="chkDiscord" data-i18n="chkDiscord">Discord</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkGpuOv" /><label for="chkGpuOv" data-i18n="chkGpuOv">OSD GPU</label></div>
             <p id="boostStatus" class="muted">—</p>
             <div class="btn-row">
-              <button type="button" class="btn accent" id="btnStartBoost" data-i18n="btnStartBoost">Arrêter la sélection</button>
+              <button type="button" class="btn" id="btnStartBoost" data-i18n="btnStartBoost">Arrêter sélection</button>
               <button type="button" class="btn" id="btnStopBoost" data-i18n="btnStopBoost">Relancer tout</button>
             </div>
+          </div>
+          <div class="session-section panel">
+            <h3 data-i18n="btnApplyLaunch">Raccourci jeu</h3>
+            <p class="muted help-text" data-i18n="sessionGameHint">—</p>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnFindGames" data-i18n="btnFindGames">Détecter jeux</button>
+            </div>
+            <ul class="list" id="gameList"><li class="muted">—</li></ul>
+            <ul class="list" id="profileList"><li class="muted">—</li></ul>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn accent" id="btnApplySession" data-i18n="btnApplySession">Appliquer la sélection</button>
           </div>
         </section>
 
         <section class="page" id="page-clean">
-          <p class="help-text" data-i18n="cleanHelp">Nettoie caches GPU et launchers. Les shaders se reconstruiront au prochain lancement (premier load plus long).</p>
+          <p class="help-text" data-i18n="cleanHelp">—</p>
           <div class="stats" id="cleanStats">
             <div class="stat"><div class="label" data-i18n="statTargets">Cibles</div><div class="value" id="stTargets">—</div></div>
             <div class="stat warn"><div class="label" data-i18n="statEst">Estimation</div><div class="value" id="stEst">—</div></div>
           </div>
           <div class="panel">
-            <div class="panel-head"><h3 data-i18n="cleanTitle">Caches gaming</h3><span class="risk ok" data-i18n="badgeRec">Recommandé</span></div>
+            <div class="panel-head"><h3 data-i18n="cleanTitle">Caches</h3></div>
             <div class="check-grid" id="cleanCats"></div>
             <div class="btn-row">
               <button type="button" class="btn accent" id="btnScanClean" data-i18n="btnScan">Analyser</button>
@@ -204,231 +195,123 @@
           </div>
         </section>
 
-        <section class="page" id="page-net">
-          <p class="help-text" data-i18n="netHelp">DNS rapides peuvent réduire la résolution de noms. Les tweaks TCP sont avancés et réversibles via undo / netsh.</p>
-          <div class="guard" data-i18n="guardNet">TCP = opt-in. DNS annulable via Sessions → Undo.</div>
+        <section class="page" id="page-fps">
+          <p class="help-text" data-i18n="fpsHelp">—</p>
           <div class="panel">
-            <div class="panel-head"><h3 data-i18n="netTitle">DNS & latence</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
+            <div class="panel-head"><h3 data-i18n="monitorTitle">Compteur FPS</h3></div>
+            <div class="stats" id="monitorStats">
+              <div class="stat"><div class="label">FPS</div><div class="value" id="monFps">—</div></div>
+              <div class="stat"><div class="label">Frametime</div><div class="value" id="monFt">—</div></div>
+              <div class="stat"><div class="label">App</div><div class="value" id="monApp" style="font-size:0.85rem">—</div></div>
+            </div>
+            <p id="monitorStatus" class="muted">—</p>
+            <p id="monitorHint" class="help-text" hidden></p>
+            <div class="switch-row"><input type="checkbox" id="chkFpsOverlay" /><label for="chkFpsOverlay" data-i18n="chkFpsOverlay">Overlay HUD</label></div>
+            <div id="overlayOptions" class="overlay-options">
+              <p class="help-text" data-i18n="overlayHelp">—</p>
+              <select id="selOverlayPreset">
+                <option value="minimal">Minimal</option>
+                <option value="standard">Standard</option>
+                <option value="full">Complet</option>
+              </select>
+              <select id="selOverlayLayout">
+                <option value="line">Ligne</option>
+                <option value="card">Carte</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+              <button type="button" class="btn" id="btnMonHelp" data-i18n="btnMonHelp">Aide</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-net">
+          <p class="help-text" data-i18n="netHelp">—</p>
+          <div class="panel">
+            <div class="panel-head"><h3 data-i18n="netTitle">DNS</h3></div>
             <div class="field">
               <select class="opti-select" id="dnsPreset">
                 <option value="cloudflare">Cloudflare</option>
                 <option value="google">Google</option>
                 <option value="quad9">Quad9</option>
-                <option value="dhcp">Automatique (DHCP)</option>
+                <option value="dhcp">DHCP</option>
               </select>
               <button type="button" class="btn accent" id="btnSetDns" data-i18n="btnSetDns">Appliquer DNS</button>
-              <button type="button" class="btn" id="btnFlushDns" data-i18n="btnFlushDns">Flush DNS</button>
-            </div>
-            <div class="switch-row" style="margin-top:12px"><input type="checkbox" id="chkTcp" /><label for="chkTcp" data-i18n="chkTcp">Tweaks TCP gaming (avancé)</label></div>
-            <div class="btn-row"><button type="button" class="btn" id="btnTcp" data-i18n="btnApplyTcp">Appliquer tweaks</button></div>
-          </div>
-        </section>
-
-        <section class="page" id="page-visual">
-          <p class="help-text" data-i18n="visualHelp">Passe Windows en « meilleures performances » : moins d'animations, moins de transparence. Ça allège le bureau, pas les graphismes in-game.</p>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="visualTitle">Effets Windows</h3><span class="risk ok" data-i18n="badgeRec">Recommandé</span></div>
-            <div class="switch-row"><input type="checkbox" id="chkFx" checked /><label for="chkFx" data-i18n="chkFx">Moins d'animations et de transparence</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkAnim" checked /><label for="chkAnim" data-i18n="chkAnim">Désactiver animations</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkTrans" checked /><label for="chkTrans" data-i18n="chkTrans">Désactiver transparence</label></div>
-            <div class="btn-row"><button type="button" class="btn accent" id="btnVisual" data-i18n="btnApply">Appliquer</button></div>
-          </div>
-        </section>
-
-        <section class="page" id="page-services">
-          <p class="help-text" data-i18n="svcHelp">Passe en manuel des services non essentiels au jeu. Defender, Update, audio et réseau de base sont protégés.</p>
-          <div class="guard" data-i18n="guardSvc">Services protégés jamais touchés.</div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="svcTitle">Services gaming</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
-            <div class="check-grid" id="svcList"></div>
-            <div class="btn-row">
-              <button type="button" class="btn" id="btnScanSvc" data-i18n="btnRefresh">Rafraîchir</button>
-              <button type="button" class="btn danger" id="btnApplySvc" data-i18n="btnDisableSvc">Passer en manuel</button>
+              <button type="button" class="btn" id="btnFlushDns" data-i18n="btnFlushDns">Flush</button>
             </div>
           </div>
         </section>
 
-        <section class="page" id="page-startup">
-          <p class="help-text" data-i18n="startupHelp">Moins de programmes au démarrage = boot plus rapide et RAM libre. Les entrées protégées (audio, GPU, Steam…) ne sont pas cochables.</p>
+        <section class="page" id="page-nvidia">
+          <p class="help-text" data-i18n="nvidiaHelp">—</p>
+          <div class="guard" data-i18n="guardNvidia">—</div>
           <div class="panel">
-            <div class="panel-head"><h3 data-i18n="startupTitle">Démarrage</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
-            <div class="check-grid" id="startupList"></div>
-            <div class="btn-row">
-              <button type="button" class="btn" id="btnScanStartup" data-i18n="btnRefresh">Rafraîchir</button>
-              <button type="button" class="btn danger" id="btnDisableStartup" data-i18n="btnDisableStartup">Désactiver sélection</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="page" id="page-debloat">
-          <p class="help-text" data-i18n="bloatHelp">Retire des apps Store non liées au jeu. Store, Terminal, calculatrice et identité Xbox restent protégés.</p>
-          <div class="guard" data-i18n="guardDebloat">keep-apps.txt protège le essentiel.</div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="bloatTitle">Apps détectées</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
-            <div class="check-grid" id="bloatList"></div>
-            <div class="btn-row">
-              <button type="button" class="btn accent" id="btnScanBloat" data-i18n="btnScan">Scanner</button>
-              <button type="button" class="btn danger" id="btnRemoveBloat" data-i18n="btnRemoveBloat">Supprimer sélection</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="page" id="page-timer">
-          <p class="help-text" data-i18n="timerHelp">Timer haute résolution (~1 ms) et priorités process — mode expert. MMCS gaming nécessite admin.</p>
-          <div class="guard" data-i18n="guardTimer">Mode avancé — experts. Réservé aux sessions gaming courtes.</div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="timerTitle">Timer & priorités</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
-            <div class="switch-row"><input type="checkbox" id="chkTimer" /><label for="chkTimer" data-i18n="chkTimer">Activer timer ~1 ms (opt-in)</label></div>
-            <div class="btn-row">
-              <button type="button" class="btn accent" id="btnTimer" data-i18n="btnApplyTimer">Appliquer timer</button>
-              <button type="button" class="btn" id="btnClearTimer" data-i18n="btnClearTimer">Clear timer</button>
-              <button type="button" class="btn" id="btnMmcs" data-i18n="btnMmcs">MMCS gaming</button>
-            </div>
-            <div class="field" style="margin-top:14px">
-              <input type="text" id="prioProc" data-i18n-placeholder="prioPh" placeholder="Nom process (ex. game)" />
-              <select class="opti-select" id="prioLevel">
-                <option value="AboveNormal">AboveNormal</option>
-                <option value="High" selected>High</option>
-                <option value="Normal">Normal</option>
-              </select>
-              <button type="button" class="btn" id="btnPrio" data-i18n="btnPrio">Priorité</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="page" id="page-softperf">
-          <p class="help-text" data-i18n="softPerfHelp">Réglages soft réversibles : anti-parking CPU, PCIe ASPM, accélération graphique matérielle (HAGS), Power Limit NVIDIA. Pas d'undervolt/OC matériel.</p>
-          <div class="guard" data-i18n="guardSoftPerf">Mode avancé — experts. Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.</div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="softPerfTitle">Power Limit / Soft</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
+            <div class="panel-head"><h3 data-i18n="softPerfTitle">OS soft + PL</h3></div>
             <div id="softPerfStatus" class="muted">—</div>
-            <div class="btn-row" style="margin-top:12px">
-              <button type="button" class="btn accent" id="btnSoftPerfOs" data-i18n="btnSoftPerfOs">Appliquer OS soft</button>
-              <button type="button" class="btn" id="btnSoftPerfRefresh" data-i18n="btnRefresh">Rafraîchir</button>
-              <button type="button" class="btn" id="btnSoftPerfReset" data-i18n="btnSoftPerfReset">Restaurer</button>
+            <div class="btn-row">
+              <button type="button" class="btn accent" id="btnSoftPerfOs">OS soft</button>
+              <button type="button" class="btn" id="btnSoftPerfReset">Reset</button>
+              <button type="button" class="btn" id="btnPlEco">Eco</button>
+              <button type="button" class="btn" id="btnPlStock">Stock</button>
+              <button type="button" class="btn" id="btnPlPerf">Perf</button>
             </div>
-            <div class="switch-row" style="margin-top:12px">
-              <input type="checkbox" id="chkHags" />
-              <label for="chkHags" data-i18n="chkHags">Activer HAGS (peut exiger un redémarrage)</label>
-            </div>
-            <div class="switch-row">
-              <input type="checkbox" id="chkApplyHags" />
-              <label for="chkApplyHags" data-i18n="chkApplyHags">Inclure HAGS dans « Appliquer OS soft »</label>
-            </div>
+            <div class="switch-row"><input type="checkbox" id="chkHags" /><label for="chkHags">HAGS</label></div>
+            <div class="switch-row"><input type="checkbox" id="chkApplyHags" /><label for="chkApplyHags">HAGS in OS soft</label></div>
           </div>
-          <div class="panel" id="softPerfNvidiaPanel" style="margin-top:14px">
-            <div class="panel-head"><h3 data-i18n="softPerfNvTitle">Power Limit NVIDIA</h3><span class="risk optin" data-i18n="badgeOptin">Opt-in</span></div>
-            <p class="help-text" id="softPerfNvHelp" data-i18n="softPerfNvHelp">Eco ≈ −10 %, Perf soft ≈ +5 %, toujours dans les limites carte. Stock = valeur mémorisée / défaut.</p>
-            <div id="softPerfNvStatus" class="muted">—</div>
-            <div class="btn-row" style="margin-top:12px">
-              <button type="button" class="btn" id="btnPlEco" data-i18n="btnPlEco">Eco soft</button>
-              <button type="button" class="btn" id="btnPlStock" data-i18n="btnPlStock">Stock</button>
-              <button type="button" class="btn accent" id="btnPlPerf" data-i18n="btnPlPerf">Perf soft</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="page" id="page-softoc">
-          <p class="help-text" data-i18n="softOcHelp">Soft OC NVIDIA : verrouillage clocks borné (+0 / +50 / +100 MHz). Pas d’undervolt. Afterburner pour les courbes UV.</p>
-          <div class="guard" data-i18n="guardSoftOc">Soft OC ≠ undervolt. Jamais au-delà des limites nvidia-smi. Stabilité = responsabilité utilisateur.</div>
           <div class="panel">
-            <div class="panel-head"><h3 data-i18n="softOcTitle">Soft OC NVIDIA</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
+            <div class="panel-head"><h3 data-i18n="softOcTitle">Verrous horloge</h3></div>
             <div id="softOcStatus" class="muted">—</div>
-            <div class="btn-row" style="margin-top:12px">
-              <button type="button" class="btn" id="btnOcStock" data-i18n="btnOcStock">Reset clocks</button>
-              <button type="button" class="btn" id="btnOc50" data-i18n="btnOc50">+50 MHz</button>
-              <button type="button" class="btn accent" id="btnOc100" data-i18n="btnOc100">+100 MHz</button>
-              <button type="button" class="btn" id="btnOcRefresh" data-i18n="btnRefresh">Rafraîchir</button>
+            <div class="btn-row">
+              <button type="button" class="btn" id="btnOcStock">Reset</button>
+              <button type="button" class="btn" id="btnOc50">+50</button>
+              <button type="button" class="btn accent" id="btnOc100">+100</button>
             </div>
           </div>
-          <div class="panel" style="margin-top:14px">
-            <div class="panel-head"><h3 data-i18n="afterburnerTitle">Undervolt (externe)</h3><span class="risk warn" data-i18n="badgeOptin">Opt-in</span></div>
-            <p class="help-text" data-i18n="afterburnerHelp">Pour un vrai undervolt, utilisez MSI Afterburner. SoftTunes peut seulement l'ouvrir s'il est installé.</p>
+          <div class="panel">
+            <div class="panel-head"><h3 data-i18n="afterburnerTitle">Afterburner</h3></div>
             <div id="afterburnerStatus" class="muted">—</div>
-            <div class="btn-row" style="margin-top:12px">
-              <button type="button" class="btn accent" id="btnOpenAfterburner" data-i18n="btnOpenAfterburner">Ouvrir Afterburner</button>
-              <button type="button" class="btn" id="btnAfterburnerDl" data-i18n="btnAfterburnerDl">Page téléchargement</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="page" id="page-monitor">
-          <p class="help-text" data-i18n="monitorHelp">FPS / frametime mesurés nativement (PresentMon). Lancez un jeu au premier plan.</p>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="monitorTitle">Monitor FPS</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
-            <div class="stats" id="monitorStats">
-              <div class="stat"><div class="label">FPS</div><div class="value" id="monFps">—</div></div>
-              <div class="stat"><div class="label">Frametime</div><div class="value" id="monFt">—</div></div>
-              <div class="stat"><div class="label" data-i18n="monitorApp">App</div><div class="value" id="monApp" style="font-size:0.85rem">—</div></div>
-            </div>
-            <p id="monitorStatus" class="muted">—</p>
-            <p id="monitorHint" class="muted help-text" hidden></p>
-            <div class="switch-row" style="margin-top:12px">
-              <input type="checkbox" id="chkFpsOverlay" />
-              <label for="chkFpsOverlay" data-i18n="chkFpsOverlay">Overlay FPS léger (déplaçable, toujours visible)</label>
-            </div>
-            <div id="overlayOptions" class="overlay-options" style="margin-top:10px">
-              <p class="help-text" data-i18n="overlayHelp">Petit HUD — glissez SoftTunes pour déplacer. Layout et métriques mémorisés.</p>
-              <div class="switch-row" style="margin-top:8px">
-                <label for="selOverlayPreset" data-i18n="overlayPreset">Préréglage overlay</label>
-                <select id="selOverlayPreset" style="margin-left:8px">
-                  <option value="minimal" data-i18n="overlayPresetMinimal">Minimal (FPS)</option>
-                  <option value="standard" data-i18n="overlayPresetStandard">Standard</option>
-                  <option value="full" data-i18n="overlayPresetFull">Complet</option>
-                </select>
-              </div>
-              <div class="switch-row" style="margin-top:8px">
-                <label for="selOverlayLayout" data-i18n="overlayLayout">Layout</label>
-                <select id="selOverlayLayout" style="margin-left:8px">
-                  <option value="line" data-i18n="overlayLayoutLine">Ligne</option>
-                  <option value="card" data-i18n="overlayLayoutCard">Carte</option>
-                </select>
-              </div>
-              <div class="overlay-metrics" style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px">
-                <label class="switch-row"><input type="checkbox" id="chkOvBrand" data-ov="brand" checked /><span data-i18n="ovBrand">Brand</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvFps" data-ov="fps" checked /><span>FPS</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvFt" data-ov="frametime" checked /><span>Frametime</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvOpl" data-ov="onePercentLow" checked /><span data-i18n="ovOpl">1% low</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvApp" data-ov="app" checked /><span data-i18n="ovApp">App</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvCpu" data-ov="cpu" checked /><span data-i18n="ovCpu">CPU %</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvCpuTemp" data-ov="cpuTemp" checked /><span data-i18n="ovCpuTemp">CPU °C</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvGpu" data-ov="gpu" checked /><span data-i18n="ovGpu">GPU %</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvGpuTemp" data-ov="gpuTemp" checked /><span data-i18n="ovGpuTemp">GPU °C</span></label>
-                <label class="switch-row"><input type="checkbox" id="chkOvRam" data-ov="ram" checked /><span data-i18n="ovRam">RAM %</span></label>
-              </div>
-            </div>
             <div class="btn-row">
-              <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
-              <button type="button" class="btn" id="btnMonHelp" data-i18n="btnMonHelp">Aide capture FPS</button>
+              <button type="button" class="btn accent" id="btnOpenAfterburner">Ouvrir</button>
+              <button type="button" class="btn" id="btnAfterburnerDl">Téléchargement</button>
             </div>
           </div>
         </section>
 
-        <section class="page" id="page-profiles">
-          <p class="help-text" data-i18n="profilesHelp">Détecte des jeux Steam/Epic, enregistre un profil (power + Game Mode + boost) et lance le jeu.</p>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="profilesTitle">Profils par jeu</h3><span class="risk ok" data-i18n="badgeRec">Recommandé</span></div>
-            <div class="btn-row">
-              <button type="button" class="btn accent" id="btnFindGames" data-i18n="btnFindGames">Détecter jeux</button>
-              <button type="button" class="btn" id="btnRefreshProfiles" data-i18n="btnRefresh">Rafraîchir profils</button>
-            </div>
-            <ul class="list" id="gameList"><li class="muted" data-i18n="emptyGames">Détecte des jeux Steam/Epic…</li></ul>
-            <h3 style="margin-top:14px" data-i18n="savedProfiles">Profils enregistrés</h3>
-            <ul class="list" id="profileList"><li class="muted">—</li></ul>
+        <section class="page" id="page-background">
+          <p class="help-text" data-i18n="backgroundHelp">—</p>
+          <div class="bg-tabs">
+            <button type="button" class="bg-tab active" data-bg-tab="services" data-i18n="bgTabServices">Services</button>
+            <button type="button" class="bg-tab" data-bg-tab="startup" data-i18n="bgTabStartup">Démarrage</button>
           </div>
-        </section>
-
-        <section class="page" id="page-tips">
-          <p class="help-text" data-i18n="tipsHelp">Conseils pédagogiques — pas de promesse « boost x4 ». Comprendre stutter, overlays, anti-cheat.</p>
-          <div id="tipsList" class="tips-list"></div>
+          <div class="bg-pane active" id="bgPaneServices">
+            <div class="panel">
+              <h3 data-i18n="svcTitle">Services</h3>
+              <div class="check-grid" id="svcList"></div>
+              <div class="btn-row">
+                <button type="button" class="btn" id="btnScanSvc" data-i18n="btnRefresh">Rafraîchir</button>
+                <button type="button" class="btn danger" id="btnApplySvc" data-i18n="btnDisableSvc">Manuel</button>
+              </div>
+            </div>
+          </div>
+          <div class="bg-pane" id="bgPaneStartup">
+            <div class="panel">
+              <h3 data-i18n="startupTitle">Démarrage</h3>
+              <div class="check-grid" id="startupList"></div>
+              <div class="btn-row">
+                <button type="button" class="btn" id="btnScanStartup" data-i18n="btnRefresh">Rafraîchir</button>
+                <button type="button" class="btn danger" id="btnDisableStartup" data-i18n="btnDisableStartup">Désactiver</button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="page" id="page-sessions">
-          <p class="help-text" data-i18n="historyHelp">Historique des actions et snapshots Undo pour revenir en arrière.</p>
+          <p class="help-text" data-i18n="historyHelp">—</p>
           <div class="panel">
             <h3 data-i18n="historyTitle">Historique</h3>
             <ul class="list" id="sessionList"><li class="muted">—</li></ul>
-            <div class="btn-row"><button type="button" class="btn" id="btnRefreshSessions" data-i18n="btnRefresh">Rafraîchir</button></div>
+            <button type="button" class="btn" id="btnRefreshSessions" data-i18n="btnRefresh">Rafraîchir</button>
           </div>
           <div class="panel">
             <h3 data-i18n="undoTitle">Undo</h3>
@@ -441,32 +324,26 @@
             <img class="about-logo" src="logo-opti.png" width="72" height="72" alt="SoftTunes" />
             <div>
               <h3>SoftTunes</h3>
-              <p data-i18n="tagline">Prépare Windows pour jouer · mesures FPS</p>
-              <p class="muted" id="aboutVersion">v1.6.0 · version finale</p>
+              <p data-i18n="tagline">—</p>
+              <p class="muted" id="aboutVersion">v1.7.0</p>
             </div>
           </div>
-          <div class="about-portrait-wrap">
-            <img src="about-portrait.png" alt="Mr-Aurevo-X" class="about-portrait" />
-            <p class="copyright" data-i18n="aboutCopyright">© 2026 Mr-Aurevo-X · Logiciel indépendant · 100 % gratuit · version finale · 100 % local</p>
+          <div class="panel">
+            <p data-i18n="aboutDisclaimer">—</p>
+            <button type="button" class="btn ghost" id="btnHonestyReminder" data-i18n="honestyReminder">Rappel FPS</button>
           </div>
           <div class="panel">
-            <h3 data-i18n="legalDisclaimer">Avertissement</h3>
-            <p data-i18n="aboutDisclaimer">Logiciel indépendant, 100 % gratuit, version finale complète. Aucune garantie de FPS. Point de restauration recommandé. Options avancées = responsabilité utilisateur. Pas de mise à jour automatique.</p>
+            <h3 data-i18n="smartTitle">SmartScreen</h3>
+            <p data-i18n="smartHelp">—</p>
           </div>
           <div class="panel">
-            <h3 data-i18n="smartTitle">Windows SmartScreen</h3>
-            <p data-i18n="smartHelp">Sans certificat payant, Windows peut afficher un avertissement. « Informations complémentaires » puis « Exécuter quand même ». SoftTunes est un outil local indépendant, sans collecte.</p>
-          </div>
-          <div class="panel">
-            <h3 data-i18n="legalTitle">Documents légaux</h3>
+            <h3 data-i18n="legalTitle">Légal</h3>
             <div class="legal-tabs">
-              <button type="button" class="legal-tab active" data-doc="terms" data-i18n="legalTerms">CGU / ToS</button>
-              <button type="button" class="legal-tab" data-doc="privacy" data-i18n="legalPrivacy">Confidentialité</button>
+              <button type="button" class="legal-tab active" data-doc="terms" data-i18n="legalTerms">CGU</button>
+              <button type="button" class="legal-tab" data-doc="privacy" data-i18n="legalPrivacy">Privacy</button>
               <button type="button" class="legal-tab" data-doc="disclaimer" data-i18n="legalDisclaimer">Disclaimer</button>
             </div>
-            <div class="legal-frame-wrap">
-              <iframe id="legalFrame" class="legal-frame" title="Legal"></iframe>
-            </div>
+            <iframe id="legalFrame" class="legal-frame" title="Legal"></iframe>
           </div>
         </section>
       </div>
@@ -476,7 +353,7 @@
       <div class="console-head">
         <span data-i18n="consoleTitle">Console</span>
         <span class="progress-label" id="progLabel"></span>
-        <button type="button" class="btn ghost" id="btnCancel" style="height:28px;font-size:0.75rem" data-i18n="btnCancel">Annuler</button>
+        <button type="button" class="btn ghost" id="btnCancel" data-i18n="btnCancel">Annuler</button>
       </div>
       <div class="progress determinate" id="prog"><i id="progBar"></i></div>
       <pre id="log"></pre>
@@ -484,6 +361,8 @@
   </div>
   <script src="suite-boot.js"></script>
   <script src="vendor/pc-command-kit/components/tool-chrome.js"></script>
+  <script src="i18n.js"></script>
+  <script src="bridge.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

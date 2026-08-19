@@ -2,7 +2,18 @@
 
 # SoftTunes
 
-Préparation de session Windows **indépendante** et **gratuite** (v1.6.0, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+Préparation de session Windows **indépendante** et **gratuite** (v1.7.0, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+
+## Important
+
+> **SoftTunes ne promet aucun gain de FPS.** Ce n’est pas un « booster +500 FPS ». L’app prépare Windows pour une session (plan d’alimentation, Game Mode, bureau allégé, overlays) et **mesure** le FPS via PresentMon. Toute variation de frames dépend du jeu, du matériel et de vos réglages in-game.
+
+| Fait | Ne fait pas |
+|------|-------------|
+| Plan perf, Game Mode, visuel bureau | Garantir +XXX FPS |
+| Fermer overlays (opt-in) | Remplacer GPU / undervolt sérieux |
+| Mesurer FPS / frametime | Téléchargement auto de mises à jour |
+| Undo / sessions | Optimiser les graphismes in-game |
 
 Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
 
