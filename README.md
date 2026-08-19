@@ -29,16 +29,16 @@ Préparation de session Windows **indépendante** et **gratuite** (v1.7.0, nom p
 
 | Chemin | Rôle |
 |--------|------|
-| **`Dev Central Tree\Opti\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
+| **`Dev Central Tree\03_Standalones\Opti\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
 | **`Dev Central Tree\builds\Opti\`** | Distribution / setup (`OptiSetup.exe`, copies runtime) |
 
-Opti n’est **pas** un outil Suite. Le canal Releases `PCCommand-Releases` le livre en pack `Opti.zip` (Install-Easy). **Nom affiché : SoftTunes.**
+Opti n’est **pas** un outil Suite. **Ship :** `Opti.zip` sur les [Releases de ce repo](https://github.com/Mr-Aurevo-X/Opti/releases). **Nom affiché : SoftTunes.**
 
 ## Lancer
 
-- Install-Easy : pack Opti → `%LOCALAPPDATA%\OptiBy-Mr-Aurevo-X`
-- Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
+- Portable : zip de release → extraire, garder `_internal` à côté de `Opti.exe`
 - Dev : `Lancer.cmd` à la racine de ce repo
+- Ancien chemin Install-Easy (`%LOCALAPPDATA%\OptiBy-Mr-Aurevo-X`) : obsolète — réinstaller depuis la release Opti
 
 Windows peut afficher « potentiellement dangereux » : les binaires ne sont pas signés Authenticode (pas de certificat éditeur payant). C’est un avertissement de réputation SmartScreen, pas un verdict antivirus.
 
