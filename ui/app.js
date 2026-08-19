@@ -27,7 +27,20 @@
       dashMonitorHint: "FPS en direct + overlay HUD → Mode avancé · Monitor FPS",
       navGroupEssentials: "Essentiels",
       navGroupTools: "Outils",
-      navGroupAdvanced: "Avancé",
+      navGroupAdvanced: "Avancé — experts",
+      navGroupHistory: "Historique",
+      navGroupLegal: "Légal",
+      btnLang: "English",
+      overlayPreset: "Préréglage overlay",
+      overlayPresetMinimal: "Minimal (FPS)",
+      overlayPresetStandard: "Standard",
+      overlayPresetFull: "Complet",
+      presetActionPower: "Plan d'alimentation hautes performances",
+      presetActionGameMode: "Game Mode activé · Game Bar/DVR off",
+      presetActionVisual: "Effets visuels optimisés pour le jeu",
+      presetActionBoost: "Session boost (overlays Xbox / Game Bar)",
+      presetConfirmTitle: "Appliquer « Optimiser pour jouer » ?",
+      presetConfirmBody: "Actions prévues :\n• Plan hautes performances\n• Game Mode + Focus\n• Effets visuels gaming\n• Session boost (overlays Xbox)\n\nRéversible via Sessions / Undo.",
       navSoftOc: "Soft OC",
       navMonitor: "Monitor FPS",
       softOcTitle: "Soft OC NVIDIA",
@@ -83,17 +96,17 @@
       adminNo: "Sans admin",
 
       navDash: "Dashboard",
-      navPower: "Power",
-      navGameMode: "Game Mode",
-      navBoost: "Boost",
+      navPower: "Énergie",
+      navGameMode: "Mode jeu",
+      navBoost: "Session boost",
       navSoftPerf: "Power Limit / Soft",
-      navTimer: "Timer / Prio",
-      navClean: "Cleanup",
+      navTimer: "Timer / Priorité",
+      navClean: "Nettoyage",
       navNet: "Réseau",
       navVisual: "Visuel",
-      navServices: "Services",
+      navServices: "Services Windows",
       navStartup: "Démarrage",
-      navDebloat: "Debloat",
+      navDebloat: "Apps inutiles",
       navProfiles: "Profils jeu",
       navSessions: "Sessions",
       navAbout: "À propos",
@@ -126,11 +139,11 @@
       btnPlPerf: "Perf soft",
       btnFindGames: "Détecter jeux",
       btnCancel: "Annuler",
-      softPerfTitle: "Power Limit / Soft",
-      softPerfHelp: "Réglages soft réversibles : anti-parking CPU, PCIe ASPM, HAGS, Power Limit NVIDIA. Pas d’undervolt/OC matériel.",
+      softPerfTitle: "Power Limit / Soft OS",
+      softPerfHelp: "Réglages soft réversibles : anti-parking CPU, PCIe ASPM, accélération graphique matérielle (HAGS), Power Limit NVIDIA. Pas d'undervolt/OC matériel.",
       softPerfNvTitle: "Power Limit NVIDIA",
       softPerfNvHelp: "Eco ≈ −10 %, Perf soft ≈ +5 %, toujours dans les limites carte. Stock = valeur mémorisée / défaut.",
-      chkHags: "Activer HAGS (peut exiger un redémarrage)",
+      chkHags: "Activer HAGS — accélération graphique matérielle (redémarrage possible)",
       chkApplyHags: "Inclure HAGS dans « Appliquer OS soft »",
       guardSoftPerf: "Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.",
 
@@ -207,7 +220,20 @@
       dashMonitorHint: "Live FPS + HUD overlay → Advanced mode · FPS Monitor",
       navGroupEssentials: "Essentials",
       navGroupTools: "Tools",
-      navGroupAdvanced: "Advanced",
+      navGroupAdvanced: "Advanced — experts",
+      navGroupHistory: "History",
+      navGroupLegal: "Legal",
+      btnLang: "Français",
+      overlayPreset: "Overlay preset",
+      overlayPresetMinimal: "Minimal (FPS)",
+      overlayPresetStandard: "Standard",
+      overlayPresetFull: "Full",
+      presetActionPower: "High performance power plan",
+      presetActionGameMode: "Game Mode on · Game Bar/DVR off",
+      presetActionVisual: "Visual effects tuned for gaming",
+      presetActionBoost: "Boost session (Xbox / Game Bar overlays)",
+      presetConfirmTitle: "Apply “Optimize for gaming”?",
+      presetConfirmBody: "Planned actions:\n• High performance power\n• Game Mode + Focus\n• Gaming visual effects\n• Boost session (Xbox overlays)\n\nReversible via Sessions / Undo.",
       navSoftOc: "Soft OC",
       navMonitor: "FPS Monitor",
       softOcTitle: "NVIDIA Soft OC",
@@ -265,15 +291,15 @@
       navDash: "Dashboard",
       navPower: "Power",
       navGameMode: "Game Mode",
-      navBoost: "Boost",
+      navBoost: "Boost session",
       navSoftPerf: "Power Limit / Soft",
-      navTimer: "Timer / Prio",
+      navTimer: "Timer / Priority",
       navClean: "Cleanup",
       navNet: "Network",
       navVisual: "Visual",
-      navServices: "Services",
+      navServices: "Windows services",
       navStartup: "Startup",
-      navDebloat: "Debloat",
+      navDebloat: "Bloat apps",
       navProfiles: "Game profiles",
       navSessions: "Sessions",
       navAbout: "About",
@@ -317,7 +343,7 @@
       softPerfHelp: "Reversible soft tweaks: CPU anti-parking, PCIe ASPM, HAGS, NVIDIA Power Limit. Not hardware undervolt/OC.",
       softPerfNvTitle: "NVIDIA Power Limit",
       softPerfNvHelp: "Eco ≈ −10%, Perf soft ≈ +5%, always within board limits. Stock = remembered / default value.",
-      chkHags: "Enable HAGS (may require reboot)",
+      chkHags: "Enable HAGS — hardware-accelerated GPU scheduling (reboot may be required)",
       chkApplyHags: "Include HAGS in “Apply soft OS”",
       guardSoftPerf: "Not hardware undervolt/OC. Soft NVIDIA PL only (board min/max). AMD: use Adrenalin manually.",
       cleanTitle: "Gaming caches",
@@ -515,9 +541,31 @@
   }
 
   function applyI18n() {
+    const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+    document.documentElement.lang = lang === "en" ? "en" : "fr";
     if (window.MrAurevoXSuite) {
       window.MrAurevoXSuite.applyI18n(lang, SUITE_I18N);
+    } else {
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.getAttribute("data-i18n");
+        if (key && pack[key]) el.textContent = pack[key];
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (key && pack[key]) el.placeholder = pack[key];
+      });
     }
+    const btnLang = $("#btnLang");
+    if (btnLang && pack.btnLang) btnLang.textContent = pack.btnLang;
+  }
+
+  function setLang(next) {
+    if (next !== "fr" && next !== "en") return;
+    lang = next;
+    try { localStorage.setItem("opti-lang", lang); } catch (_) {}
+    applyI18n();
+    const aboutVer = $("#aboutVersion");
+    if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${lang === "en" ? "final version" : "version finale"}`;
   }
 
   function showPage(page) {
@@ -776,6 +824,44 @@
     };
   }
 
+  const OVERLAY_PRESETS = {
+    minimal: {
+      layout: "line",
+      show: {
+        brand: false, fps: true, frametime: false, onePercentLow: false,
+        app: false, cpu: false, cpuTemp: false, gpu: false, gpuTemp: false, ram: false
+      }
+    },
+    standard: {
+      layout: "line",
+      show: {
+        brand: false, fps: true, frametime: true, onePercentLow: true,
+        app: true, cpu: false, cpuTemp: false, gpu: true, gpuTemp: false, ram: false
+      }
+    },
+    full: null
+  };
+
+  function applyOverlayPreset(name) {
+    const preset = name === "full" ? defaultOverlayConfig() : OVERLAY_PRESETS[name];
+    if (!preset) return;
+    applyOverlayConfigToForm(preset);
+    persistOverlayConfig().catch(() => {});
+  }
+
+  function guessOverlayPreset(cfg) {
+    if (!cfg || !cfg.show) return "full";
+    const show = cfg.show;
+    if (show.fps && !show.frametime && !show.app && !show.cpu && !show.gpu) return "minimal";
+    if (show.fps && show.frametime && show.app && show.gpu && !show.cpuTemp && !show.gpuTemp && !show.ram) return "standard";
+    return "full";
+  }
+
+  function confirmGamingPreset() {
+    const pack = SUITE_I18N[lang] || SUITE_I18N.fr;
+    return window.confirm((pack.presetConfirmTitle || "Preset") + "\n\n" + (pack.presetConfirmBody || ""));
+  }
+
   function collectOverlayConfigFromForm() {
     const cfg = defaultOverlayConfig();
     const sel = $("#selOverlayLayout");
@@ -828,6 +914,8 @@
       } catch (_) {}
     }
     applyOverlayConfigToForm(cfg);
+    const selPreset = $("#selOverlayPreset");
+    if (selPreset) selPreset.value = guessOverlayPreset(cfg);
     return cfg;
   }
 
@@ -1098,6 +1186,7 @@
 
     $("#btnHealthRefresh").addEventListener("click", () => refreshHealth().catch((e) => log(e.message, "err")));
     $("#btnPreset").addEventListener("click", async () => {
+      if (!confirmGamingPreset()) return;
       try {
         const r = await runJob("applyGamingPreset", {});
         log(r.Message || "Preset OK", "ok");
@@ -1422,9 +1511,22 @@
     }
     document.querySelectorAll("[data-ov]").forEach((el) => {
       el.addEventListener("change", () => {
+        const selPreset = $("#selOverlayPreset");
+        if (selPreset) selPreset.value = "full";
         persistOverlayConfig().catch((e) => log(e.message, "err"));
       });
     });
+    const selPreset = $("#selOverlayPreset");
+    if (selPreset) {
+      selPreset.addEventListener("change", () => {
+        applyOverlayPreset(selPreset.value);
+      });
+    }
+
+    const btnLang = $("#btnLang");
+    if (btnLang) {
+      btnLang.addEventListener("click", () => setLang(lang === "fr" ? "en" : "fr"));
+    }
 
 
     $("#btnPrio").addEventListener("click", async () => {

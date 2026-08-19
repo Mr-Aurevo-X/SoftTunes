@@ -46,6 +46,7 @@
         <span data-i18n="modeAdvanced">Mode avancé</span>
       </label>
       <p class="mode-hint muted" data-i18n="modeAdvancedHint">Révèle : Power Limit, Soft OC, Monitor, Timer, Services, Debloat</p>
+      <button type="button" class="btn ghost" id="btnLang" style="width:100%;margin:0 0 10px" data-i18n="btnLang">English</button>
       <button type="button" class="btn" id="btnElevate" data-i18n="btnElevate" style="width:100%;margin:6px 0 10px">Élever (admin)</button>
 
       <nav class="nav" id="nav">
@@ -105,6 +106,12 @@
               <h3 id="scoreGradeLabel" data-i18n="scoreLabel">Score de préparation</h3>
               <p id="scoreGradeText" class="score-grade">—</p>
               <p data-i18n="dashHelp">Un clic applique le preset recommandé : power, Game Mode, effets, boost overlays. Score = préparation, pas un FPS.</p>
+              <ul class="preset-summary" id="presetSummary" aria-label="Preset actions">
+                <li data-i18n="presetActionPower">Plan d'alimentation hautes performances</li>
+                <li data-i18n="presetActionGameMode">Game Mode activé · Game Bar/DVR off</li>
+                <li data-i18n="presetActionVisual">Effets visuels optimisés pour le jeu</li>
+                <li data-i18n="presetActionBoost">Session boost (overlays Xbox / Game Bar)</li>
+              </ul>
               <div class="badge-row" id="dashBadges"></div>
               <div class="btn-row">
                 <button type="button" class="btn accent" id="btnPreset" data-i18n="btnPreset">Optimiser pour jouer</button>
@@ -265,8 +272,8 @@
         </section>
 
         <section class="page" id="page-timer">
-          <p class="help-text" data-i18n="timerHelp">Timer ~1 ms et priorités process sont agressifs (batterie, thermiques, anti-cheat). MMCS nécessite admin.</p>
-          <div class="guard" data-i18n="guardTimer">Réservé aux sessions gaming courtes.</div>
+          <p class="help-text" data-i18n="timerHelp">Timer haute résolution (~1 ms) et priorités process — mode expert. MMCS gaming nécessite admin.</p>
+          <div class="guard" data-i18n="guardTimer">Mode avancé — experts. Réservé aux sessions gaming courtes.</div>
           <div class="panel">
             <div class="panel-head"><h3 data-i18n="timerTitle">Timer & priorités</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
             <div class="switch-row"><input type="checkbox" id="chkTimer" /><label for="chkTimer" data-i18n="chkTimer">Activer timer ~1 ms (opt-in)</label></div>
@@ -288,8 +295,8 @@
         </section>
 
         <section class="page" id="page-softperf">
-          <p class="help-text" data-i18n="softPerfHelp">Réglages soft réversibles : anti-parking CPU, PCIe ASPM, HAGS, Power Limit NVIDIA. Pas d’undervolt/OC matériel.</p>
-          <div class="guard" data-i18n="guardSoftPerf">Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.</div>
+          <p class="help-text" data-i18n="softPerfHelp">Réglages soft réversibles : anti-parking CPU, PCIe ASPM, accélération graphique matérielle (HAGS), Power Limit NVIDIA. Pas d'undervolt/OC matériel.</p>
+          <div class="guard" data-i18n="guardSoftPerf">Mode avancé — experts. Pas un undervolt/OC matériel. PL NVIDIA soft uniquement (borné min/max carte). AMD : Adrenalin manuellement.</div>
           <div class="panel">
             <div class="panel-head"><h3 data-i18n="softPerfTitle">Power Limit / Soft</h3><span class="risk adv" data-i18n="badgeAdv">Avancé</span></div>
             <div id="softPerfStatus" class="muted">—</div>
@@ -361,6 +368,14 @@
             <div id="overlayOptions" class="overlay-options" style="margin-top:10px">
               <p class="help-text" data-i18n="overlayHelp">Petit HUD — glissez Opti pour déplacer. Layout et métriques mémorisés.</p>
               <div class="switch-row" style="margin-top:8px">
+                <label for="selOverlayPreset" data-i18n="overlayPreset">Préréglage overlay</label>
+                <select id="selOverlayPreset" style="margin-left:8px">
+                  <option value="minimal" data-i18n="overlayPresetMinimal">Minimal (FPS)</option>
+                  <option value="standard" data-i18n="overlayPresetStandard">Standard</option>
+                  <option value="full" data-i18n="overlayPresetFull">Complet</option>
+                </select>
+              </div>
+              <div class="switch-row" style="margin-top:8px">
                 <label for="selOverlayLayout" data-i18n="overlayLayout">Layout</label>
                 <select id="selOverlayLayout" style="margin-left:8px">
                   <option value="line" data-i18n="overlayLayoutLine">Ligne</option>
@@ -425,7 +440,7 @@
             <div>
               <h3>Opti</h3>
               <p data-i18n="tagline">Optimiseur PC gaming · indépendant · 100 % gratuit</p>
-              <p class="muted" id="aboutVersion">v1.3.1 · version finale</p>
+              <p class="muted" id="aboutVersion">v1.6.0 · version finale</p>
             </div>
           </div>
           <div class="about-portrait-wrap">

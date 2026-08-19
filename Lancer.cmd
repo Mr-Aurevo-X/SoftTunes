@@ -16,13 +16,13 @@ if errorlevel 1 (
   exit /b 1
 )
 
-if exist "%~dp0host\host.py" (
-  python "%~dp0host\host.py" %*
+if exist "%~dp0host\opti_host.py" (
+  python "%~dp0host\opti_host.py" %*
   endlocal
   exit /b %ERRORLEVEL%
 )
 
-echo [ERROR] Ni Opti.exe ni host\host.py.
+echo [ERROR] Ni Opti.exe ni host\opti_host.py.
 pause
 endlocal
 exit /b 1

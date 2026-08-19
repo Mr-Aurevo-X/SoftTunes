@@ -10,7 +10,7 @@ from pathlib import Path
 
 APP_NAME = "Opti"
 PUBLISHER = "Mr-Aurevo-X"
-VERSION = "1.3.3"
+VERSION = "1.6.0"
 
 
 def bundle_dir() -> Path:
@@ -36,7 +36,7 @@ def bundle_dir() -> Path:
 
 def install_root() -> Path:
     local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    return Path(local) / "Programs" / "Opti"
+    return Path(local) / "Programs" / "OptiBy-Mr-Aurevo-X"
 
 
 def create_shortcut(lnk_path: Path, target: Path, workdir: Path, icon: Path | None = None) -> None:
