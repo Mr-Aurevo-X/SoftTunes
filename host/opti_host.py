@@ -528,7 +528,7 @@ def main() -> None:
         raise SystemExit(f"UI introuvable: {index}")
 
     api = Api(root)
-    ver = "1.4.1"
+    ver = "1.6.0"
     try:
         vf = root / "version.json"
         if vf.is_file():

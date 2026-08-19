@@ -1,12 +1,12 @@
 ﻿# Opti
 
-Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.4.1).
+Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale complète** (v1.6.0).
 
-Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite d’outils Mr-Aurevo-X / Launcher.
+Éditeur : Mr-Aurevo-X (copyright). Opti **n’appartient pas** à la suite d’outils Mr-Aurevo-X / PC Command.
 
 - Traitement 100 % local — aucune collecte
 - Pas de mise à jour automatique in-app
-- Install : `OptiSetup.exe` → `%LOCALAPPDATA%\Programs\Opti\`
+- Install / mises à jour : **Install-Easy** → `Opti.zip` sur `Mr-Aurevo-X/PCCommand-Releases`
 - Mode Avancé : **Power Limit / Soft**, **Soft OC** (clocks NVIDIA bornés), **Monitor FPS** (PresentMon intégré, sans RTSS) + **overlay HUD** léger (toujours visible, clic traversant)
 
 ## Emplacement (Dev Central Tree)
@@ -16,13 +16,13 @@ Optimiseur PC gaming **indépendant**, **100 % gratuit**, **version finale compl
 | **`Dev Central Tree\Opti\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
 | **`Dev Central Tree\builds\Opti\`** | Distribution / setup (`OptiSetup.exe`, copies runtime) |
 
-Opti n’est **pas** un outil Suite. Le Launcher et les scripts de release l’excluent du catalogue hub.
+Opti n’est **pas** un outil Suite. Le canal Releases `PCCommand-Releases` le livre en pack `Opti.zip` (Install-Easy).
 
 ## Lancer
 
-- Installateur : `OptiSetup.exe` (ou sous `..\builds\Opti\`)
+- Install-Easy : pack Opti → `%LOCALAPPDATA%\MrAurevoX-Opti`
 - Portable (onedir) : `Opti-dist\Opti.exe` — le dossier `_internal` doit rester à côté de l’exe (ne pas déplacer l’exe seul).
-- Dev : `Opti.exe` à la racine de ce repo après build
+- Dev : `Lancer.cmd` à la racine de ce repo
 
 Dev :
 
@@ -42,4 +42,4 @@ tools\build_setup.bat
 
 ## Sync GitHub
 
-Les modifications se font ici (`Dev Central Tree\Opti`), puis `git push` vers https://github.com/Mr-Aurevo-X/Opti (sauvegarde). L’app installée chez l’utilisateur ne se met pas à jour seule.
+Les modifications se font ici (`Dev Central Tree\Opti`), puis `git push` vers https://github.com/Mr-Aurevo-X/Opti. Les mises à jour utilisateur passent par **Install-Easy** / `Opti.zip` sur **PCCommand-Releases** (pas d’auto-update in-app).
