@@ -19,7 +19,7 @@ from typing import Any
 _ALLOWED_API_HOSTS = frozenset({"api.github.com"})
 _ALLOWED_RELEASE_HOSTS = frozenset({"github.com", "www.github.com"})
 _ALLOWED_RELEASE_ORGS = frozenset({"mr-aurevo-x"})
-_ALLOWED_REPOS = frozenset({"Mr-Aurevo-X/Opti"})
+_ALLOWED_REPOS = frozenset({"Mr-Aurevo-X/SoftTunes"})
 
 
 def normalize_version(raw: str | None) -> str:

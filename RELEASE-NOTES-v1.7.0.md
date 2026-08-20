@@ -1,6 +1,6 @@
 # SoftTunes 1.7.0 — simplification (utile, pas théâtre)
 
-**Product display name:** SoftTunes · **Repo/binary:** Opti / `Opti.exe`
+**Product display name:** SoftTunes · **Repo:** `Mr-Aurevo-X/SoftTunes` · binary build: `Opti.exe`
 
 ## Highlights
 
@@ -18,7 +18,8 @@ Timer/Prio/MMCS · Debloat · TCP gaming tweaks · score breakdown · separate p
 
 ## Install
 
-- Portable: `Opti.zip` on [this repo's Releases](https://github.com/Mr-Aurevo-X/Opti/releases)
+- Portable: `SoftTunes.zip` on [this repo's Releases](https://github.com/Mr-Aurevo-X/SoftTunes/releases)
+- Install: `%LOCALAPPDATA%\Programs\SoftTunes` · data: `%LOCALAPPDATA%\SoftTunes`
 - Dev: `Lancer.cmd` in this repo
 
 ## Commit

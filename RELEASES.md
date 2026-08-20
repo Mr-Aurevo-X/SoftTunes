@@ -2,7 +2,7 @@
 
 Binaries ship through **this repository's** GitHub Releases (same remote as sources).
 
-- SoftTunes / Opti: `https://github.com/Mr-Aurevo-X/Opti/releases` — asset `Opti.zip`
-- GameChangelog: `https://github.com/Mr-Aurevo-X/GameChangelog/releases` — asset `GameChangelog.zip`
+`https://github.com/Mr-Aurevo-X/SoftTunes/releases` — asset `SoftTunes.zip`
 
-No central PCCommand-Releases / Install-Easy channel.
+Install path: `%LOCALAPPDATA%\Programs\SoftTunes`  
+User data: `%LOCALAPPDATA%\SoftTunes` (migrates from legacy `%LOCALAPPDATA%\Opti` if present)

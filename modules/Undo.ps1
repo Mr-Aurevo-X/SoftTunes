@@ -3,7 +3,7 @@
 # Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
 
 #Requires -Version 5.1
-# Undo.ps1 — soft undo store under %LOCALAPPDATA%\Mr-Aurevo-X\Opti\undo\
+# Undo.ps1 — soft undo store under %LOCALAPPDATA%\SoftTunes\undo\
 
 function Get-OptiUndoDir {
     $dir = Join-Path (Get-OptiDataDir) 'undo'

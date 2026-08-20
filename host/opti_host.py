@@ -91,7 +91,8 @@ def elevate_self() -> bool:
 DEFAULT_ACCENT = "#e03545"
 ENV_ACCENT = "MRAUREVOX_ACCENT"
 ENV_LANG = "MRAUREVOX_LANG"
-OPTI_INSTALL_DIR = "OptiBy-Mr-Aurevo-X"
+SOFT_TUNES_INSTALL_DIR = "SoftTunes"
+_LEGACY_INSTALL_DIRS = ("OptiBy-Mr-Aurevo-X", "Opti")
 HUB_SETTINGS_DIR = "PCCommand"
 
 # Actions that need elevation (HKLM, services, AppX, restore, softperf HAGS, clocks, etc.)
@@ -135,12 +136,17 @@ def _localappdata() -> Path:
 
 def _settings_paths() -> list[Path]:
     root = _localappdata()
-    return [
-        root / OPTI_INSTALL_DIR / "user-settings.json",
+    paths = [
+        root / "Programs" / SOFT_TUNES_INSTALL_DIR / "user-settings.json",
+        root / SOFT_TUNES_INSTALL_DIR / "user-settings.json",
         root / HUB_SETTINGS_DIR / "user-settings.json",
         root / "MrAurevoX" / "user-settings.json",
         root / "Mr-Aurevo-X" / "user-settings.json",
     ]
+    for legacy in _LEGACY_INSTALL_DIRS:
+        paths.append(root / "Programs" / legacy / "user-settings.json")
+        paths.append(root / legacy / "user-settings.json")
+    return paths
 
 
 def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
@@ -209,8 +215,8 @@ class Api(WindowChromeMixin):
     def check_latest_release(self) -> dict:
         return check_latest(
             self.root,
-            source_repo="Mr-Aurevo-X/Opti",
-            zip_name="Opti.zip",
+            source_repo="Mr-Aurevo-X/SoftTunes",
+            zip_name="SoftTunes.zip",
         )
 
     def open_release_page(self, url: str = "") -> dict:

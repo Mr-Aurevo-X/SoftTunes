@@ -1,26 +1,17 @@
-:: Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
-:: SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-:: Author: Mr-Aurevo-X
-
 @echo off
-chcp 65001 >nul
-cd /d "%~dp0"
-title Opti — Desinstallation
+setlocal
 echo.
-echo  Retire l'installation :
-echo    %LOCALAPPDATA%\Programs\Opti
-echo  + raccourcis Bureau / menu Demarrer
+echo  SoftTunes uninstall
+echo  Removing:
+echo    %LOCALAPPDATA%\Programs\SoftTunes
+echo    (legacy) %LOCALAPPDATA%\Programs\OptiBy-Mr-Aurevo-X
+echo    (legacy) %LOCALAPPDATA%\Programs\Opti
 echo.
-set /p OK="Confirmer ? (O/N) "
-if /I not "%OK%"=="O" if /I not "%OK%"=="Y" exit /b 0
-
-set "DEST=%LOCALAPPDATA%\Programs\Opti"
+set "DEST=%LOCALAPPDATA%\Programs\SoftTunes"
 if exist "%DEST%" rmdir /S /Q "%DEST%"
-
-set "DESK=%USERPROFILE%\Desktop\Opti Mr-Aurevo-X.lnk"
-if exist "%DESK%" del /F /Q "%DESK%"
-set "SM=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Mr-Aurevo-X\Opti.lnk"
-if exist "%SM%" del /F /Q "%SM%"
-
-echo [OK] Desinstalle.
-pause
+if exist "%LOCALAPPDATA%\Programs\OptiBy-Mr-Aurevo-X" rmdir /S /Q "%LOCALAPPDATA%\Programs\OptiBy-Mr-Aurevo-X"
+if exist "%LOCALAPPDATA%\Programs\Opti" rmdir /S /Q "%LOCALAPPDATA%\Programs\Opti"
+del /Q "%USERPROFILE%\Desktop\SoftTunes.lnk" 2>nul
+del /Q "%USERPROFILE%\Desktop\Opti.lnk" 2>nul
+echo Done.
+exit /b 0

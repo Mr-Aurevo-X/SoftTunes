@@ -17,7 +17,7 @@ Préparation de session Windows **indépendante** et **gratuite** (v1.7.0, nom p
 
 Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
 
-> Dépôt GitHub et binaire : toujours `Opti` / `Opti.exe` pour l’instant (renommage technique plus tard).
+> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Binaire de build encore `Opti.exe` (renommage exe later).
 
 - Prépare Windows pour une **session de jeu** (plan d’alimentation, Game Mode, overlays Xbox, caches)
 - Mesure le FPS réel via **PresentMon** (overlay HUD) — sans garantir un gain de frames
@@ -29,16 +29,18 @@ Préparation de session Windows **indépendante** et **gratuite** (v1.7.0, nom p
 
 | Chemin | Rôle |
 |--------|------|
-| **`Dev Central Tree\03_Standalones\Opti\`** (ce dépôt) | Clone Git de [Mr-Aurevo-X/Opti](https://github.com/Mr-Aurevo-X/Opti) — **source of truth** pour éditer, build, commit/push |
+| **`Dev Central Tree\03_Standalones\Opti\`** (clone local) | Clone Git de [Mr-Aurevo-X/SoftTunes](https://github.com/Mr-Aurevo-X/SoftTunes) — **source of truth** pour éditer, build, commit/push |
 | **`Dev Central Tree\builds\Opti\`** | Distribution / setup (`OptiSetup.exe`, copies runtime) |
 
-Opti n’est **pas** un outil Suite. **Ship :** `Opti.zip` sur les [Releases de ce repo](https://github.com/Mr-Aurevo-X/Opti/releases). **Nom affiché : SoftTunes.**
+**Ship :** `SoftTunes.zip` sur les [Releases SoftTunes](https://github.com/Mr-Aurevo-X/SoftTunes/releases).
 
 ## Lancer
 
-- Portable : zip de release → extraire, garder `_internal` à côté de `Opti.exe`
-- Dev : `Lancer.cmd` à la racine de ce repo
-- Ancien chemin Install-Easy (`%LOCALAPPDATA%\OptiBy-Mr-Aurevo-X`) : obsolète — réinstaller depuis la release Opti
+- Portable : zip de release → extraire, garder `_internal` à côté de l’exe
+- Installer setup : `%LOCALAPPDATA%\Programs\SoftTunes`
+- Données (sessions / undo) : `%LOCALAPPDATA%\SoftTunes`
+- Dev : `Lancer.cmd` à la racine du clone local
+- Anciens chemins `Opti` / `OptiBy-Mr-Aurevo-X` : obsolètes (données migrées au premier lancement si besoin)
 
 Windows peut afficher « potentiellement dangereux » : les binaires ne sont pas signés Authenticode (pas de certificat éditeur payant). C’est un avertissement de réputation SmartScreen, pas un verdict antivirus.
 

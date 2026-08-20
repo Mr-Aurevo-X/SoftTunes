@@ -17,7 +17,7 @@ Independent **Windows session prep + FPS meter**, **100% free** (v1.7.0, product
 
 Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 
-> GitHub repo and binary still use `Opti` / `Opti.exe` for now (technical rename later).
+> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Build binary still `Opti.exe` for now (exe rename later).
 
 - Prepares Windows for a play session (power plan, Game Mode, Xbox overlays, caches)
 - Meters real FPS via **PresentMon** (HUD overlay) — does not promise extra frames

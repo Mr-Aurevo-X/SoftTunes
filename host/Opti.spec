@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\host\\opti_host.py'],
-    pathex=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\host'],
+    ['C:\\Users\\aurel\\Documents\\Dev Central Tree\\03_Standalones\\Opti\\host\\opti_host.py'],
+    pathex=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\03_Standalones\\Opti\\host'],
     binaries=[],
-    datas=[('C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\build\\ui_stage', 'ui')],
-    hiddenimports=['clr', 'fps_worker', 'presentmon_reader', 'fps_worker_manager', 'fps_overlay', 'system_stats', 'window_chrome', 'release_notice'],
+    datas=[('C:\\Users\\aurel\\Documents\\Dev Central Tree\\03_Standalones\\Opti\\build\\ui_stage', 'ui')],
+    hiddenimports=['clr', 'fps_worker', 'presentmon_reader', 'fps_worker_manager', 'fps_overlay', 'system_stats', 'window_chrome'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -32,8 +32,8 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    version='C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\tools\\file_version_info.txt',
-    icon=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\Opti\\logo-opti.ico'],
+    version='C:\\Users\\aurel\\Documents\\Dev Central Tree\\03_Standalones\\Opti\\tools\\file_version_info.txt',
+    icon=['C:\\Users\\aurel\\Documents\\Dev Central Tree\\03_Standalones\\Opti\\logo-opti.ico'],
 )
 coll = COLLECT(
     exe,
