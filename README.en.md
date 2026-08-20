@@ -27,6 +27,21 @@ Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 
 Read-only public distribution: no PRs or issues (`CONTRIBUTING.md`). License: PolyForm Noncommercial 1.0.0.
 
+## Where it installs
+
+| Mode | Location |
+|------|----------|
+| **Installer** (`OptiSetup.exe` / setup) | `%LOCALAPPDATA%\Programs\SoftTunes` — binary + `_internal` |
+| **Portable** (`SoftTunes.zip`) | Folder **of your choice**: extract the zip, keep `_internal` next to the exe |
+| **Data** (sessions, undo, settings) | `%LOCALAPPDATA%\SoftTunes` |
+| **Dev (sources)** | Clone under `03_Standalones\Opti\` + `Lancer.cmd` |
+
+Legacy paths `%LOCALAPPDATA%\Programs\Opti`, `OptiBy-Mr-Aurevo-X`, `%LOCALAPPDATA%\Opti` are still detected on first launch (data migrates to SoftTunes if needed).
+
+Download: [SoftTunes Releases](https://github.com/Mr-Aurevo-X/SoftTunes/releases).
+
+## Run
+
 ```bat
 Lancer.cmd
 ```

@@ -34,13 +34,21 @@ Préparation de session Windows **indépendante** et **gratuite** (v1.7.0, nom p
 
 **Ship :** `SoftTunes.zip` sur les [Releases SoftTunes](https://github.com/Mr-Aurevo-X/SoftTunes/releases).
 
+## Où s’installe
+
+| Mode | Emplacement |
+|------|-------------|
+| **Installer** (`OptiSetup.exe` / setup) | `%LOCALAPPDATA%\Programs\SoftTunes` — binaire + `_internal` |
+| **Portable** (`SoftTunes.zip`) | Dossier **au choix** : extraire le zip, garder `_internal` à côté de l’exe |
+| **Données** (sessions, undo, réglages) | `%LOCALAPPDATA%\SoftTunes` |
+| **Dev (sources)** | Clone `03_Standalones\Opti\` + `Lancer.cmd` |
+
+Anciens chemins `%LOCALAPPDATA%\Programs\Opti`, `OptiBy-Mr-Aurevo-X`, `%LOCALAPPDATA%\Opti` : encore détectés au premier lancement (migration des données vers SoftTunes si besoin).
+
 ## Lancer
 
-- Portable : zip de release → extraire, garder `_internal` à côté de l’exe
-- Installer setup : `%LOCALAPPDATA%\Programs\SoftTunes`
-- Données (sessions / undo) : `%LOCALAPPDATA%\SoftTunes`
+- Portable / install : lancez l’exe depuis le dossier d’installation ci-dessus
 - Dev : `Lancer.cmd` à la racine du clone local
-- Anciens chemins `Opti` / `OptiBy-Mr-Aurevo-X` : obsolètes (données migrées au premier lancement si besoin)
 
 Windows peut afficher « potentiellement dangereux » : les binaires ne sont pas signés Authenticode (pas de certificat éditeur payant). C’est un avertissement de réputation SmartScreen, pas un verdict antivirus.
 
