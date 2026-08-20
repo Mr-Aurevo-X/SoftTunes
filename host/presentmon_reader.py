@@ -142,6 +142,7 @@ class PresentMonSession:
             SESSION_NAME,
             "--stop_existing_session",
             "--exclude",
+            "SoftTunes.exe",
             "Opti.exe",
             "--exclude",
             "python.exe",
