@@ -42,7 +42,7 @@ VSVersionInfo(
 
         StringStruct(u'LegalCopyright', u'(c) 2026 Mr-Aurevo-X'),
 
-        StringStruct(u'OriginalFilename', u'Opti.exe'),
+        StringStruct(u'OriginalFilename', u'SoftTunes.exe'),
 
         StringStruct(u'ProductName', u'Opti'),
 

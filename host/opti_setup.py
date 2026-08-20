@@ -14,10 +14,10 @@ from pathlib import Path
 
 APP_NAME = "SoftTunes"
 PUBLISHER = "Mr-Aurevo-X"
-VERSION = "1.7.0"
+VERSION = "1.7.1"
 INSTALL_FOLDER = "SoftTunes"
-# Build still produces Opti.exe until a separate binary rename.
-EXE_NAME = "Opti.exe"
+EXE_NAME = "SoftTunes.exe"
+LEGACY_EXE_NAMES = ("Opti.exe",)
 
 
 def bundle_dir() -> Path:
@@ -33,18 +33,18 @@ def bundle_dir() -> Path:
             meipass,
             here,
         ):
-            if (cand / EXE_NAME).is_file() or (cand / "SoftTunes.exe").is_file():
+            if (cand / EXE_NAME).is_file() or any((cand / n).is_file() for n in LEGACY_EXE_NAMES):
                 return cand
         return here
     root = Path(__file__).resolve().parent.parent
-    for cand in (root / "dist" / "Opti", root / "Opti-dist", root / "SoftTunes-dist", root):
-        if (cand / EXE_NAME).is_file() or (cand / "SoftTunes.exe").is_file():
+    for cand in (root / "dist" / "SoftTunes", root / "dist" / "Opti", root / "SoftTunes-dist", root / "Opti-dist", root):
+        if (cand / EXE_NAME).is_file() or any((cand / n).is_file() for n in LEGACY_EXE_NAMES):
             return cand
     return root
 
 
 def resolve_exe(dest: Path) -> Path:
-    for name in ("SoftTunes.exe", EXE_NAME):
+    for name in (EXE_NAME, *LEGACY_EXE_NAMES):
         p = dest / name
         if p.is_file():
             return p

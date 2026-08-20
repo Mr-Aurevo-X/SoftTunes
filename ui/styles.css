@@ -145,7 +145,9 @@ body {
 .page-header p { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; }
 
 .content { flex: 1; overflow: auto; min-height: 0; padding-right: 4px; }
-.page { display: none; animation: rise 0.35s ease; }
+@keyframes softtunesPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+.hub-skel, .softtunes-skel { background: rgba(255,255,255,0.06); border-radius: 8px; animation: softtunesPulse 1.1s ease-in-out infinite; }
+.page { display: none; animation: rise 0.2s ease; }
 .page.active { display: block; }
 @keyframes rise {
   from { opacity: 0; transform: translateY(8px); }
