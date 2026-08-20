@@ -61,7 +61,22 @@
 
   async function run(action, payload) {
     if (!api) throw new Error("API host indisponible");
-    const res = await api.run(action, payload || {});
+    const body = payload || {};
+    let token = null;
+    if (typeof api.prepare_action === "function") {
+      try {
+        const prep = await api.prepare_action(action, body);
+        if (prep && prep.ok && prep.token) token = prep.token;
+        else if (prep && prep.need_confirm === false && prep.ok === false && /non gatee/i.test(String(prep.error || ""))) {
+          /* read-only action — no token */
+        } else if (prep && !prep.ok && prep.error && !/non gatee/i.test(String(prep.error))) {
+          throw new Error(prep.error || "Confirmation refusée");
+        }
+      } catch (e) {
+        if (!/non gatee/i.test(String(e && e.message))) throw e;
+      }
+    }
+    const res = token != null ? await api.run(action, body, token) : await api.run(action, body);
     if (!res || !res.ok) {
       const adm = needsAdminMessage(res);
       if (adm) {
@@ -79,7 +94,20 @@
     jobBusy = true;
     setProgress(0, action);
     try {
-      const start = await api.start_action(action, payload || {});
+      const body = payload || {};
+      let token = null;
+      if (typeof api.prepare_action === "function") {
+        const prep = await api.prepare_action(action, body);
+        if (prep && prep.ok && prep.token) {
+          token = prep.token;
+        } else if (prep && !prep.ok && prep.error && !/non gatee/i.test(String(prep.error || ""))) {
+          throw new Error(prep.error || "Confirmation refusée");
+        }
+      }
+      const start =
+        token != null
+          ? await api.start_action(action, body, token)
+          : await api.start_action(action, body);
       if (!start || !start.ok) {
         const adm = needsAdminMessage(start);
         if (adm) {

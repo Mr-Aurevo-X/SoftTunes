@@ -7,7 +7,6 @@ XboxApp
 XboxGameBar
 NVIDIA Share
 nvsphelper64
-nvcontainer
 RadeonSoftware
 AMDRSServ
 AMDRSSrcExt

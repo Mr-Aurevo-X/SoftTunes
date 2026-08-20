@@ -238,30 +238,21 @@ try {
 
         'scanBloat' { Ok @{ apps = @(Get-OptiBloatCandidates) } }
         'removeBloat' {
-            $names = @($p.packageFullNames)
-            $r = Remove-OptiBloatApps -PackageFullNames $names -LogPath $Global:OptiCurrentLog
-            Add-OptiSession -Action 'removeBloat' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
-            Ok $r
+            Fail 'Action desactivee (removeBloat).'
         }
 
         'setTimer' {
-            $r = Set-OptiTimerResolution -Enable:([bool]$p.enable) -LogPath $Global:OptiCurrentLog
-            Add-OptiSession -Action 'setTimer' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
-            Ok $r
+            Fail 'Action desactivee (setTimer).'
         }
         'clearTimer' {
-            Ok (Clear-OptiTimerResolution -LogPath $Global:OptiCurrentLog)
+            Fail 'Action desactivee (clearTimer).'
         }
 
         'setPriority' {
-            $r = Set-OptiProcessPriority -ProcessName ([string]$p.processName) -Priority ($(if ($p.priority) { [string]$p.priority } else { 'High' })) -LogPath $Global:OptiCurrentLog
-            Add-OptiSession -Action 'setPriority' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
-            Ok $r
+            Fail 'Action desactivee (setPriority).'
         }
         'setMmcs' {
-            $r = Set-OptiSystemResponsiveness -Gaming:([bool]($p.gaming -ne $false)) -LogPath $Global:OptiCurrentLog
-            Add-OptiSession -Action 'setMmcs' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
-            Ok $r
+            Fail 'Action desactivee (setMmcs).'
         }
 
         'getSoftPerf' { Ok (Get-OptiSoftPerf) }
@@ -314,9 +305,7 @@ try {
             Ok $entry
         }
         'applyProfile' {
-            $r = Invoke-OptiGameProfile -Name ([string]$p.name) -Launch:([bool]($p.launch -ne $false)) -LogPath $Global:OptiCurrentLog
-            Add-OptiSession -Action 'applyProfile' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
-            Ok $r
+            Fail 'Action desactivee (applyProfile).'
         }
 
         'getSessions' { Ok @{ sessions = @(Get-OptiSessions) } }
@@ -345,22 +334,7 @@ try {
         }
 
         'applyGamingPreset' {
-            $createRp = [bool]$p.createRestorePoint
-            $r = Invoke-OptiSessionPreset `
-                -CreateRestorePoint $createRp `
-                -PowerProfile 'high' `
-                -GameMode $true `
-                -DisableGameBar $true `
-                -FocusAssist $true `
-                -Visual $true `
-                -KillOverlays $true `
-                -IncludeDiscord $false `
-                -IncludeGpuOverlay $false `
-                -LogPath $Global:OptiCurrentLog
-            $r.Message = 'Session preset OK'
-            $r.MessageFr = 'Preset session OK'
-            Add-OptiSession -Action 'applyGamingPreset' -Result $r -LogPath $Global:OptiCurrentLog | Out-Null
-            Ok $r
+            Fail 'Action desactivee (applyGamingPreset).'
         }
 
         default { Fail "Action inconnue: $action" }

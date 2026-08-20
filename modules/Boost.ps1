@@ -55,7 +55,7 @@ function Start-OptiBoostSession {
         $names = @($names | Where-Object { $_ -notmatch '(?i)^discord' })
     }
     if (-not $IncludeGpuOverlay) {
-        $names = @($names | Where-Object { $_ -notmatch '(?i)nvidia|radeon|amd|nvcontainer|AMDRS' })
+        $names = @($names | Where-Object { $_ -notmatch '(?i)nvidia|radeon|amd|AMDRS' })
     }
 
     if ($KillOverlays) {

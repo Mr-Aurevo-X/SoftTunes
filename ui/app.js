@@ -118,11 +118,13 @@
       } catch (_) {}
     }
     gate.hidden = false;
+    document.body.classList.add("pcd-confirm-open");
   }
 
   function hideHonestyGate(persist) {
     const gate = $("#honestyGate");
     if (gate) gate.hidden = true;
+    document.body.classList.remove("pcd-confirm-open");
     if (persist) {
       try { localStorage.setItem(HONESTY_KEY, APP_VERSION); } catch (_) {}
     }
@@ -669,6 +671,7 @@
       .join("") || '<li class="muted">—</li>';
     $$("#undoList [data-undo]").forEach((btn) => {
       btn.addEventListener("click", async () => {
+        if (!window.confirm(p.undoConfirm || "Annuler cette action ?")) return;
         try {
           const r = await runJob("runUndo", { id: btn.dataset.undo });
           const cls = r.Partial ? "warn" : r.Success === false ? "err" : "ok";
@@ -705,6 +708,7 @@
     });
 
     $("#btnRestore").addEventListener("click", async () => {
+      if (!window.confirm(p.rpConfirm || "Creer un point de restauration ?")) return;
       try {
         const r = await runJob("createRestorePoint", {});
         log(r.Message || JSON.stringify(r), r.Success ? "ok" : "warn");
@@ -737,9 +741,15 @@
     const bindPower = (id, profile) => {
       const btn = $(id);
       if (btn) {
-        btn.addEventListener("click", () =>
-          runJob("setPowerPlan", { profile }).then((r) => log(r.Message, "ok")).catch((e) => log(e.message, "err"))
-        );
+        btn.addEventListener("click", async () => {
+          if (!window.confirm((p.powerConfirm || "Appliquer le plan d'alimentation") + "\n\n" + profile)) return;
+          try {
+            const r = await runJob("setPowerPlan", { profile });
+            log(r.Message, "ok");
+          } catch (e) {
+            log(e.message, "err");
+          }
+        });
       }
     };
     bindPower("#btnPowerBalanced", "balanced");
@@ -749,6 +759,7 @@
     const btnGm = $("#btnApplyGm");
     if (btnGm) {
       btnGm.addEventListener("click", async () => {
+        if (!window.confirm(p.gmConfirm || "Appliquer Game Mode / Focus Assist ?")) return;
         try {
           const r = await runJob("setGameMode", {
             gameMode: $("#chkGameMode").checked,
@@ -766,6 +777,7 @@
     const btnStartBoost = $("#btnStartBoost");
     if (btnStartBoost) {
       btnStartBoost.addEventListener("click", async () => {
+        if (!window.confirm(p.boostConfirm || "Lancer le boost (fermeture overlays) ?")) return;
         try {
           const r = await runJob("startBoost", {
             killOverlays: $("#chkKillOv").checked,
@@ -828,6 +840,7 @@
     });
 
     $("#btnSetDns").addEventListener("click", async () => {
+      if (!window.confirm(p.dnsConfirm || "Appliquer le DNS selectionne ?")) return;
       try {
         const r = await runJob("setDns", { presetId: $("#dnsPreset").value });
         log(r.Message, "ok");
@@ -835,9 +848,15 @@
         log(e.message, "err");
       }
     });
-    $("#btnFlushDns").addEventListener("click", () =>
-      runJob("flushDns", {}).then((r) => log(r.Message, "ok")).catch((e) => log(e.message, "err"))
-    );
+    $("#btnFlushDns").addEventListener("click", async () => {
+      if (!window.confirm(p.flushDnsConfirm || "Vider le cache DNS ?")) return;
+      try {
+        const r = await runJob("flushDns", {});
+        log(r.Message, "ok");
+      } catch (e) {
+        log(e.message, "err");
+      }
+    });
 
     $("#btnScanSvc").addEventListener("click", () => refreshServices().catch((e) => log(e.message, "err")));
     $("#btnApplySvc").addEventListener("click", async () => {

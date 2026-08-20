@@ -21,6 +21,7 @@ from fps_worker_manager import FpsWorkerManager
 from fps_overlay import FpsOverlay, OVERLAY_TITLE
 from release_notice import check_latest, open_release_url
 from window_chrome import WindowChromeMixin, create_tool_window
+from confirm_gate import ConfirmGate
 
 _DENIED_OPEN_EXTS = {
     ".exe", ".cmd", ".bat", ".ps1", ".vbs", ".msi", ".com", ".scr", ".js", ".jse", ".wsf",
@@ -113,6 +114,39 @@ ADMIN_ACTIONS = frozenset({
     "setPowerPlan",
 })
 
+# Mutators require ConfirmGate token (prepare_action → start_action/run).
+GATED_ACTIONS = frozenset({
+    "createRestorePoint",
+    "setServices",
+    "setSoftPerfOs",
+    "setNvidiaPowerLimit",
+    "resetSoftPerf",
+    "setNvidiaClocks",
+    "resetNvidiaClocks",
+    "applySessionPreset",
+    "disableStartup",
+    "runUndo",
+    "setPowerPlan",
+    "setGameMode",
+    "setVisual",
+    "startBoost",
+    "stopBoost",
+    "setDns",
+    "flushDns",
+    "runCleanup",
+})
+
+# Orphan / high-risk actions removed from UI — refuse at host.
+DISABLED_ACTIONS = frozenset({
+    "removeBloat",
+    "setMmcs",
+    "setTimer",
+    "clearTimer",
+    "setPriority",
+    "applyGamingPreset",
+    "applyProfile",
+})
+
 URL_ALLOWLIST = frozenset({
     "https://www.msi.com/Landing/afterburner",
     "http://www.msi.com/Landing/afterburner",
@@ -198,6 +232,39 @@ class Api(WindowChromeMixin):
         self._current_proc: subprocess.Popen[str] | None = None
         self._fps = FpsWorkerManager(root)
         self._overlay = FpsOverlay(self._fps, root)
+        self._confirm = ConfirmGate(ttl_seconds=90.0)
+
+    def prepare_action(self, action: str, payload: dict | None = None) -> dict:
+        act = str(action or "").strip()
+        if act in DISABLED_ACTIONS:
+            return {"ok": False, "error": f"Action desactivee: {act}", "token": None}
+        if act not in GATED_ACTIONS:
+            return {"ok": False, "error": f"action non gatee: {act}", "token": None}
+        try:
+            return {"ok": True, "token": self._confirm.prepare(act, payload or {})}
+        except ValueError as exc:
+            return {"ok": False, "error": str(exc), "token": None}
+
+    def _require_gate(self, action: str, payload: dict | None, token: str | None) -> dict | None:
+        act = str(action or "").strip()
+        if act in DISABLED_ACTIONS:
+            return {"ok": False, "error": f"Action desactivee: {act}", "data": None}
+        if act not in GATED_ACTIONS:
+            return None
+        if not token:
+            return {
+                "ok": False,
+                "error": "Confirmation requise",
+                "need_confirm": True,
+                "data": None,
+            }
+        if not self._confirm.consume(str(token), act, payload or {}):
+            return {
+                "ok": False,
+                "error": "Jeton de confirmation invalide ou expire",
+                "data": None,
+            }
+        return None
 
     def get_suite_accent(self) -> dict:
         return {"ok": True, "accent": resolve_suite_accent()}
@@ -245,9 +312,12 @@ class Api(WindowChromeMixin):
             if self._current_proc is proc:
                 self._current_proc = None
 
-    def run(self, action: str, payload: dict | None = None) -> dict:
+    def run(self, action: str, payload: dict | None = None, token: str | None = None) -> dict:
         if payload is None:
             payload = {}
+        denied = self._require_gate(action, payload, token)
+        if denied is not None:
+            return denied
         if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
@@ -384,9 +454,14 @@ class Api(WindowChromeMixin):
             with self._job_lock:
                 self._job_running = False
 
-    def start_action(self, action: str, payload: dict | None = None) -> dict:
+    def start_action(
+        self, action: str, payload: dict | None = None, token: str | None = None
+    ) -> dict:
         if payload is None:
             payload = {}
+        denied = self._require_gate(action, payload, token)
+        if denied is not None:
+            return denied
         if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
