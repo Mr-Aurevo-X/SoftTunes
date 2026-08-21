@@ -2,7 +2,9 @@
 
 # SoftTunes
 
-Independent **Windows session prep + FPS meter**, **100% free** (v1.7.1, product name **SoftTunes**). Not a “+500 FPS booster”.
+Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.0**, product name **SoftTunes**). Not a “+500 FPS booster”.
+
+![SoftTunes Home — Void Glow](docs/softtunes-v2-accueil.png)
 
 ## Important
 
@@ -17,7 +19,14 @@ Independent **Windows session prep + FPS meter**, **100% free** (v1.7.1, product
 
 Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 
-> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Binary: `SoftTunes.exe`.
+> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.0](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.0). Binary: `SoftTunes.exe` / `Lancer.cmd`.
+
+### v2.0.0
+
+- **Void Glow** UI (confirms, update banner, chrome)
+- Session / NVIDIA: honest live state (power, PL, Soft OC)
+- SoftTunes About (legal, local paths, GitHub update opt-out)
+- FPS HUD: color presets (Void Glow + neon)
 
 - Prepares Windows for a play session (power plan, Game Mode, Xbox overlays, caches)
 - Meters real FPS via **PresentMon** (HUD overlay) — does not promise extra frames
@@ -38,18 +47,22 @@ Read-only public distribution: no PRs or issues (`CONTRIBUTING.md`). License: Po
 
 Legacy paths `%LOCALAPPDATA%\Programs\Opti`, `OptiBy-Mr-Aurevo-X`, `%LOCALAPPDATA%\Opti` are still detected on first launch (data migrates to SoftTunes if needed).
 
-Download: [SoftTunes Releases](https://github.com/Mr-Aurevo-X/SoftTunes/releases).
-
 ## Run
 
+- Portable / install: run the exe from the install folder above
+- Dev: `Lancer.cmd` at the clone root
+
+## Build
+
 ```bat
-Lancer.cmd
+tools\build_opti.bat
+tools\build_setup.bat
 ```
 
-Windows may flag the app as potentially unsafe: binaries are not Authenticode-signed (no paid publisher certificate). That is a SmartScreen reputation warning, not an antivirus verdict.
+## Support
+
+Optional tips (SoftTunes stays free): Discord · PayPal · Revolut — see French README badges.
 
 ---
 
-Dreamed by **Mr-Aurevo-X**. Cursor made the dream real.
-
-[Discord](https://discord.com/users/406891052516114442) · [PayPal](https://www.paypal.com/paypalme/aurevo1) · [Revolut](https://revolut.me/mr_aurevo_x)
+Dreamed by **Mr-Aurevo-X**. Cursor built the dream.

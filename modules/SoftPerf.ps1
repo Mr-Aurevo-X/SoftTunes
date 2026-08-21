@@ -17,6 +17,55 @@ function Get-OptiSoftPerfStatePath {
     Join-Path (Get-OptiDataDir) 'softperf-state.json'
 }
 
+function Read-OptiSoftPerfState {
+    $path = Get-OptiSoftPerfStatePath
+    if (-not (Test-Path -LiteralPath $path)) { return @{} }
+    try {
+        $st = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
+        $ht = @{}
+        if ($st) {
+            $st.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+        }
+        return $ht
+    } catch {
+        return @{}
+    }
+}
+
+function Write-OptiSoftPerfState {
+    param([hashtable]$Patch)
+    $path = Get-OptiSoftPerfStatePath
+    $ht = Read-OptiSoftPerfState
+    foreach ($k in @($Patch.Keys)) { $ht[$k] = $Patch[$k] }
+    $ht['savedAt'] = (Get-Date).ToString('o')
+    $json = ($ht | ConvertTo-Json -Compress)
+    [System.IO.File]::WriteAllText($path, $json, [System.Text.UTF8Encoding]::new($false))
+}
+
+function Resolve-OptiPlPreset {
+    param($nv, [string]$LastPreset)
+    if (-not $nv -or -not $nv.available) { return $null }
+    $cur = [double]$nv.currentPl
+    $stock = [double]$(if ($null -ne $nv.stockPl) { $nv.stockPl } else { $nv.defaultPl })
+    $max = [double]$nv.maxPl
+    $min = [double]$nv.minPl
+    if ($null -eq $cur -or $cur -le 0) { return $LastPreset }
+
+    # Laptop GPUs often have stock == max — prefer last applied preset when watts match both.
+    $stockEqMax = ($stock -gt 0 -and $max -gt 0 -and [math]::Abs($stock - $max) -le 1.5)
+    if ($stockEqMax -and [math]::Abs($cur - $stock) -le 1.5) {
+        if ($LastPreset -in @('stock', 'perf')) { return $LastPreset }
+        return 'stock'
+    }
+
+    if ($null -ne $max -and $max -gt 0 -and [math]::Abs($cur - $max) -le 1.5) { return 'perf' }
+    if ($null -ne $stock -and $stock -gt 0 -and [math]::Abs($cur - $stock) -le 1.5) { return 'stock' }
+    if ($null -ne $stock -and $stock -gt 0 -and $cur -le ($stock * 0.93) + 0.5) { return 'eco' }
+    if ($null -ne $min -and $min -gt 0 -and [math]::Abs($cur - $min) -le 1.5) { return 'eco' }
+    if ($LastPreset -in @('eco', 'stock', 'perf')) { return $LastPreset }
+    return $null
+}
+
 function Get-OptiNvidiaSmiPath {
     $cmd = Get-Command nvidia-smi.exe -ErrorAction SilentlyContinue
     if ($cmd -and $cmd.Source) { return [string]$cmd.Source }
@@ -86,8 +135,9 @@ function Set-OptiPowerCfgAcIndex {
 
 function Get-OptiHagsEnabled {
     try {
+        if (-not (Test-Path -LiteralPath $script:OptiHagsPath)) { return $false }
         $v = Get-ItemProperty -Path $script:OptiHagsPath -Name 'HwSchMode' -ErrorAction SilentlyContinue
-        if ($null -eq $v) { return $null }
+        if ($null -eq $v -or $null -eq $v.PSObject.Properties['HwSchMode']) { return $false }
         return ([int]$v.HwSchMode -eq 2)
     } catch {
         return $null
@@ -158,14 +208,12 @@ function Get-OptiNvidiaPowerInfo {
 
         $statePath = Get-OptiSoftPerfStatePath
         $savedStock = $null
-        if (Test-Path -LiteralPath $statePath) {
-            try {
-                $st = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8 | ConvertFrom-Json
-                if ($null -ne $st.nvidiaStockPl) { $savedStock = [double]$st.nvidiaStockPl }
-            } catch { }
-        }
+        $lastPl = $null
+        $st = Read-OptiSoftPerfState
+        if ($null -ne $st.nvidiaStockPl) { $savedStock = [double]$st.nvidiaStockPl }
+        if ($st.lastPlPreset) { $lastPl = [string]$st.lastPlPreset }
 
-        return @{
+        $info = @{
             available = $true
             path      = $smi
             name      = $parts[0]
@@ -174,7 +222,10 @@ function Get-OptiNvidiaPowerInfo {
             maxPl     = $max
             defaultPl = $def
             stockPl   = $(if ($null -ne $savedStock) { $savedStock } else { $def })
+            lastPlPreset = $lastPl
         }
+        $info.activePlPreset = (Resolve-OptiPlPreset -nv $info -LastPreset $lastPl)
+        return $info
     } catch {
         return @{ available = $false; reason = $_.Exception.Message; path = $smi }
     }
@@ -182,20 +233,7 @@ function Get-OptiNvidiaPowerInfo {
 
 function Save-OptiSoftPerfNvidiaStock {
     param([double]$Watts)
-    $path = Get-OptiSoftPerfStatePath
-    $obj = @{ nvidiaStockPl = $Watts; savedAt = (Get-Date).ToString('o') }
-    if (Test-Path -LiteralPath $path) {
-        try {
-            $prev = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
-            $ht = @{}
-            $prev.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
-            $ht['nvidiaStockPl'] = $Watts
-            $ht['savedAt'] = (Get-Date).ToString('o')
-            $obj = $ht
-        } catch { }
-    }
-    $json = ($obj | ConvertTo-Json -Compress)
-    [System.IO.File]::WriteAllText($path, $json, [System.Text.UTF8Encoding]::new($false))
+    Write-OptiSoftPerfState -Patch @{ nvidiaStockPl = $Watts }
 }
 
 function Get-OptiSoftPerfSnapshotData {
@@ -219,6 +257,11 @@ function Get-OptiSoftPerf {
     $boost = Get-OptiPowerCfgAcIndex -SubGuid $script:OptiSubProcessor -SettingGuid $script:OptiPerfBoostMode
     $aspm = Get-OptiPowerCfgAcIndex -SubGuid $script:OptiSubPciExpress -SettingGuid $script:OptiAspm
     $hags = Get-OptiHagsEnabled
+    $softOsActive = (
+        ($null -ne $procMin -and $procMin -ge 100) -and
+        ($null -ne $procMax -and $procMax -ge 100) -and
+        ($aspm -eq 0 -or $null -eq $aspm)
+    )
 
     return @{
         disclaimer = 'Not hardware undervolt/OC. Soft OS tweaks + optional NVIDIA power limit only.'
@@ -235,6 +278,7 @@ function Get-OptiSoftPerf {
             aspmOff         = ($aspm -eq 0)
             aspmAvailable   = ($null -ne $aspm)
             hagsEnabled     = $hags
+            softOsActive    = [bool]$softOsActive
         }
         nvidia     = $nv
     }
@@ -283,6 +327,9 @@ function Set-OptiSoftPerfOs {
     }
 
     Write-OptiLog -Message ('SoftPerf OS applied: {0}' -f ($applied -join ', ')) -LogPath $LogPath -Level OK
+    if ($applied.Count -gt 0) {
+        Write-OptiSoftPerfState -Patch @{ lastSoftOs = $true }
+    }
     return @{
         Success = ($applied.Count -gt 0)
         Message = if ($applied.Count -gt 0) {
@@ -334,16 +381,24 @@ function Set-OptiNvidiaPowerLimit {
     $null = New-OptiUndoSnapshot -Name 'softperf-pl' -Data $before
 
     $target = [double]$nv.currentPl
+    $stock = [double]$(if ($null -ne $nv.stockPl -and $nv.stockPl -gt 0) { $nv.stockPl } else { $nv.defaultPl })
     switch ($Preset) {
         'eco' {
-            $target = [math]::Max([double]$nv.minPl, [math]::Round([double]$nv.currentPl * 0.9, 0))
+            $base = if ($stock -gt 0) { $stock } else { [double]$nv.currentPl }
+            $target = [math]::Max([double]$nv.minPl, [math]::Round($base * 0.9, 0))
         }
         'stock' {
-            $target = [double]$nv.stockPl
+            $target = $stock
             if ($null -eq $target -or $target -le 0) { $target = [double]$nv.defaultPl }
         }
         'perf' {
-            $target = [math]::Min([double]$nv.maxPl, [math]::Round([double]$nv.currentPl * 1.05, 0))
+            # Push toward board max (honest), not +5% of whatever is current.
+            if ($null -ne $nv.maxPl -and [double]$nv.maxPl -gt 0) {
+                $target = [double]$nv.maxPl
+            } else {
+                $base = if ($stock -gt 0) { $stock } else { [double]$nv.currentPl }
+                $target = [math]::Round($base * 1.05, 0)
+            }
         }
     }
     $target = [math]::Max([double]$nv.minPl, [math]::Min([double]$nv.maxPl, [math]::Round($target, 0)))
@@ -358,15 +413,18 @@ function Set-OptiNvidiaPowerLimit {
                 nvidia  = $nv
             }
         }
+        Write-OptiSoftPerfState -Patch @{ lastPlPreset = $Preset }
         $afterNv = Get-OptiNvidiaPowerInfo
         Write-OptiLog -Message ("NVIDIA PL set to {0}W ({1})" -f $target, $Preset) -LogPath $LogPath -Level OK
         return @{
             Success = $true
             Message = ("NVIDIA power limit set to {0}W ({1})" -f $target, $Preset)
+            MessageFr = ("Limite GPU NVIDIA : {0}W ({1})" -f $target, $Preset)
             preset  = $Preset
             targetW = $target
             before  = $before
             nvidia  = $afterNv
+            activePlPreset = $afterNv.activePlPreset
         }
     } catch {
         return @{ Success = $false; Message = $_.Exception.Message; nvidia = $nv }

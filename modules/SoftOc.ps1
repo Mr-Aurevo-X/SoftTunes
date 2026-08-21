@@ -18,6 +18,39 @@ function Get-OptiAfterburnerPath {
     return $null
 }
 
+function Get-OptiAmdSoftwarePath {
+    $candidates = @(
+        (Join-Path ${env:ProgramFiles} 'AMD\CNext\CNext\RadeonSoftware.exe')
+        (Join-Path ${env:ProgramFiles} 'AMD\CNext\CNext\AMDRSServ.exe')
+        (Join-Path ${env:ProgramFiles(x86)} 'AMD\CNext\CNext\RadeonSoftware.exe')
+        (Join-Path ${env:ProgramFiles} 'AMD\CNext\AMDRSServ.exe')
+    )
+    foreach ($c in $candidates) {
+        if ($c -and (Test-Path -LiteralPath $c)) { return $c }
+    }
+    $cmd = Get-Command RadeonSoftware.exe -ErrorAction SilentlyContinue
+    if ($cmd -and $cmd.Source) { return [string]$cmd.Source }
+    return $null
+}
+
+function Get-OptiAmdGpuInfo {
+    $gpu = Get-OptiGpuInfo
+    $amdGpus = @(@($gpu.gpus) | Where-Object { $_.vendor -eq 'amd' })
+    $path = Get-OptiAmdSoftwarePath
+    return @{
+        available = ($amdGpus.Count -gt 0)
+        vendor    = 'amd'
+        gpus      = @($amdGpus)
+        name      = if ($amdGpus.Count -gt 0) { [string]$amdGpus[0].name } else { $null }
+        software  = @{
+            found = [bool]$path
+            path  = $path
+        }
+        noteFr = "SoftTunes ne verrouille pas les horloges AMD (pas d'equivalent nvidia-smi). OS soft + HAGS + Adrenalin pour UV / courbes."
+        noteEn = "SoftTunes does not lock AMD clocks (no nvidia-smi equivalent). Use OS soft + HAGS + Adrenalin for UV / curves."
+    }
+}
+
 function Get-OptiNvidiaClockInfo {
     $smi = Get-OptiNvidiaSmiPath
     if (-not $smi) {
@@ -47,16 +80,48 @@ function Get-OptiNvidiaClockInfo {
     }
 }
 
+function Get-OptiSoftOcStatePath {
+    Join-Path (Get-OptiDataDir) 'softoc-state.json'
+}
+
+function Read-OptiSoftOcState {
+    $path = Get-OptiSoftOcStatePath
+    if (-not (Test-Path -LiteralPath $path)) { return @{} }
+    try {
+        $st = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
+        $ht = @{}
+        if ($st) { $st.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value } }
+        return $ht
+    } catch { return @{} }
+}
+
+function Write-OptiSoftOcState {
+    param([hashtable]$Patch)
+    $path = Get-OptiSoftOcStatePath
+    $ht = Read-OptiSoftOcState
+    foreach ($k in @($Patch.Keys)) { $ht[$k] = $Patch[$k] }
+    $ht['savedAt'] = (Get-Date).ToString('o')
+    [System.IO.File]::WriteAllText($path, ($ht | ConvertTo-Json -Compress), [System.Text.UTF8Encoding]::new($false))
+}
+
 function Get-OptiSoftOc {
     $gpu = Get-OptiGpuInfo
     $clk = Get-OptiNvidiaClockInfo
     $pl = Get-OptiNvidiaPowerInfo
     $ab = Get-OptiAfterburnerPath
+    $amd = Get-OptiAmdGpuInfo
+    $st = Read-OptiSoftOcState
+    $lastOc = if ($st.lastOcPreset) { [string]$st.lastOcPreset } else { $null }
+    if ($clk -is [hashtable]) {
+        $clk['lastOcPreset'] = $lastOc
+        $clk['activeOcPreset'] = $lastOc
+    }
     return @{
-        disclaimer = 'Soft OC only (NVIDIA clock locks + PL). Not undervolt. Use Afterburner for UV curves.'
+        disclaimer = 'Soft OC only (NVIDIA clock locks + PL). Not undervolt. Use Afterburner (NVIDIA) or Adrenalin (AMD) for UV curves.'
         gpu        = $gpu
         nvidia     = $clk
         power      = $pl
+        amd        = $amd
         afterburner = @{
             found = [bool]$ab
             path  = $ab
@@ -109,9 +174,11 @@ function Set-OptiNvidiaClocks {
                 }
             }
             Write-OptiLog -Message 'NVIDIA clocks reset (rgc/rmc)' -LogPath $LogPath -Level OK
+            Write-OptiSoftOcState -Patch @{ lastOcPreset = 'stock' }
             return @{
                 Success = $true
                 Message = 'NVIDIA clocks reset to default'
+                MessageFr = 'Horloges NVIDIA remises au défaut'
                 preset  = $Preset
                 nvidia  = (Get-OptiNvidiaClockInfo)
             }
@@ -163,9 +230,11 @@ function Set-OptiNvidiaClocks {
         }
 
         Write-OptiLog -Message ("NVIDIA soft OC core lock {0}-{1} MHz ({2})" -f $lo, $hi, $Preset) -LogPath $LogPath -Level OK
+        Write-OptiSoftOcState -Patch @{ lastOcPreset = $Preset }
         return @{
             Success    = $true
             Message    = ("Soft OC applied: core lock {0}-{1} MHz ({2})" -f $lo, $hi, $Preset)
+            MessageFr  = ("Soft OC : verrou core {0}-{1} MHz ({2})" -f $lo, $hi, $Preset)
             preset     = $Preset
             targetCore = $targetCore
             coreLo     = $lo
@@ -194,6 +263,23 @@ function Open-OptiAfterburner {
     try {
         Start-Process -FilePath $path -ErrorAction Stop | Out-Null
         return @{ Success = $true; Message = 'Afterburner launched'; path = $path }
+    } catch {
+        return @{ Success = $false; Message = $_.Exception.Message; path = $path }
+    }
+}
+
+function Open-OptiAmdSoftware {
+    $path = Get-OptiAmdSoftwarePath
+    if (-not $path) {
+        return @{
+            Success = $false
+            Message = 'AMD Software (Adrenalin) not found'
+            download = 'https://www.amd.com/en/support/download/drivers.html'
+        }
+    }
+    try {
+        Start-Process -FilePath $path -ErrorAction Stop | Out-Null
+        return @{ Success = $true; Message = 'AMD Software launched'; path = $path }
     } catch {
         return @{ Success = $false; Message = $_.Exception.Message; path = $path }
     }

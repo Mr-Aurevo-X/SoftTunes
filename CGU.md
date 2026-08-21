@@ -4,32 +4,40 @@
 Produit : SoftTunes  
 Copyright (c) 2026 Mr-Aurevo-X. Tous droits réservés.
 
-Les présentes CGU s’appliquent à **SoftTunes** uniquement. Licence : PolyForm Noncommercial 1.0.0 (`LICENSE`). SoftTunes n’appartient pas au catalogue hubs PC Command.
+Les présentes CGU s’appliquent à **SoftTunes** (application Mr-Aurevo-X). Le fichier anglais `LICENSE` (PolyForm Noncommercial 1.0.0) est la licence. Ce document ajoute les règles d’usage. Ce n’est pas une seconde licence.
 
 ## 1. Licence
 
-Usage **non commercial** gratuit selon `LICENSE`. Revente, encapsulage payant ou SaaS payant : interdits sans accord écrit.
+Usage **non commercial** gratuit selon `LICENSE`. Revente, encapsulage payant, SaaS payant ou sous-licence : interdits sans accord écrit séparé.
 
-Binaires officiels : Releases GitHub [`Mr-Aurevo-X/SoftTunes`](https://github.com/Mr-Aurevo-X/SoftTunes/releases) (`SoftTunes.zip`).
+Binaires officiels : GitHub Releases `Mr-Aurevo-X/SoftTunes` (`SoftTunes.zip`).
+
+Conserver les mentions de copyright. Ne pas retirer les textes À propos / légaux.
 
 ## 2. Aucune mise à jour garantie
 
-Logiciel autonome. Pas de téléchargement automatique : une bannière peut proposer d’ouvrir la page GitHub Latest. Installation manuelle.
+Le logiciel est livré comme un ensemble **autonome et fonctionnel**. L’éditeur n’a **aucune obligation** de fournir des versions futures. Pas de mise à jour automatique in-app : SoftTunes peut afficher une notification si GitHub Latest est plus récent, avec un lien navigateur. Une nouvelle version se prend manuellement.
 
-## 3. « En l’état »
+## 3. Tel quel / tel que disponible
 
-FOURNI **EN L’ÉTAT**, sans garantie. Vous assumez le risque lié à l’exécution (plan d’alimentation, overlays, Soft OC NVIDIA borné, etc.).
+LE LOGICIEL EST FOURNI **TEL QUEL** ET **TEL QUE DISPONIBLE**, SANS GARANTIE D’AUCUNE SORTE.
 
-## 4. Responsabilité de l’utilisateur
+Aucune promesse de gain de FPS. SoftTunes prépare Windows pour une session et mesure le FPS (PresentMon) — sans garantir plus de frames.
 
-Les mutateurs système passent par une confirmation UI et un jeton ConfirmGate côté host. Point de restauration recommandé avant session. SoftTunes **ne promet aucun gain de FPS**.
+Vous assumez **100 %** du risque lié à l’exécution et à la configuration. Mr-Aurevo-X n’est pas responsable des forks tiers altérés.
 
-Windows SmartScreen peut avertir (binaires non signés Authenticode) — réputation, pas verdict antivirus.
+## 4. Responsabilité utilisateur
 
-## 5. Soutien facultatif
+Utilisez SoftTunes conformément à son objet (préparation de session, caches, mesures FPS, réglages expert optionnels). Les actions réseau éventuelles sont décrites dans la politique de confidentialité. Les mutators système restent réversibles via Historique / Undo lorsque proposé.
 
-Discord / PayPal / Revolut : volontaires. Un don n’achète ni support ni mises à jour.
+## 5. Soutien optionnel
 
-## 6. Distribution lecture seule
+Liens Discord, PayPal et Revolut : **volontaires**. Un don n’achète ni support ni mises à jour. Un clic quitte l’app locale.
 
-Dépôt public en lecture seule — pas de PR / issues externes (`CONTRIBUTING.md`).
+## 6. Inner-source fermé
+
+Les dépôts publics sont des **distributions en lecture seule**. Pas de PRs / issues externes acceptées.
+
+## 7. Droit applicable
+
+Droit français. Litiges : tribunaux du domicile de l’éditeur, sous réserve des règles impératives de protection du consommateur.

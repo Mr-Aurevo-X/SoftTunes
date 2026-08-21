@@ -45,9 +45,19 @@
     if (label) label.textContent = detail ? `${pct}% — ${detail}` : pct ? `${pct}%` : "";
   }
 
-  async function waitApi(retries = 80) {
+  async function waitApi(retries = 120) {
     for (let i = 0; i < retries; i++) {
-      if (global.pywebview && global.pywebview.api) return global.pywebview.api;
+      const a = global.pywebview && global.pywebview.api;
+      // pywebview injects api:{} first, then fills methods async (_createApi).
+      // Returning too early → "api.run is not a function".
+      if (
+        a &&
+        (typeof a.run === "function" ||
+          typeof a.start_action === "function" ||
+          typeof a.prepare_action === "function")
+      ) {
+        return a;
+      }
       await new Promise((r) => setTimeout(r, 50));
     }
     return null;
@@ -57,6 +67,15 @@
     if (res && res.data && res.data.needsAdmin) return hint || res.error || "Admin required";
     if (res && /admin required/i.test(String(res.error || ""))) return hint || res.error;
     return null;
+  }
+
+  function hostCall(name) {
+    if (!api) throw new Error("API host indisponible");
+    const fn = api[name];
+    if (typeof fn !== "function") {
+      throw new Error(`API host pas prêt (${name}). Relance SoftTunes.`);
+    }
+    return fn.apply(api, Array.prototype.slice.call(arguments, 1));
   }
 
   async function run(action, payload) {
@@ -76,7 +95,10 @@
         if (!/non gatee/i.test(String(e && e.message))) throw e;
       }
     }
-    const res = token != null ? await api.run(action, body, token) : await api.run(action, body);
+    const res =
+      token != null
+        ? await hostCall("run", action, body, token)
+        : await hostCall("run", action, body);
     if (!res || !res.ok) {
       const adm = needsAdminMessage(res);
       if (adm) {
@@ -90,7 +112,14 @@
 
   async function runJob(action, payload) {
     if (!api) throw new Error("API host indisponible");
-    if (jobBusy) throw new Error("Action déjà en cours");
+    // Wait instead of hard-fail if Accueil refresh / scan overlap (avoids freeze + dead clicks).
+    if (jobBusy) {
+      const waitStart = Date.now();
+      while (jobBusy && Date.now() - waitStart < 180000) {
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      if (jobBusy) throw new Error("Action déjà en cours");
+    }
     jobBusy = true;
     setProgress(0, action);
     try {
@@ -106,8 +135,8 @@
       }
       const start =
         token != null
-          ? await api.start_action(action, body, token)
-          : await api.start_action(action, body);
+          ? await hostCall("start_action", action, body, token)
+          : await hostCall("start_action", action, body);
       if (!start || !start.ok) {
         const adm = needsAdminMessage(start);
         if (adm) {
@@ -118,7 +147,7 @@
       }
       for (;;) {
         await new Promise((r) => setTimeout(r, 200));
-        const prog = await api.get_action_progress();
+        const prog = await hostCall("get_action_progress");
         const d = (prog && prog.data) || {};
         setProgress(d.percent || 0, d.detail || d.phase || "");
         if (d.done && !d.running) {
@@ -126,12 +155,12 @@
           break;
         }
       }
-      const result = await api.get_action_result();
+      const result = await hostCall("get_action_result");
       if (!result || !result.ok) throw new Error((result && result.error) || "Échec");
       return result.data;
     } finally {
       jobBusy = false;
-      setProgress(100, "");
+      setProgress(0, "");
     }
   }
 

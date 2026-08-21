@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -93,16 +94,50 @@ def _api_latest_release(repo: str) -> dict[str, Any]:
         raise ValueError(f"release repo not allowlisted: {repo!r}")
     url = f"https://api.github.com/repos/{repo}/releases/latest"
     _assert_api_url(url)
-    req = urllib.request.Request(
-        url,
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "MrAurevoX-ReleaseNotice",
-            "X-GitHub-Api-Version": "2022-11-28",
-        },
-    )
-    with urllib.request.urlopen(req, timeout=8) as resp:  # nosec B310
-        return json.loads(resp.read().decode("utf-8"))
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "MrAurevoX-ReleaseNotice",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = (os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN") or "").strip()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:  # nosec B310
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        # Private SoftTunes → unauthenticated API returns 404. Fall back to gh CLI auth.
+        if exc.code in (401, 403, 404):
+            via_gh = _api_latest_via_gh(repo)
+            if via_gh is not None:
+                return via_gh
+        raise
+
+
+def _api_latest_via_gh(repo: str) -> dict[str, Any] | None:
+    """Use local `gh` auth (works for private Mr-Aurevo-X/SoftTunes)."""
+    creationflags = 0
+    if sys.platform == "win32":
+        creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    try:
+        completed = subprocess.run(
+            ["gh", "api", f"repos/{repo}/releases/latest"],
+            capture_output=True,
+            text=True,
+            timeout=12,
+            check=False,
+            creationflags=creationflags,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if completed.returncode != 0 or not (completed.stdout or "").strip():
+        return None
+    try:
+        data = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        return None
+    return data if isinstance(data, dict) else None
 
 
 def check_latest(

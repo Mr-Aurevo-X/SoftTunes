@@ -1,43 +1,43 @@
-﻿# Conditions générales d’utilisation — PC Command / Suite Mr-Aurevo-X
+# Conditions générales d’utilisation — SoftTunes
 
 Éditeur : Mr-Aurevo-X  
 Produit : SoftTunes  
 Copyright (c) 2026 Mr-Aurevo-X. Tous droits réservés.
 
-Les présentes CGU s’appliquent aux hubs **PC Command**, à Install-Easy, aux standalones et aux apps vitrine sous marque Mr-Aurevo-X. Le fichier anglais `LICENSE` (PolyForm Noncommercial 1.0.0) est la licence. Ce document ajoute les règles d’usage. Ce n’est pas une seconde licence.
+Les présentes CGU s’appliquent à **SoftTunes** (application Mr-Aurevo-X). Le fichier anglais `LICENSE` (PolyForm Noncommercial 1.0.0) est la licence. Ce document ajoute les règles d’usage. Ce n’est pas une seconde licence.
 
 ## 1. Licence
 
 Usage **non commercial** gratuit selon `LICENSE`. Revente, encapsulage payant, SaaS payant ou sous-licence : interdits sans accord écrit séparé.
 
-Binaires officiels : Install-Easy et/ou Releases GitHub `Mr-Aurevo-X/MrAurevoX-Launcher` (`Launch-Hub-*.zip` par hub).
+Binaires officiels : GitHub Releases `Mr-Aurevo-X/SoftTunes` (`SoftTunes.zip`).
 
-Conserver les mentions de copyright et en-têtes source. Ne pas retirer les textes À propos / légaux.
+Conserver les mentions de copyright. Ne pas retirer les textes À propos / légaux.
 
 ## 2. Aucune mise à jour garantie
 
-Le logiciel est livré comme un ensemble **autonome et fonctionnel**. L’éditeur n’a **aucune obligation** de fournir des versions futures, correctifs, adaptations OS ou maintenance. Pas de mise à jour automatique in-app : le hub peut afficher une notification si GitHub Latest est plus récent, avec un lien navigateur vers la release. Une nouvelle version se prend manuellement.
+Le logiciel est livré comme un ensemble **autonome et fonctionnel**. L’éditeur n’a **aucune obligation** de fournir des versions futures. Pas de mise à jour automatique in-app : SoftTunes peut afficher une notification si GitHub Latest est plus récent, avec un lien navigateur. Une nouvelle version se prend manuellement.
 
-## 3. « En l’état » / « selon disponibilité »
+## 3. Tel quel / tel que disponible
 
-LE LOGICIEL EST FOURNI **EN L’ÉTAT** ET **SELON DISPONIBILITÉ**, SANS GARANTIE D’AUCUNE SORTE.
+LE LOGICIEL EST FOURNI **TEL QUEL** ET **TEL QUE DISPONIBLE**, SANS GARANTIE D’AUCUNE SORTE.
 
-Vous assumez **100 %** du risque lié à l’exécution, la configuration, l’hébergement et l’isolation. Si un tiers modifie le logiciel et redistribue une version cassée ou nuisible, Mr-Aurevo-X n’est pas responsable de ce fork, de cet hébergement, ni de cet usage.
+Aucune promesse de gain de FPS. SoftTunes prépare Windows pour une session et mesure le FPS (PresentMon) — sans garantir plus de frames.
 
-## 4. Responsabilité de l’utilisateur
+Vous assumez **100 %** du risque lié à l’exécution et à la configuration. Mr-Aurevo-X n’est pas responsable des forks tiers altérés.
 
-ConfirmGate protège les actions destructives ; vous les confirmez. Point de restauration / sauvegarde recommandé. Les outils réseau contactent les **cibles que vous saisissez**. Traduction / réputation optionnelles : données vers des tiers (voir `PRIVACY.md`).
+## 4. Responsabilité utilisateur
 
-Windows peut afficher « potentiellement dangereux » ou « Windows a protégé votre ordinateur » : les binaires officiels ne sont pas signés Authenticode (pas de certificat éditeur payant). C’est un avertissement de réputation SmartScreen, pas un verdict antivirus. Voir `ISOLATION.md`.
+Utilisez SoftTunes conformément à son objet (préparation de session, caches, mesures FPS, réglages expert optionnels). Les actions réseau éventuelles sont décrites dans la politique de confidentialité. Les mutators système restent réversibles via Historique / Undo lorsque proposé.
 
-## 5. Soutien facultatif
+## 5. Soutien optionnel
 
-Liens Discord, PayPal, Revolut : **volontaires**. Un don n’est pas un prix de licence et n’achète ni support ni mises à jour. Un clic quitte l’application locale.
+Liens Discord, PayPal et Revolut : **volontaires**. Un don n’achète ni support ni mises à jour. Un clic quitte l’app locale.
 
 ## 6. Inner-source fermé
 
-Les dépôts publics sont des **distributions en lecture seule**. Pas de PR, pas d’issues, pas de contributions externes (`CONTRIBUTING.md`).
+Les dépôts publics sont des **distributions en lecture seule**. Pas de PRs / issues externes acceptées.
 
 ## 7. Droit applicable
 
-Droit français. Litiges : tribunaux compétents du domicile de l’éditeur, sous réserve des règles d’ordre public.
+Droit français. Litiges : tribunaux du domicile de l’éditeur, sous réserve des règles impératives de protection du consommateur.

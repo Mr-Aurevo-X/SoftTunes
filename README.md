@@ -2,7 +2,9 @@
 
 # SoftTunes
 
-Préparation de session Windows **indépendante** et **gratuite** (v1.7.1, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+Préparation de session Windows **indépendante** et **gratuite** (**v2.0.0**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+
+![SoftTunes Accueil — Void Glow](docs/softtunes-v2-accueil.png)
 
 ## Important
 
@@ -17,7 +19,14 @@ Préparation de session Windows **indépendante** et **gratuite** (v1.7.1, nom p
 
 Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
 
-> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Binaire : `SoftTunes.exe`.
+> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.0](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.0). Binaire : `SoftTunes.exe` / `Lancer.cmd`.
+
+### v2.0.0
+
+- UI **Void Glow** (confirmations, banner maj, chrome)
+- Session / NVIDIA : feedback d’état réel (power, PL, Soft OC)
+- À propos SoftTunes (legal, chemins locaux, maj GitHub opt-out)
+- HUD FPS : presets couleur (Void Glow + fluo)
 
 - Prépare Windows pour une **session de jeu** (plan d’alimentation, Game Mode, overlays Xbox, caches)
 - Mesure le FPS réel via **PresentMon** (overlay HUD) — sans garantir un gain de frames
@@ -55,10 +64,10 @@ Windows peut afficher « potentiellement dangereux » : les binaires ne sont pas
 Dev :
 
 ```powershell
-cd "C:\Users\aurel\Documents\Dev Central Tree\Opti"
+cd "C:\Users\aurel\Documents\Dev Central Tree\03_Standalones\Opti"
 python -m venv .venv
 .\.venv\Scripts\pip install -r requirements.txt
-.\.venv\Scripts\python host\opti_host.py
+.\Lancer.cmd
 ```
 
 ## Build

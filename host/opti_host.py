@@ -18,8 +18,16 @@ from typing import Any
 import webview
 
 from fps_worker_manager import FpsWorkerManager
-from fps_overlay import FpsOverlay, OVERLAY_TITLE
+from fps_overlay import FpsOverlay
 from release_notice import check_latest, open_release_url
+from about_support import (
+    about_local_paths,
+    get_update_check_pref,
+    is_github_update_check_enabled,
+    open_support_url as open_support_url_safe,
+    set_github_update_check,
+    set_suite_language as write_suite_language,
+)
 from window_chrome import WindowChromeMixin, create_tool_window
 from confirm_gate import ConfirmGate
 
@@ -150,6 +158,8 @@ DISABLED_ACTIONS = frozenset({
 URL_ALLOWLIST = frozenset({
     "https://www.msi.com/Landing/afterburner",
     "http://www.msi.com/Landing/afterburner",
+    "https://www.amd.com/en/support/download/drivers.html",
+    "https://www.amd.com/fr/support/download/drivers.html",
 })
 
 
@@ -279,7 +289,19 @@ class Api(WindowChromeMixin):
     def get_suite_language(self) -> dict:
         return {"ok": True, "language": resolve_suite_language()}
 
+    def set_suite_language(self, language: str = "fr") -> dict:
+        return write_suite_language(language)
+
     def check_latest_release(self) -> dict:
+        if not is_github_update_check_enabled():
+            return {
+                "ok": True,
+                "updateAvailable": False,
+                "skipped": True,
+                "checkGithubUpdates": False,
+                "local": None,
+                "message": None,
+            }
         return check_latest(
             self.root,
             source_repo="Mr-Aurevo-X/SoftTunes",
@@ -292,6 +314,18 @@ class Api(WindowChromeMixin):
             info = self.check_latest_release()
             target = str(info.get("releaseUrl") or "")
         return open_release_url(target)
+
+    def open_support_url(self, kind: str = "") -> dict:
+        return open_support_url_safe(kind)
+
+    def get_update_check_pref(self) -> dict:
+        return get_update_check_pref()
+
+    def set_update_check_pref(self, enabled: bool = True) -> dict:
+        return set_github_update_check(bool(enabled))
+
+    def get_about_local_paths(self) -> dict:
+        return about_local_paths(self.root)
 
 
     def _kill_current_proc(self) -> None:
@@ -312,16 +346,23 @@ class Api(WindowChromeMixin):
             if self._current_proc is proc:
                 self._current_proc = None
 
-    def run(self, action: str, payload: dict | None = None, token: str | None = None) -> dict:
+    def run(
+        self,
+        action: str,
+        payload: dict | None = None,
+        token: str | None = None,
+        skip_gate: bool = False,
+    ) -> dict:
         if payload is None:
             payload = {}
-        denied = self._require_gate(action, payload, token)
-        if denied is not None:
-            return denied
+        if not skip_gate:
+            denied = self._require_gate(action, payload, token)
+            if denied is not None:
+                return denied
         if action_needs_admin(action, payload) and not is_admin():
             return {
                 "ok": False,
-                "error": "Admin required. Click Elevate in SoftTunes, then retry.",
+                "error": "Admin required. SoftTunes must run elevated.",
                 "data": {"needsAdmin": True},
             }
         if not self.api_ps1.is_file():
@@ -432,7 +473,8 @@ class Api(WindowChromeMixin):
 
     def _job_worker(self, action: str, payload: dict) -> None:
         try:
-            res = self.run(action, payload)
+            # Gate already consumed in start_action — do not require a second token.
+            res = self.run(action, payload, None, True)
             if not res or not res.get("ok"):
                 err = (res or {}).get("error") or "Échec de l'action"
                 self._job_error = str(err)
@@ -646,38 +688,25 @@ def main() -> None:
         raise SystemExit(f"UI introuvable: {index}")
 
     api = Api(root)
-    ver = "1.7.1"
+    ver = "2.0.0"
     try:
         vf = root / "version.json"
         if vf.is_file():
             ver = str(json.loads(vf.read_text(encoding="utf-8")).get("version", ver))
     except Exception:
         pass
-    overlay_html = ui_dir() / "overlay.html"
-    if overlay_html.is_file():
-        hud = webview.create_window(
-            OVERLAY_TITLE,
-            overlay_html.as_uri(),
-            width=560,
-            height=40,
-            frameless=True,
-            on_top=True,
-            transparent=True,
-            hidden=True,
-            easy_drag=True,
-            resizable=False,
-            background_color="#000000",
-        )
-        api.attach_overlay(hud)
 
-    create_tool_window(
+    # HUD is a native WinForms form (TransparencyKey). WebView2 cannot punch chroma-key.
+    main_win = create_tool_window(
         title=f"SoftTunes {ver}",
         url=index.as_uri(),
         js_api=api,
         background_color="#06070c",
     )
+    api.attach_overlay(main_win)
     webview.start(gui="edgechromium", debug=False)
 
 
 if __name__ == "__main__":
     main()
+

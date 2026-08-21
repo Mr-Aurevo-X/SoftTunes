@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 # Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
 
-"""SoftTunes setup — install onedir package to LocalAppData + shortcuts (no admin required)."""
+"""SoftTunes setup â€” install onedir package to LocalAppData + shortcuts (no admin required)."""
 from __future__ import annotations
 
 import os
@@ -14,7 +14,7 @@ from pathlib import Path
 
 APP_NAME = "SoftTunes"
 PUBLISHER = "Mr-Aurevo-X"
-VERSION = "1.7.1"
+VERSION = "2.0.0"
 INSTALL_FOLDER = "SoftTunes"
 EXE_NAME = "SoftTunes.exe"
 LEGACY_EXE_NAMES = ("Opti.exe",)
@@ -64,7 +64,7 @@ def create_shortcut(lnk_path: Path, target: Path, workdir: Path, icon: Path | No
         sc.Targetpath = str(target)
         sc.WorkingDirectory = str(workdir)
         sc.IconLocation = str(icon or target)
-        sc.Description = "SoftTunes — prepare Windows for play · FPS meter"
+        sc.Description = "SoftTunes â€” prepare Windows for play Â· FPS meter"
         sc.save()
         return
     except Exception:
@@ -140,7 +140,7 @@ def main() -> int:
                 shutil.copytree(p, dest / name, dirs_exist_ok=True)
             elif p.is_file():
                 shutil.copy2(p, dest / name)
-        print("WARNING: exe missing — copied sources only. Build first.")
+        print("WARNING: exe missing â€” copied sources only. Build first.")
 
     exe = resolve_exe(dest)
     if not exe.is_file():
@@ -164,7 +164,7 @@ def main() -> int:
     create_shortcut(start_dir / "SoftTunes.lnk", exe, dest, icon)
     write_uninstall(dest, exe)
 
-    print("OK — SoftTunes installed.")
+    print("OK â€” SoftTunes installed.")
     print(f"Launch: {exe}")
     try:
         os.startfile(str(exe))  # type: ignore[attr-defined]
@@ -175,3 +175,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

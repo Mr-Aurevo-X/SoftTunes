@@ -66,7 +66,7 @@ function Wait-OptiMetricsSettle {
 
 function Get-OptiPowerScore {
     param([string]$PowerName)
-    if ("$PowerName" -match '(?i)High|Ultimate|Hautes\s*perf|Performances\s*maximales|Performances\s*élevées|Maximale') {
+    if ("$PowerName" -match '(?i)High|Ultimate|Haute\s*perf|Hautes\s*perf|Performances\s*maximales|Performances\s*optimales|Performances\s*élevées|Performances\s*elevees|Maximale') {
         return 100
     }
     return 55
@@ -75,7 +75,7 @@ function Get-OptiPowerScore {
 function Get-OptiPowerSchemeName {
     try {
         $out = powercfg /getactivescheme 2>$null
-        if ($out -match '\((.+)\)$') { return $Matches[1].Trim() }
+        if ("$out" -match '\((.+?)\)') { return $Matches[1].Trim() }
         return [string]$out
     } catch { return 'Unknown' }
 }

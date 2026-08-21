@@ -13,7 +13,7 @@
   const PAGE_META = I18N_ROOT.PAGE_META || { fr: {}, en: {} };
   const PAGE_ALIASES = I18N_ROOT.PAGE_ALIASES || {};
 
-  const APP_VERSION = "1.7.1";
+  const APP_VERSION = "2.0.0";
   const OVERLAY_KEY = "opti-fps-overlay";
   const OVERLAY_CFG_KEY = "opti-overlay-config";
   const ADV_KEY = "opti-advanced-mode";
@@ -21,9 +21,10 @@
   const SESSION_OPTS_KEY = "softtunes-session-opts";
 
   const LEGAL_FILES = {
-    terms: { fr: "legal/cgu.fr.html", en: "legal/tos.en.html" },
-    privacy: { fr: "legal/privacy.fr.html", en: "legal/privacy.en.html" },
-    disclaimer: { fr: "legal/disclaimer.fr.html", en: "legal/disclaimer.en.html" },
+    terms: { fr: "legal/terms.fr.md", en: "legal/terms.en.md" },
+    privacy: { fr: "legal/privacy.fr.md", en: "legal/privacy.en.md" },
+    mentions: { fr: "legal/mentions.fr.md", en: "legal/mentions.en.md" },
+    notices: { fr: "legal/notices.fr.md", en: "legal/notices.en.md" },
   };
 
   const PAGE_TIPS = {
@@ -31,6 +32,7 @@
     session: ["overlays", "stutter", "softperf"],
     fps: ["fps-frametime", "stutter", "bottleneck"],
     nvidia: ["softperf", "soft-vs-ab", "thermals"],
+    amd: ["softperf", "overlays", "vram"],
     clean: ["vram"],
     net: [],
     background: ["stutter"],
@@ -68,6 +70,8 @@
   let monitorTimer = null;
   const legalCache = {};
   let tipsCache = null;
+  /** @type {{ nvidia: boolean, amd: boolean, names: string }} */
+  let gpuDetect = { nvidia: false, amd: false, names: "" };
 
   const $ = B.$;
   const $$ = B.$$;
@@ -81,6 +85,108 @@
     return SUITE_I18N[lang] || SUITE_I18N.fr;
   }
 
+  function t(key, vars) {
+    let s = pack()[key] || key;
+    if (vars != null && typeof vars === "object" && !Array.isArray(vars)) {
+      Object.keys(vars).forEach((k) => {
+        s = String(s).split(`{${k}}`).join(String(vars[k] == null ? "" : vars[k]));
+      });
+    } else if (arguments.length > 1) {
+      Array.prototype.slice.call(arguments, 1).forEach((a, i) => {
+        s = String(s).split(`{${i}}`).join(String(a));
+      });
+    }
+    return s;
+  }
+
+  function syncLangSwitch() {
+    const root = $("#langSwitch");
+    if (!root) return;
+    root.querySelectorAll("[data-lang]").forEach((btn) => {
+      const on = btn.getAttribute("data-lang") === lang;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    root.setAttribute("aria-label", t("langSwitchAria"));
+  }
+
+  async function persistLanguage(next) {
+    try { localStorage.setItem("opti-lang", next); } catch (_) {}
+    try {
+      if (B.api && typeof B.api.set_suite_language === "function") {
+        await B.api.set_suite_language(next);
+      }
+    } catch (_) {}
+  }
+
+  async function resolveBootLanguage() {
+    try {
+      if (B.api?.get_suite_settings) {
+        const res = await B.api.get_suite_settings();
+        if (res && (res.language === "en" || res.language === "fr")) return res.language;
+      }
+      if (B.api?.get_suite_language) {
+        const res = await B.api.get_suite_language();
+        if (res && (res.language === "en" || res.language === "fr")) return res.language;
+      }
+    } catch (_) {}
+    try {
+      const saved = localStorage.getItem("opti-lang");
+      if (saved === "en" || saved === "fr") return saved;
+    } catch (_) {}
+    if (navigator.language && navigator.language.toLowerCase().startsWith("en")) return "en";
+    return "fr";
+  }
+
+  let lastReleaseInfo = null;
+
+  function applyGpuVendorPages() {
+    const hasNv = !!gpuDetect.nvidia;
+    const hasAmd = !!gpuDetect.amd;
+    const nvBody = $("#nvidiaBody");
+    const nvEmpty = $("#nvidiaEmpty");
+    const nvMsg = $("#nvidiaEmptyMsg");
+    const amdBody = $("#amdBody");
+    const amdEmpty = $("#amdEmpty");
+    const amdMsg = $("#amdEmptyMsg");
+    if (nvBody) nvBody.hidden = !hasNv;
+    if (nvEmpty) nvEmpty.hidden = hasNv;
+    if (amdBody) amdBody.hidden = !hasAmd;
+    if (amdEmpty) amdEmpty.hidden = hasAmd;
+    const other = gpuDetect.names || "—";
+    if (nvMsg && !hasNv) {
+      nvMsg.textContent = hasAmd || other !== "—"
+        ? t("gpuEmptyNvidiaOther", other)
+        : t("gpuEmptyNvidia");
+    }
+    if (amdMsg && !hasAmd) {
+      amdMsg.textContent = hasNv || other !== "—"
+        ? t("gpuEmptyAmdOther", other)
+        : t("gpuEmptyAmd");
+    }
+    // Keep both nav entries visible so the empty message is reachable.
+    const navNv = $("#navNvidia");
+    const navAmd = $("#navAmd");
+    if (navNv) navNv.hidden = false;
+    if (navAmd) navAmd.hidden = false;
+  }
+
+  function ingestGpuDetect(gpu, extras) {
+    const gpus = (gpu && gpu.gpus) || [];
+    const names = gpus.map((g) => g && g.name).filter(Boolean).join(", ") || gpuDetect.names || "";
+    let hasNv = gpus.some((g) => String(g.vendor || "").toLowerCase() === "nvidia");
+    let hasAmd = gpus.some((g) => String(g.vendor || "").toLowerCase() === "amd");
+    const top = String((gpu && gpu.vendor) || "").toLowerCase();
+    if (top === "nvidia") hasNv = true;
+    if (top === "amd") hasAmd = true;
+    if (extras) {
+      if (extras.nvidiaAvailable) hasNv = true;
+      if (extras.amdAvailable) hasAmd = true;
+    }
+    gpuDetect = { nvidia: hasNv, amd: hasAmd, names: names || "—" };
+    applyGpuVendorPages();
+  }
+
   function applyI18n() {
     document.documentElement.lang = lang === "en" ? "en" : "fr";
     if (window.MrAurevoXSuite) {
@@ -91,21 +197,40 @@
         if (key && pack()[key]) el.textContent = pack()[key];
       });
     }
-    const btnLang = $("#btnLang");
-    if (btnLang && pack().btnLang) btnLang.textContent = pack().btnLang;
+    syncLangSwitch();
+    applyGpuVendorPages();
+    const hint = $("#aboutUpdateHint");
+    const chk = $("#chkGithubUpdates");
+    if (hint && chk) {
+      hint.textContent = chk.checked ? t("aboutUpdateHintOn") : t("aboutUpdateHintOff");
+    }
+    if (lastReleaseInfo && lastReleaseInfo.updateAvailable) {
+      paintReleaseBanner(lastReleaseInfo);
+    }
   }
 
-  function setLang(next) {
+  async function setLang(next) {
     if (next !== "fr" && next !== "en") return;
+    if (next === lang) {
+      syncLangSwitch();
+      return;
+    }
     lang = next;
-    try { localStorage.setItem("opti-lang", lang); } catch (_) {}
+    await persistLanguage(lang);
+    // Drop legal cache so FR/EN docs reload for the new language.
+    Object.keys(legalCache).forEach((k) => { delete legalCache[k]; });
     applyI18n();
     const aboutVer = $("#aboutVersion");
-    if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${lang === "en" ? "final version" : "version finale"}`;
+    if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${t("versionFinal")}`;
     const meta = (PAGE_META[lang] || PAGE_META.fr)[currentPage];
     if (meta) {
       $("#pageTitle").textContent = meta[0];
       $("#pageSub").textContent = meta[1];
+    }
+    const dlg = $("#aboutDialog");
+    if (dlg && (dlg.open || dlg.hasAttribute("open"))) {
+      const active = document.querySelector(".about-legal-links [data-doc].active");
+      loadLegal(active?.getAttribute("data-doc") || "terms").catch(() => {});
     }
   }
 
@@ -158,7 +283,7 @@
   }
 
   async function refreshHealth(prefetched) {
-    const h = prefetched || (await runJob("getHealth", {}));
+    const h = prefetched || (await run("getHealth", {}));
     renderReadiness(h);
     return h;
   }
@@ -196,14 +321,14 @@
     const helpBtn = $("#btnPageHelp");
     if (helpBtn) helpBtn.hidden = !(PAGE_TIPS[resolved] || []).length;
 
-    if (resolved === "about") {
-      const activeTab = $(".legal-tab.active");
-      loadLegal(activeTab ? activeTab.dataset.doc : "terms").catch(() => {});
-    }
     if (resolved === "net") refreshDns().catch(() => {});
     if (resolved === "nvidia") {
       refreshSoftPerf().catch(() => {});
       refreshSoftOc().catch(() => {});
+    }
+    if (resolved === "amd") {
+      refreshSoftPerf().catch(() => {});
+      refreshAmd().catch(() => {});
     }
     if (resolved === "background") {
       const tab = $(".bg-tab.active");
@@ -280,26 +405,27 @@
     } catch (_) {}
   }
 
-  function confirmSessionPreset() {
+  async function confirmSessionPreset() {
     const p = pack();
     let body = p.presetConfirmBody || "";
     const rp = $("#chkCreateRp");
     if (rp && rp.checked) {
       body += lang === "en" ? "\n\nA restore point will be created." : "\n\nUn point de restauration sera créé.";
     }
-    return window.confirm((p.presetConfirmTitle || "Session") + "\n\n" + body);
+    return askConfirm(body, p.presetConfirmTitle || "Session");
   }
 
   async function applySession(fromDash) {
-    if (!confirmSessionPreset()) return;
+    if (!(await confirmSessionPreset())) return;
     try {
       const payload = collectSessionPayload(fromDash);
       const r = await runJob("applySessionPreset", payload);
-      log(r.MessageFr && lang === "fr" ? r.MessageFr : (r.Message || "OK"), "ok");
+      logAction(r, lang === "en" ? "Session preset applied" : "Preset session appliqué");
       persistSessionOpts();
       await refreshHealth();
       await refreshPower().catch(() => {});
       await refreshBoost().catch(() => {});
+      await refreshGameMode().catch(() => {});
     } catch (e) {
       log(String(e.message || e), "err");
     }
@@ -345,14 +471,97 @@
     });
   }
 
+  function actionMessage(r, fallback) {
+    if (!r) return fallback || (lang === "en" ? "Done" : "OK");
+    if (lang === "fr" && r.MessageFr) return String(r.MessageFr);
+    if (r.Message) return String(r.Message);
+    return fallback || (lang === "en" ? "Done" : "OK");
+  }
+
+  function logAction(r, fallbackOk) {
+    const ok = !!(r && r.Success !== false);
+    log(actionMessage(r, fallbackOk || (ok ? (lang === "en" ? "Done" : "OK") : (lang === "en" ? "Failed" : "Échec"))), ok ? "ok" : "err");
+    return ok;
+  }
+
+  let confirmResolver = null;
+
+  function askConfirm(message, titleText) {
+    const ov = $("#confirmOverlay");
+    const title = $("#confirmTitle");
+    const msg = $("#confirmMsg");
+    if (!ov || !msg) {
+      return Promise.resolve(window.confirm(String(message || "")));
+    }
+    if (title) title.textContent = titleText || t("confirmTitle");
+    msg.textContent = String(message || "");
+    ov.hidden = false;
+    document.body.classList.add("pcd-confirm-open");
+    return new Promise((resolve) => {
+      confirmResolver = resolve;
+    });
+  }
+
+  function closeConfirm(ok) {
+    const ov = $("#confirmOverlay");
+    if (ov) ov.hidden = true;
+    document.body.classList.remove("pcd-confirm-open");
+    const fn = confirmResolver;
+    confirmResolver = null;
+    if (fn) fn(!!ok);
+  }
+
+  function detectActivePowerProfile(plans) {
+    const active = (plans || []).find((x) => x && x.active);
+    if (!active) return null;
+    const g = String(active.guid || "").toLowerCase();
+    const n = String(active.name || "");
+    if (g === "381b4222-f694-41f0-9685-ff5bb260df2e" || /Balanced|Équilibré|Equilibre|Utilisation normale/i.test(n)) {
+      return "balanced";
+    }
+    if (g === "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c" || /High performance|Haute performance|Hautes performances|Performances élevées|Performances elevees/i.test(n)) {
+      return "high";
+    }
+    if (
+      g === "e9a42b02-d5df-448d-aa00-03f14749eb61" ||
+      /Ultimate|Performances maximales|Performances optimales/i.test(n)
+    ) {
+      return "ultimate";
+    }
+    return null;
+  }
+
+  function syncPowerButtons(plans) {
+    const profile = detectActivePowerProfile(plans);
+    const active = (plans || []).find((x) => x && x.active);
+    const map = {
+      btnPowerBalanced: "balanced",
+      btnPowerHigh: "high",
+      btnPowerUlt: "ultimate",
+    };
+    Object.keys(map).forEach((id) => {
+      const btn = $("#" + id);
+      if (!btn) return;
+      const on = profile === map[id];
+      btn.classList.toggle("accent", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    const hint = $("#powerActiveHint");
+    if (hint) {
+      const name = (active && active.name) || "—";
+      hint.textContent = t("powerActive", { name });
+    }
+  }
+
   async function refreshPower() {
     const d = await run("getPowerPlans", {});
     const plans = d.plans || [];
     const list = $("#powerList");
     if (!list) return;
     list.innerHTML = plans.length
-      ? plans.map((p) => `<li>${p.active ? "★ " : ""}${esc(p.name)} <span class="muted">${esc(p.guid)}</span></li>`).join("")
+      ? plans.map((plan) => `<li>${plan.active ? "★ " : ""}${esc(plan.name)} <span class="muted">${esc(plan.guid)}</span></li>`).join("")
       : '<li class="muted">—</li>';
+    syncPowerButtons(plans);
   }
 
   async function refreshGameMode() {
@@ -372,43 +581,113 @@
       : (s.active ? `Actif — ${n} overlays vus` : `Inactif — ${n} overlays détectés`);
   }
 
+  function setAccentButtons(map) {
+    Object.keys(map).forEach((id) => {
+      const b = $("#" + id);
+      if (!b) return;
+      const on = !!map[id];
+      b.classList.toggle("accent", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
   async function refreshSoftPerf() {
     const d = await run("getSoftPerf", {});
     const os = d.os || {};
     const gpu = d.gpu || {};
     const nv = d.nvidia || {};
+    const vendor = String(gpu.vendor || "").toLowerCase();
     const gpuNames = ((gpu.gpus || []).map((g) => g.name).filter(Boolean).join(", ")) || "—";
+    ingestGpuDetect(gpu, { nvidiaAvailable: !!nv.available });
+    const plPreset = String(nv.activePlPreset || nv.lastPlPreset || "");
+    const softOn = !!os.softOsActive;
     const status = $("#softPerfStatus");
     if (status) {
-      const nvLine = nv.available
-        ? `${nv.name || "NVIDIA"} · PL ${nv.currentPl}W`
-        : (lang === "en" ? "nvidia-smi unavailable" : "nvidia-smi indisponible");
+      const hagsTxt = os.hagsEnabled == null ? "?" : (os.hagsEnabled ? "on" : "off");
+      let nvLine = lang === "en" ? "nvidia-smi unavailable" : "nvidia-smi indisponible";
+      if (nv.available) {
+        const bits = [`${nv.name || "NVIDIA"}`, `PL ${nv.currentPl}W`];
+        if (nv.stockPl != null) bits.push(`stock ${nv.stockPl}W`);
+        if (nv.maxPl != null) bits.push(`max ${nv.maxPl}W`);
+        if (plPreset) bits.push(plPreset);
+        nvLine = bits.join(" · ");
+      }
       status.textContent = lang === "en"
-        ? `GPU: ${gpuNames} · HAGS: ${os.hagsEnabled == null ? "?" : os.hagsEnabled ? "on" : "off"} · ${nvLine}`
-        : `GPU : ${gpuNames} · HAGS : ${os.hagsEnabled == null ? "?" : os.hagsEnabled ? "on" : "off"} · ${nvLine}`;
+        ? `GPU: ${gpuNames} · HAGS: ${hagsTxt} · OS soft: ${softOn ? "on" : "off"} · ${nvLine}`
+        : `GPU : ${gpuNames} · HAGS : ${hagsTxt} · OS soft : ${softOn ? "on" : "off"} · ${nvLine}`;
+    }
+    const amdPerf = $("#amdSoftPerfStatus");
+    if (amdPerf) {
+      amdPerf.textContent = lang === "en"
+        ? `GPU: ${gpuNames} · vendor ${vendor || "?"} · HAGS: ${os.hagsEnabled == null ? "?" : os.hagsEnabled ? "on" : "off"}`
+        : `GPU : ${gpuNames} · vendor ${vendor || "?"} · HAGS : ${os.hagsEnabled == null ? "?" : os.hagsEnabled ? "on" : "off"}`;
     }
     if ($("#chkHags") && os.hagsEnabled != null) $("#chkHags").checked = !!os.hagsEnabled;
-    const canNv = !!nv.available;
+    if ($("#chkAmdHags") && os.hagsEnabled != null) $("#chkAmdHags").checked = !!os.hagsEnabled;
+    const canNv = !!nv.available && !!gpuDetect.nvidia;
     ["btnPlEco", "btnPlStock", "btnPlPerf"].forEach((id) => {
       const b = $("#" + id);
       if (b) b.disabled = !canNv;
     });
-    const nav = $("#navNvidia");
-    if (nav) nav.hidden = !canNv;
+    setAccentButtons({
+      btnSoftPerfOs: softOn,
+      btnPlEco: canNv && plPreset === "eco",
+      btnPlStock: canNv && plPreset === "stock",
+      btnPlPerf: canNv && plPreset === "perf",
+    });
   }
 
   async function updateNvidiaNav() {
     try { await refreshSoftPerf(); } catch (_) {}
   }
 
+  async function refreshAmd() {
+    const d = await run("getSoftOc", {});
+    const amd = d.amd || {};
+    const soft = amd.software || {};
+    ingestGpuDetect(d.gpu || {}, {
+      nvidiaAvailable: !!(d.nvidia && d.nvidia.available),
+      amdAvailable: !!amd.available,
+    });
+    const status = $("#amdStatus");
+    if (status) {
+      if (amd.available) {
+        const names = ((amd.gpus || []).map((g) => g.name).filter(Boolean).join(", ")) || amd.name || "AMD";
+        status.textContent = lang === "en"
+          ? `Detected: ${names}`
+          : `Détecté : ${names}`;
+      } else {
+        status.textContent = lang === "en"
+          ? "No AMD / Radeon GPU detected (WMI)."
+          : "Aucun GPU AMD / Radeon détecté (WMI).";
+      }
+    }
+    const note = $("#amdSoftwareStatus");
+    if (note) {
+      if (soft.found) {
+        note.textContent = lang === "en" ? `Found: ${soft.path}` : `Trouvé : ${soft.path}`;
+      } else {
+        note.textContent = lang === "en"
+          ? "AMD Software not installed — download Adrenalin for UV / tuning."
+          : "AMD Software non installé — télécharge Adrenalin pour UV / réglages.";
+      }
+    }
+  }
+
   async function refreshSoftOc() {
     const d = await run("getSoftOc", {});
     const nv = d.nvidia || {};
     const ab = d.afterburner || {};
+    ingestGpuDetect(d.gpu || {}, {
+      nvidiaAvailable: !!nv.available,
+      amdAvailable: !!(d.amd && d.amd.available),
+    });
+    const ocPreset = String(nv.activeOcPreset || nv.lastOcPreset || "");
     const el = $("#softOcStatus");
     if (el) {
       el.textContent = nv.available
-        ? `${nv.name || "NVIDIA"} · core ${nv.coreCurrent}/${nv.coreMax} MHz · mem ${nv.memCurrent}/${nv.memMax} MHz`
+        ? `${nv.name || "NVIDIA"} · core ${nv.coreCurrent}/${nv.coreMax} MHz · mem ${nv.memCurrent}/${nv.memMax} MHz` +
+          (ocPreset ? ` · ${ocPreset}` : "")
         : (lang === "en" ? `Clocks unavailable (${nv.reason || "n/a"})` : `Horloges indisponibles (${nv.reason || "n/a"})`);
     }
     const abEl = $("#afterburnerStatus");
@@ -417,15 +696,75 @@
         ? (lang === "en" ? `Found: ${ab.path}` : `Trouvé : ${ab.path}`)
         : (lang === "en" ? "Afterburner not installed" : "Afterburner non installé");
     }
+    const canOc = !!nv.available && !!gpuDetect.nvidia;
     ["btnOcStock", "btnOc50", "btnOc100"].forEach((id) => {
       const b = $("#" + id);
-      if (b) b.disabled = !nv.available;
+      if (b) b.disabled = !canOc;
+    });
+    setAccentButtons({
+      btnOcStock: canOc && ocPreset === "stock",
+      btnOc50: canOc && ocPreset === "plus50",
+      btnOc100: canOc && ocPreset === "plus100",
     });
   }
+
+  const OVERLAY_COLOR_PRESETS = {
+    voidglow: {
+      accent: "#e03545",
+      text: "#f0f2f5",
+      brand: "#e03545",
+      fps: "#ff6b7a",
+      muted: "#a8aab4",
+    },
+    neonlime: {
+      accent: "#39ff14",
+      text: "#f7ff00",
+      brand: "#39ff14",
+      fps: "#f7ff00",
+      muted: "#b8ff66",
+    },
+    neoncold: {
+      accent: "#00e8ff",
+      text: "#ffe566",
+      brand: "#00e8ff",
+      fps: "#ff4fd8",
+      muted: "#7adfff",
+    },
+    neonorange: {
+      accent: "#ff7a18",
+      text: "#39d0ff",
+      brand: "#ff9a3c",
+      fps: "#39d0ff",
+      muted: "#ffc078",
+    },
+    neonviolet: {
+      accent: "#b44dff",
+      text: "#b8ff3c",
+      brand: "#d27aff",
+      fps: "#b8ff3c",
+      muted: "#e0b3ff",
+    },
+    neonice: {
+      accent: "#e8fbff",
+      text: "#7af0ff",
+      brand: "#ffffff",
+      fps: "#5ce1ff",
+      muted: "#b6f3ff",
+    },
+    neonfire: {
+      accent: "#ff2a2a",
+      text: "#ffe600",
+      brand: "#ff4d4d",
+      fps: "#ffe600",
+      muted: "#ffb347",
+    },
+  };
 
   function defaultOverlayConfig() {
     return {
       layout: "line",
+      scale: 1,
+      colors: Object.assign({}, OVERLAY_COLOR_PRESETS.voidglow),
       show: {
         brand: true, fps: true, frametime: true, onePercentLow: true,
         app: true, cpu: true, cpuTemp: true, gpu: true, gpuTemp: true, ram: true,
@@ -433,10 +772,28 @@
     };
   }
 
+  function applyOverlayColorPreset(name) {
+    const colors = OVERLAY_COLOR_PRESETS[name];
+    if (!colors) return;
+    const cfg = collectOverlayConfigFromForm();
+    cfg.colors = Object.assign({}, colors);
+    applyOverlayConfigToForm(cfg);
+    document.querySelectorAll("[data-ov-color-preset]").forEach((btn) => {
+      btn.classList.toggle("accent", btn.getAttribute("data-ov-color-preset") === name);
+    });
+    persistOverlayConfig().catch((e) => log(e.message || String(e), "err"));
+  }
+
   function applyOverlayPreset(name) {
-    const preset = name === "full" ? defaultOverlayConfig() : OVERLAY_PRESETS[name];
+    const base = defaultOverlayConfig();
+    const preset = name === "full" ? base : OVERLAY_PRESETS[name];
     if (!preset) return;
-    applyOverlayConfigToForm(preset);
+    const merged = Object.assign({}, base, preset, {
+      colors: Object.assign({}, base.colors, (preset.colors || {})),
+      show: Object.assign({}, base.show, (preset.show || {})),
+      scale: (typeof preset.scale === "number" ? preset.scale : base.scale),
+    });
+    applyOverlayConfigToForm(merged);
     persistOverlayConfig().catch(() => {});
   }
 
@@ -444,6 +801,17 @@
     const cfg = defaultOverlayConfig();
     const sel = $("#selOverlayLayout");
     if (sel && (sel.value === "line" || sel.value === "card")) cfg.layout = sel.value;
+    const scaleEl = $("#rngOverlayScale");
+    if (scaleEl) {
+      const s = Number(scaleEl.value);
+      if (s >= 0.7 && s <= 2.2) cfg.scale = Math.round(s * 100) / 100;
+    }
+    document.querySelectorAll("[data-ov-color]").forEach((el) => {
+      const key = el.getAttribute("data-ov-color");
+      if (key && Object.prototype.hasOwnProperty.call(cfg.colors, key) && el.value) {
+        cfg.colors[key] = String(el.value).toLowerCase();
+      }
+    });
     document.querySelectorAll("[data-ov]").forEach((el) => {
       const key = el.getAttribute("data-ov");
       if (key && Object.prototype.hasOwnProperty.call(cfg.show, key)) cfg.show[key] = !!el.checked;
@@ -455,6 +823,16 @@
     if (!cfg) return;
     const sel = $("#selOverlayLayout");
     if (sel && (cfg.layout === "line" || cfg.layout === "card")) sel.value = cfg.layout;
+    const scaleEl = $("#rngOverlayScale");
+    const scaleVal = $("#overlayScaleVal");
+    const scale = typeof cfg.scale === "number" ? cfg.scale : 1;
+    if (scaleEl) scaleEl.value = String(scale);
+    if (scaleVal) scaleVal.textContent = `${Math.round(scale * 100)}%`;
+    const colors = cfg.colors || {};
+    document.querySelectorAll("[data-ov-color]").forEach((el) => {
+      const key = el.getAttribute("data-ov-color");
+      if (key && colors[key]) el.value = colors[key];
+    });
     const show = cfg.show || {};
     document.querySelectorAll("[data-ov]").forEach((el) => {
       const key = el.getAttribute("data-ov");
@@ -566,18 +944,14 @@
       const hintEl = $("#monitorHint");
       if (hintEl) {
         const lines = [];
-        if (d && d.needsAdmin) {
-          lines.push(lang === "en"
-            ? "Try « Elevate (admin) » in the header, then reopen FPS."
-            : "Essayez « Élever (admin) » en haut, puis rouvrez FPS.");
-        } else if (active) {
+        if (active) {
           lines.push(lang === "en"
             ? "Capture is running. Focus a game window and wait a few seconds."
             : "La capture tourne. Mettez le jeu au premier plan et attendez.");
         } else {
           lines.push(lang === "en"
-            ? "1. Launch a game · 2. Alt+Tab to the game · 3. Run SoftTunes as admin if still empty"
-            : "1. Lancez un jeu · 2. Alt+Tab vers le jeu · 3. Élevez SoftTunes en admin si vide");
+            ? "1. Launch a game · 2. Alt+Tab to the game · 3. Wait a few seconds"
+            : "1. Lancez un jeu · 2. Alt+Tab vers le jeu · 3. Attendez quelques secondes");
         }
         hintEl.textContent = lines.join(" ");
         hintEl.hidden = false;
@@ -586,17 +960,32 @@
   }
 
   async function scanClean() {
+    log(lang === "en" ? "Scanning caches…" : "Analyse des caches…", "warn");
+    setStatus(lang === "en" ? "Scanning…" : "Analyse…");
     const d = await runJob("scanCleanup", {});
     const items = d.items || [];
-    $("#stTargets").textContent = String(items.length);
-    $("#stEst").textContent = d.totalSize || "—";
-    $("#cleanCats").innerHTML = items
-      .map(
-        (it) => `<label class="check-item"><input type="checkbox" data-id="${esc(it.id)}" ${it.exists && it.bytes > 0 ? "checked" : ""}/>
+    const targets = $("#stTargets");
+    const est = $("#stEst");
+    if (targets) targets.textContent = String(items.length);
+    if (est) est.textContent = d.totalSize || "—";
+    const box = $("#cleanCats");
+    if (box) {
+      // Yield to UI before heavy DOM write (avoids freeze after large scans).
+      await new Promise((r) => requestAnimationFrame(() => r()));
+      const frag = document.createDocumentFragment();
+      const wrap = document.createElement("div");
+      wrap.innerHTML = items
+        .map(
+          (it) => `<label class="check-item"><input type="checkbox" data-id="${esc(it.id)}" ${it.exists && it.bytes > 0 ? "checked" : ""}/>
         <div><div class="t">${esc(it.name)}</div><div class="d">${esc(it.size)} — ${esc(it.path)}</div></div></label>`
-      )
-      .join("");
+        )
+        .join("");
+      while (wrap.firstChild) frag.appendChild(wrap.firstChild);
+      box.replaceChildren(frag);
+      await new Promise((r) => requestAnimationFrame(() => r()));
+    }
     log(`Cleanup scan: ${d.totalSize}`, "ok");
+    setStatus(pack().ready || "Prêt");
   }
 
   async function refreshDns() {
@@ -671,13 +1060,15 @@
       .join("") || '<li class="muted">—</li>';
     $$("#undoList [data-undo]").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!window.confirm(p.undoConfirm || "Annuler cette action ?")) return;
+        const p = pack();
+        if (!(await askConfirm(p.undoConfirm || (lang === "en" ? "Undo this action?" : "Annuler cette action ?")))) return;
         try {
           const r = await runJob("runUndo", { id: btn.dataset.undo });
           const cls = r.Partial ? "warn" : r.Success === false ? "err" : "ok";
-          log(r.Message || "Undo OK", cls);
+          log(actionMessage(r, "Undo OK"), cls);
           await refreshSessions();
           await refreshHealth();
+          await refreshPower().catch(() => {});
         } catch (e) {
           log(String(e.message || e), "err");
         }
@@ -688,30 +1079,49 @@
   async function loadLegal(doc) {
     const key = doc && LEGAL_FILES[doc] ? doc : "terms";
     const file = LEGAL_FILES[key][lang] || LEGAL_FILES[key].fr;
-    const frame = $("#legalFrame");
-    if (!frame) return;
+    const body = $("#aboutLegalBody");
+    if (!body) return;
+    document.querySelectorAll(".about-legal-links [data-doc]").forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-doc") === key);
+    });
     try {
       if (!legalCache[file]) {
         const res = await fetch(file, { cache: "no-store" });
-        legalCache[file] = res.ok ? await res.text() : `<p>(${key})</p>`;
+        legalCache[file] = res.ok
+          ? await res.text()
+          : (lang === "en" ? `Could not load ${file}` : `Impossible de charger ${file}`);
       }
-      frame.srcdoc = legalCache[file];
-    } catch (_) {
-      frame.srcdoc = `<p>(${key})</p>`;
+      body.textContent = legalCache[file];
+      body.hidden = false;
+    } catch (err) {
+      body.textContent = String(err);
+      body.hidden = false;
     }
   }
 
   function wire() {
+    const confirmOk = $("#confirmOk");
+    const confirmCancel = $("#confirmCancel");
+    if (confirmOk) confirmOk.addEventListener("click", () => closeConfirm(true));
+    if (confirmCancel) confirmCancel.addEventListener("click", () => closeConfirm(false));
+    const confirmOverlay = $("#confirmOverlay");
+    if (confirmOverlay) {
+      confirmOverlay.addEventListener("click", (e) => {
+        if (e.target === confirmOverlay) closeConfirm(false);
+      });
+    }
+
     $("#nav").addEventListener("click", (e) => {
       const btn = e.target.closest(".nav-btn");
       if (btn) showPage(btn.dataset.page);
     });
 
     $("#btnRestore").addEventListener("click", async () => {
-      if (!window.confirm(p.rpConfirm || "Creer un point de restauration ?")) return;
+      const p = pack();
+      if (!(await askConfirm(p.rpConfirm || (lang === "en" ? "Create a restore point?" : "Créer un point de restauration ?")))) return;
       try {
         const r = await runJob("createRestorePoint", {});
-        log(r.Message || JSON.stringify(r), r.Success ? "ok" : "warn");
+        logAction(r, lang === "en" ? "Restore point created" : "Point de restauration créé");
       } catch (e) {
         log(String(e.message || e), "err");
       }
@@ -740,17 +1150,27 @@
 
     const bindPower = (id, profile) => {
       const btn = $(id);
-      if (btn) {
-        btn.addEventListener("click", async () => {
-          if (!window.confirm((p.powerConfirm || "Appliquer le plan d'alimentation") + "\n\n" + profile)) return;
-          try {
-            const r = await runJob("setPowerPlan", { profile });
-            log(r.Message, "ok");
-          } catch (e) {
-            log(e.message, "err");
-          }
-        });
-      }
+      if (!btn) return;
+      btn.addEventListener("click", async () => {
+        const p = pack();
+        const label = profile === "balanced"
+          ? (p.btnBalanced || "balanced")
+          : profile === "ultimate"
+            ? (p.btnUltimate || "ultimate")
+            : (p.btnHigh || "high");
+        if (!(await askConfirm(`${p.powerConfirm || (lang === "en" ? "Apply power plan?" : "Appliquer le plan d'alimentation ?")}\n\n${label}`, t("confirmTitle")))) return;
+        try {
+          log(t("powerApplying", { name: label }), "warn");
+          setStatus(t("powerApplying", { name: label }));
+          const r = await runJob("setPowerPlan", { profile });
+          const ok = logAction(r, t("powerDone", { name: label }));
+          await refreshPower();
+          await refreshHealth().catch(() => {});
+          if (ok) setStatus(t("powerDone", { name: label }));
+        } catch (e) {
+          log(String(e.message || e), "err");
+        }
+      });
     };
     bindPower("#btnPowerBalanced", "balanced");
     bindPower("#btnPowerHigh", "high");
@@ -759,17 +1179,21 @@
     const btnGm = $("#btnApplyGm");
     if (btnGm) {
       btnGm.addEventListener("click", async () => {
-        if (!window.confirm(p.gmConfirm || "Appliquer Game Mode / Focus Assist ?")) return;
+        const p = pack();
+        if (!(await askConfirm(p.gmConfirm || (lang === "en" ? "Apply Game Mode / Focus Assist?" : "Appliquer Game Mode / Focus Assist ?")))) return;
         try {
+          log(lang === "en" ? "Applying Game Mode…" : "Application Game Mode…", "warn");
           const r = await runJob("setGameMode", {
             gameMode: $("#chkGameMode").checked,
             disableGameBar: $("#chkDisableBar").checked,
             focusAssist: $("#chkFocus").checked,
           });
-          log(r.Message, "ok");
+          logAction(r, lang === "en" ? "Game Mode applied" : "Game Mode appliqué");
           persistSessionOpts();
+          await refreshGameMode();
+          await refreshHealth().catch(() => {});
         } catch (e) {
-          log(e.message, "err");
+          log(String(e.message || e), "err");
         }
       });
     }
@@ -777,18 +1201,20 @@
     const btnStartBoost = $("#btnStartBoost");
     if (btnStartBoost) {
       btnStartBoost.addEventListener("click", async () => {
-        if (!window.confirm(p.boostConfirm || "Lancer le boost (fermeture overlays) ?")) return;
+        const p = pack();
+        if (!(await askConfirm(p.boostConfirm || (lang === "en" ? "Start boost (close overlays)?" : "Lancer le boost (fermeture overlays) ?")))) return;
         try {
+          log(lang === "en" ? "Starting boost…" : "Démarrage boost…", "warn");
           const r = await runJob("startBoost", {
             killOverlays: $("#chkKillOv").checked,
             includeDiscord: $("#chkDiscord").checked,
             includeGpuOverlay: $("#chkGpuOv").checked,
           });
-          log(r.Message, "ok");
+          logAction(r, lang === "en" ? "Boost started" : "Boost démarré");
           persistSessionOpts();
           await refreshBoost();
         } catch (e) {
-          log(e.message, "err");
+          log(String(e.message || e), "err");
         }
       });
     }
@@ -796,11 +1222,12 @@
     if (btnStopBoost) {
       btnStopBoost.addEventListener("click", async () => {
         try {
+          log(lang === "en" ? "Stopping boost…" : "Arrêt boost…", "warn");
           const r = await runJob("stopBoost", {});
-          log(r.Message, "ok");
+          logAction(r, lang === "en" ? "Boost stopped" : "Boost arrêté");
           await refreshBoost();
         } catch (e) {
-          log(e.message, "err");
+          log(String(e.message || e), "err");
         }
       });
     }
@@ -809,15 +1236,16 @@
     if (btnVisual) {
       btnVisual.addEventListener("click", async () => {
         try {
+          log(lang === "en" ? "Applying desktop visuals…" : "Application effets bureau…", "warn");
           const r = await runJob("setVisual", {
             reduceEffects: $("#chkFx").checked,
             disableAnimations: $("#chkAnim").checked,
             disableTransparency: $("#chkTrans").checked,
           });
-          log(r.Message, "ok");
+          logAction(r, lang === "en" ? "Visual settings applied" : "Effets bureau appliqués");
           persistSessionOpts();
         } catch (e) {
-          log(e.message, "err");
+          log(String(e.message || e), "err");
         }
       });
     }
@@ -828,11 +1256,12 @@
 
     $("#btnScanClean").addEventListener("click", () => scanClean().catch((e) => log(e.message, "err")));
     $("#btnRunClean").addEventListener("click", async () => {
-      if (!confirm(pack().confirmDanger || "Confirm?")) return;
-      const ids = $$("#cleanCats input:checked").map((i) => i.dataset.id);
+      if (!(await askConfirm(pack().confirmDanger || "Confirm?"))) return;
       try {
+        log(lang === "en" ? "Cleaning caches…" : "Nettoyage des caches…", "warn");
+        const ids = $$("#cleanCats input:checked").map((i) => i.dataset.id);
         const r = await runJob("runCleanup", { ids });
-        log(r.Message, "ok");
+        logAction(r, lang === "en" ? "Cleanup done" : "Nettoyage terminé");
         await scanClean();
       } catch (e) {
         log(e.message, "err");
@@ -840,19 +1269,24 @@
     });
 
     $("#btnSetDns").addEventListener("click", async () => {
-      if (!window.confirm(p.dnsConfirm || "Appliquer le DNS selectionne ?")) return;
+      const p = pack();
+      if (!(await askConfirm(p.dnsConfirm || (lang === "en" ? "Apply selected DNS?" : "Appliquer le DNS sélectionné ?")))) return;
       try {
+        log(lang === "en" ? "Applying DNS…" : "Application DNS…", "warn");
         const r = await runJob("setDns", { presetId: $("#dnsPreset").value });
-        log(r.Message, "ok");
+        logAction(r, lang === "en" ? "DNS applied" : "DNS appliqué");
+        await refreshDns().catch(() => {});
       } catch (e) {
         log(e.message, "err");
       }
     });
     $("#btnFlushDns").addEventListener("click", async () => {
-      if (!window.confirm(p.flushDnsConfirm || "Vider le cache DNS ?")) return;
+      const p = pack();
+      if (!(await askConfirm(p.flushDnsConfirm || (lang === "en" ? "Flush DNS cache?" : "Vider le cache DNS ?")))) return;
       try {
+        log(lang === "en" ? "Flushing DNS…" : "Flush DNS…", "warn");
         const r = await runJob("flushDns", {});
-        log(r.Message, "ok");
+        logAction(r, lang === "en" ? "DNS flushed" : "Cache DNS vidé");
       } catch (e) {
         log(e.message, "err");
       }
@@ -860,11 +1294,12 @@
 
     $("#btnScanSvc").addEventListener("click", () => refreshServices().catch((e) => log(e.message, "err")));
     $("#btnApplySvc").addEventListener("click", async () => {
-      if (!confirm(pack().confirmDanger || "Confirm?")) return;
+      if (!(await askConfirm(pack().confirmDanger || "Confirm?"))) return;
       const names = $$("#svcList input:checked").map((i) => i.dataset.name);
       try {
+        log(lang === "en" ? "Applying services…" : "Application services…", "warn");
         const r = await runJob("setServices", { names });
-        log(r.Message, "ok");
+        logAction(r, lang === "en" ? "Services updated" : "Services mis à jour");
         await refreshServices();
       } catch (e) {
         log(e.message, "err");
@@ -872,7 +1307,7 @@
     });
     $("#btnScanStartup").addEventListener("click", () => refreshStartup().catch((e) => log(e.message, "err")));
     $("#btnDisableStartup").addEventListener("click", async () => {
-      if (!confirm(pack().confirmDanger || "Confirm?")) return;
+      if (!(await askConfirm(pack().confirmDanger || "Confirm?"))) return;
       const items = $$("#startupList input:checked").map((i) => ({
         Name: decodeURIComponent(i.dataset.name),
         Hive: decodeURIComponent(i.dataset.hive),
@@ -880,8 +1315,9 @@
         Protected: false,
       }));
       try {
+        log(lang === "en" ? "Disabling startup items…" : "Désactivation démarrage…", "warn");
         const r = await runJob("disableStartup", { items });
-        log(r.Message, "ok");
+        logAction(r, lang === "en" ? "Startup items disabled" : "Éléments de démarrage désactivés");
         await refreshStartup();
       } catch (e) {
         log(e.message, "err");
@@ -891,14 +1327,15 @@
     const btnSoftOs = $("#btnSoftPerfOs");
     if (btnSoftOs) {
       btnSoftOs.addEventListener("click", async () => {
-        if (!confirm(pack().confirmSoftPerf || pack().confirmDanger || "Confirm?")) return;
+        if (!(await askConfirm(pack().confirmSoftPerf || pack().confirmDanger || "Confirm?"))) return;
         try {
+          log(lang === "en" ? "Applying soft OS…" : "Application OS soft…", "warn");
           const r = await runJob("setSoftPerfOs", {
             enableSoftOs: true,
             setHags: !!($("#chkApplyHags") && $("#chkApplyHags").checked),
             hagsEnabled: !!($("#chkHags") && $("#chkHags").checked),
           });
-          log(r.Message || "OK", "ok");
+          logAction(r);
           await refreshSoftPerf();
         } catch (e) {
           log(e.message, "err");
@@ -909,8 +1346,9 @@
     if (btnSoftReset) {
       btnSoftReset.addEventListener("click", async () => {
         try {
+          log(lang === "en" ? "Resetting soft OS…" : "Reset OS soft…", "warn");
           const r = await runJob("resetSoftPerf", {});
-          log(r.Message || "OK", r.Success === false ? "err" : "ok");
+          logAction(r);
           await refreshSoftPerf();
         } catch (e) {
           log(e.message, "err");
@@ -918,10 +1356,11 @@
       });
     }
     const setPl = (preset) => async () => {
-      if (!confirm(pack().confirmSoftPerf || pack().confirmDanger || "Confirm?")) return;
+      if (!(await askConfirm(pack().confirmSoftPerf || pack().confirmDanger || "Confirm?"))) return;
       try {
+        log(lang === "en" ? `NVIDIA power limit → ${preset}…` : `Power Limit NVIDIA → ${preset}…`, "warn");
         const r = await runJob("setNvidiaPowerLimit", { preset });
-        log(r.Message || "OK", r.Success === false ? "err" : "ok");
+        logAction(r);
         await refreshSoftPerf();
       } catch (e) {
         log(e.message, "err");
@@ -932,10 +1371,11 @@
     if ($("#btnPlPerf")) $("#btnPlPerf").addEventListener("click", setPl("perf"));
 
     const setOc = (preset) => async () => {
-      if (!confirm(pack().confirmSoftOc || pack().confirmDanger || "Confirm?")) return;
+      if (!(await askConfirm(pack().confirmSoftOc || pack().confirmDanger || "Confirm?"))) return;
       try {
+        log(lang === "en" ? `NVIDIA clocks → ${preset}…` : `Horloges NVIDIA → ${preset}…`, "warn");
         const r = await runJob("setNvidiaClocks", { preset });
-        log(r.Message || "OK", r.Success === false ? "err" : "ok");
+        logAction(r);
         await refreshSoftOc();
       } catch (e) {
         log(e.message, "err");
@@ -949,7 +1389,7 @@
       $("#btnOpenAfterburner").addEventListener("click", async () => {
         try {
           const r = await run("openAfterburner", {});
-          log(r.Message || "OK", r.Success === false ? "warn" : "ok");
+          logAction(r, "Afterburner");
         } catch (e) {
           log(e.message, "err");
         }
@@ -960,6 +1400,60 @@
         try {
           const api = B.api;
           if (api && api.open_url) await api.open_url("https://www.msi.com/Landing/afterburner");
+        } catch (e) {
+          log(e.message, "err");
+        }
+      });
+    }
+
+    const runAmdSoftOs = async () => {
+      if (!(await askConfirm(pack().confirmSoftPerf || pack().confirmDanger || "Confirm?"))) return;
+      try {
+        log(lang === "en" ? "Applying AMD soft OS…" : "Application OS soft AMD…", "warn");
+        const r = await runJob("setSoftPerfOs", {
+          enableSoftOs: true,
+          setHags: !!($("#chkAmdApplyHags") && $("#chkAmdApplyHags").checked),
+          hagsEnabled: !!($("#chkAmdHags") && $("#chkAmdHags").checked),
+        });
+        logAction(r);
+        await refreshSoftPerf();
+        await refreshAmd();
+      } catch (e) {
+        log(e.message, "err");
+      }
+    };
+    if ($("#btnAmdSoftPerfOs")) $("#btnAmdSoftPerfOs").addEventListener("click", runAmdSoftOs);
+    if ($("#btnAmdSoftPerfReset")) {
+      $("#btnAmdSoftPerfReset").addEventListener("click", async () => {
+        try {
+          log(lang === "en" ? "Resetting soft OS…" : "Reset OS soft…", "warn");
+          const r = await runJob("resetSoftPerf", {});
+          logAction(r);
+          await refreshSoftPerf();
+          await refreshAmd();
+        } catch (e) {
+          log(e.message, "err");
+        }
+      });
+    }
+    if ($("#btnOpenAmdSoftware")) {
+      $("#btnOpenAmdSoftware").addEventListener("click", async () => {
+        try {
+          const r = await run("openAmdSoftware", {});
+          logAction(r, "AMD Software");
+        } catch (e) {
+          log(e.message, "err");
+        }
+      });
+    }
+    if ($("#btnAmdSoftwareDl")) {
+      $("#btnAmdSoftwareDl").addEventListener("click", async () => {
+        try {
+          const api = B.api;
+          const url = lang === "fr"
+            ? "https://www.amd.com/fr/support/download/drivers.html"
+            : "https://www.amd.com/en/support/download/drivers.html";
+          if (api && api.open_url) await api.open_url(url);
         } catch (e) {
           log(e.message, "err");
         }
@@ -993,30 +1487,54 @@
         applyOverlayPreset(selPreset.value);
       });
     }
-
-    const btnEl = $("#btnElevate");
-    if (btnEl) {
-      btnEl.addEventListener("click", async () => {
-        try {
-          const api = B.api;
-          if (!api || !api.request_elevation) { log("Elevation API missing", "err"); return; }
-          const r = await api.request_elevation();
-          if (r && r.alreadyAdmin) log(lang === "en" ? "Already admin" : "Déjà admin", "ok");
-          else if (r && r.elevating) log(lang === "en" ? "UAC prompted — relaunching" : "UAC demandé — relance", "warn");
-          else log((r && r.error) || "Elevation failed", "err");
-        } catch (e) {
-          log(String(e.message || e), "err");
-        }
+    const scaleEl = $("#rngOverlayScale");
+    if (scaleEl) {
+      const syncScaleLabel = () => {
+        const scaleVal = $("#overlayScaleVal");
+        const s = Number(scaleEl.value) || 1;
+        if (scaleVal) scaleVal.textContent = `${Math.round(s * 100)}%`;
+      };
+      scaleEl.addEventListener("input", syncScaleLabel);
+      scaleEl.addEventListener("change", () => {
+        syncScaleLabel();
+        persistOverlayConfig().catch((e) => log(e.message, "err"));
       });
     }
+    document.querySelectorAll("[data-ov-color]").forEach((el) => {
+      el.addEventListener("change", () => {
+        persistOverlayConfig().catch((e) => log(e.message, "err"));
+      });
+    });
+    document.querySelectorAll("[data-ov]").forEach((el) => {
+      el.addEventListener("change", () => {
+        persistOverlayConfig().catch((e) => log(e.message, "err"));
+      });
+    });
+    const btnOvReset = $("#btnOvColorsReset");
+    if (btnOvReset) {
+      btnOvReset.addEventListener("click", () => {
+        applyOverlayColorPreset("neonlime");
+      });
+    }
+    document.querySelectorAll("[data-ov-color-preset]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyOverlayColorPreset(btn.getAttribute("data-ov-color-preset"));
+      });
+    });
 
     const gotoSession = $("#btnGotoSession");
     if (gotoSession) gotoSession.addEventListener("click", () => showPage("session"));
     const gotoFps = $("#btnGotoFps");
     if (gotoFps) gotoFps.addEventListener("click", () => showPage("fps"));
 
-    const btnLang = $("#btnLang");
-    if (btnLang) btnLang.addEventListener("click", () => setLang(lang === "fr" ? "en" : "fr"));
+    const langSwitch = $("#langSwitch");
+    if (langSwitch) {
+      langSwitch.addEventListener("click", (ev) => {
+        const seg = ev.target.closest("[data-lang]");
+        if (!seg || !langSwitch.contains(seg)) return;
+        setLang(seg.getAttribute("data-lang") === "en" ? "en" : "fr").catch(() => {});
+      });
+    }
 
     const btnFindGames = $("#btnFindGames");
     if (btnFindGames) {
@@ -1047,15 +1565,18 @@
 
     $("#btnRefreshSessions").addEventListener("click", () => refreshSessions().catch((e) => log(e.message, "err")));
 
-    const legalTabs = $(".legal-tabs");
-    if (legalTabs) {
-      legalTabs.addEventListener("click", (e) => {
-        const tab = e.target.closest(".legal-tab");
-        if (!tab) return;
-        $$(".legal-tab").forEach((t) => t.classList.toggle("active", t === tab));
-        loadLegal(tab.dataset.doc).catch(() => {});
-      });
-    }
+    document.querySelector(".hub-support")?.addEventListener("click", async (ev) => {
+      const supportBtn = ev.target.closest("[data-support]");
+      if (!supportBtn) return;
+      const kind = supportBtn.dataset.support;
+      try {
+        if (B.api && typeof B.api.open_support_url === "function") {
+          await B.api.open_support_url(kind);
+        }
+      } catch (_) {}
+    });
+
+    wireAboutDialog();
 
     const honestyAck = $("#honestyAck");
     if (honestyAck) {
@@ -1064,8 +1585,6 @@
         hideHonestyGate(!!(dont && dont.checked));
       });
     }
-    const btnHonestyReminder = $("#btnHonestyReminder");
-    if (btnHonestyReminder) btnHonestyReminder.addEventListener("click", () => maybeShowHonestyGate(true));
 
     const btnHelp = $("#btnPageHelp");
     if (btnHelp) btnHelp.addEventListener("click", () => showTipsModal(currentPage));
@@ -1081,40 +1600,247 @@
     wireBgTabs();
   }
 
-  async function checkReleaseNotice() {
-    const api = B.api;
-    if (!api || typeof api.check_latest_release !== "function") return;
-    let info;
-    try {
-      info = await api.check_latest_release();
-    } catch (_) {
-      return;
+  function wireAboutDialog() {
+    const btn = $("#btnAbout");
+    const dlg = $("#aboutDialog");
+    const chk = $("#chkGithubUpdates");
+    const hint = $("#aboutUpdateHint");
+    if (!btn || !dlg) return;
+
+    async function copyText(value, hintEl, okMsg) {
+      const text = (value || "").trim();
+      if (!text) return;
+      try {
+        if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+        else {
+          const tmp = document.createElement("textarea");
+          tmp.value = text;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand("copy");
+          tmp.remove();
+        }
+        if (hintEl) {
+          hintEl.hidden = false;
+          hintEl.textContent = okMsg || (lang === "en" ? "Copied." : "Copié.");
+          setTimeout(() => { hintEl.hidden = true; }, 1800);
+        }
+      } catch (_) {
+        if (hintEl) {
+          hintEl.hidden = false;
+          hintEl.textContent = lang === "en" ? "Select and Ctrl+C." : "Sélectionne et Ctrl+C.";
+        }
+      }
     }
+
+    async function refreshPref() {
+      try {
+        if (B.api?.get_update_check_pref) {
+          const r = await B.api.get_update_check_pref();
+          if (chk) chk.checked = r?.checkGithubUpdates !== false;
+          const repo = $("#aboutRepoUrl");
+          if (repo && r?.repoUrl) repo.value = r.repoUrl;
+        }
+      } catch (_) {}
+      if (hint && chk) {
+        hint.textContent = chk.checked
+          ? (pack().aboutUpdateHintOn || hint.textContent)
+          : (pack().aboutUpdateHintOff || hint.textContent);
+      }
+    }
+
+    async function refreshLocalPaths() {
+      const list = $("#aboutPathsList");
+      const pathHint = $("#aboutPathCopyHint");
+      if (!list) return;
+      list.replaceChildren();
+      let paths = [];
+      try {
+        if (B.api?.get_about_local_paths) {
+          const r = await B.api.get_about_local_paths();
+          if (Array.isArray(r?.paths)) paths = r.paths;
+        }
+      } catch (_) {}
+      if (!paths.length) {
+        paths = [
+          {
+            id: "app",
+            label: lang === "en" ? "SoftTunes install (exe folder)" : "Install SoftTunes (dossier de l’exe)",
+            path: "%LOCALAPPDATA%\\Programs\\SoftTunes",
+            hint: lang === "en"
+              ? "%LOCALAPPDATA%\\Programs\\SoftTunes — SoftTunes.exe (zip build)."
+              : "%LOCALAPPDATA%\\Programs\\SoftTunes — emplacement SoftTunes.exe (build zip).",
+            optional: true,
+          },
+          {
+            id: "data",
+            label: lang === "en" ? "SoftTunes data" : "Données SoftTunes",
+            path: "%LOCALAPPDATA%\\SoftTunes",
+            hint: "%LOCALAPPDATA%\\SoftTunes",
+          },
+          {
+            id: "settings",
+            label: lang === "en" ? "Shared preferences" : "Préférences partagées",
+            path: "%LOCALAPPDATA%\\Mr-Aurevo-X\\user-settings.json",
+            hint: lang === "en"
+              ? "Shared Mr-Aurevo-X file — keep if other apps use it."
+              : "Fichier partagé Mr-Aurevo-X — à garder si d’autres apps l’utilisent.",
+          },
+        ];
+      }
+      for (const entry of paths) {
+        const id = String(entry.id || "");
+        const labelKey = id === "app" ? "aboutPathApp"
+          : id === "data" ? "aboutPathData"
+          : id === "settings" ? "aboutPathSettings"
+          : "";
+        const hintKey = id === "app" ? "aboutPathAppHint"
+          : id === "data" ? "aboutPathDataHint"
+          : id === "settings" ? "aboutPathSettingsHint"
+          : "";
+        const item = document.createElement("div");
+        item.className = "about-path-item";
+        const label = document.createElement("div");
+        label.className = "about-path-label";
+        const baseLabel = (labelKey && pack()[labelKey]) || entry.label || entry.id || "Path";
+        label.textContent =
+          baseLabel + (entry.optional ? (lang === "en" ? " (optional)" : " (optionnel)") : "");
+        const row = document.createElement("div");
+        row.className = "about-repo-row";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "about-repo-input";
+        input.readOnly = true;
+        input.spellcheck = false;
+        input.value = entry.path || "";
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "btn accent";
+        copyBtn.textContent = pack().btnCopy || "Copier";
+        copyBtn.addEventListener("click", () => {
+          copyText(input.value, pathHint, t("aboutCopyPath"));
+        });
+        row.appendChild(input);
+        row.appendChild(copyBtn);
+        item.appendChild(label);
+        item.appendChild(row);
+        const hintText = (hintKey && pack()[hintKey]) || entry.hint;
+        if (hintText) {
+          const note = document.createElement("p");
+          note.className = "about-note";
+          note.textContent = hintText;
+          item.appendChild(note);
+        }
+        list.appendChild(item);
+      }
+    }
+
+    btn.addEventListener("click", async () => {
+      const aboutVer = $("#aboutVersion");
+      if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${t("versionFinal")}`;
+      await refreshPref();
+      await refreshLocalPaths();
+      loadLegal("terms").catch(() => {});
+      if (typeof dlg.showModal === "function") dlg.showModal();
+      else dlg.setAttribute("open", "");
+    });
+
+    if (chk) {
+      chk.addEventListener("change", async () => {
+        try {
+          if (B.api?.set_update_check_pref) await B.api.set_update_check_pref(!!chk.checked);
+        } catch (_) {}
+        await refreshPref();
+        if (chk.checked) checkReleaseNotice().catch(() => {});
+        else {
+          lastReleaseInfo = null;
+          const bar = document.getElementById("hubReleaseBanner");
+          if (bar) { bar.hidden = true; bar.innerHTML = ""; }
+        }
+      });
+    }
+
+    $("#btnCopyRepo")?.addEventListener("click", () => {
+      const repo = $("#aboutRepoUrl");
+      copyText(repo?.value, $("#aboutCopyHint"), t("aboutCopyLink"));
+    });
+
+    document.querySelector(".about-legal-links")?.addEventListener("click", (e) => {
+      const tab = e.target.closest("[data-doc]");
+      if (!tab) return;
+      document.querySelectorAll(".about-legal-links [data-doc]").forEach((t) => {
+        t.classList.toggle("active", t === tab);
+      });
+      loadLegal(tab.dataset.doc).catch(() => {});
+    });
+  }
+
+  function paintReleaseBanner(info) {
     const bar = document.getElementById("hubReleaseBanner");
     if (!bar || !info?.ok || !info.updateAvailable) return;
     const remote = String(info.remote || "");
-    try {
-      if (sessionStorage.getItem("hubReleaseDismissed") === remote) return;
-    } catch (_) {}
+    const local = String(info.local || APP_VERSION || "?");
+    const api = B.api;
     bar.hidden = false;
     bar.innerHTML =
-      '<div class="hub-release-text"><strong>Nouvelle version</strong><span></span></div>' +
+      `<div class="hub-release-text"><strong>${esc(t("releaseNew"))}</strong><span></span></div>` +
       '<div class="hub-release-actions">' +
-      '<button type="button" class="hub-release-btn" id="hubReleaseOpen">Ouvrir la release</button>' +
-      '<button type="button" class="hub-release-dismiss" id="hubReleaseDismiss" aria-label="Fermer">×</button>' +
+      `<button type="button" class="hub-release-btn" id="hubReleaseOpen">${esc(t("releaseOpen"))}</button>` +
+      `<button type="button" class="hub-release-dismiss" id="hubReleaseDismiss" aria-label="${esc(t("releaseClose"))}">×</button>` +
       "</div>";
     const span = bar.querySelector(".hub-release-text span");
-    if (span) span.textContent = info.message || `Nouvelle version ${remote}`;
+    if (span) {
+      span.textContent = local
+        ? t("releaseMsgLocal", { ver: remote, local })
+        : t("releaseMsg", { ver: remote });
+    }
     document.getElementById("hubReleaseDismiss")?.addEventListener("click", () => {
       try { sessionStorage.setItem("hubReleaseDismissed", remote); } catch (_) {}
       bar.hidden = true;
       bar.innerHTML = "";
+      lastReleaseInfo = null;
     });
     document.getElementById("hubReleaseOpen")?.addEventListener("click", async () => {
       try {
-        if (typeof api.open_release_page === "function") await api.open_release_page(info.releaseUrl || "");
+        if (api && typeof api.open_release_page === "function") {
+          await api.open_release_page(info.releaseUrl || "");
+        }
       } catch (_) {}
     });
+  }
+
+  async function checkReleaseNotice() {
+    const api = B.api;
+    if (!api || typeof api.check_latest_release !== "function") return;
+    try {
+      if (api.get_update_check_pref) {
+        const pref = await api.get_update_check_pref();
+        if (pref && pref.checkGithubUpdates === false) return;
+      }
+    } catch (_) {}
+    let info;
+    try {
+      info = await api.check_latest_release();
+    } catch (e) {
+      log(t("releaseCheckFail", { err: String(e && e.message ? e.message : e) }), "warn");
+      return;
+    }
+    if (info && info.skipped) return;
+    if (!info?.ok) {
+      log(t("releaseCheckFail", { err: String(info?.error || "error") }), "warn");
+      return;
+    }
+    if (!info.updateAvailable) {
+      const local = String(info.local || APP_VERSION || "?");
+      log(t("releaseUpToDate", { local }), "ok");
+      return;
+    }
+    const remote = String(info.remote || "");
+    try {
+      if (sessionStorage.getItem("hubReleaseDismissed") === remote) return;
+    } catch (_) {}
+    lastReleaseInfo = info;
+    paintReleaseBanner(info);
   }
 
   async function boot() {
@@ -1124,28 +1850,17 @@
       return;
     }
     try {
-      const saved = localStorage.getItem("opti-lang");
-      if (saved === "en" || saved === "fr") lang = saved;
-      else if (navigator.language && navigator.language.toLowerCase().startsWith("en")) lang = "en";
+      lang = await resolveBootLanguage();
       if (window.MrAurevoXSuite) window.MrAurevoXSuite.applyAccent("#e03545");
     } catch (_) {}
     applyI18n();
     wire();
     maybeShowHonestyGate(false);
     const aboutVer = $("#aboutVersion");
-    if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${lang === "en" ? "final version" : "version finale"}`;
+    if (aboutVer) aboutVer.textContent = `v${APP_VERSION} · ${t("versionFinal")}`;
 
     try {
-      const ping = await run("ping", {});
-      let admin = !!(ping && ping.admin);
-      try {
-        if (B.api && B.api.is_admin) admin = !!(await B.api.is_admin());
-      } catch (_) {}
-      const badge = $("#adminBadge");
-      if (badge) {
-        if (admin) { badge.textContent = pack().adminOk; badge.className = "badge ok"; }
-        else { badge.textContent = pack().adminNo; badge.className = "badge warn"; }
-      }
+      await run("ping", {});
       setStatus(pack().ready);
       log(`SoftTunes v${APP_VERSION} ready`, "ok");
       restoreFpsOverlay().catch(() => {});
@@ -1166,3 +1881,4 @@
     boot();
   }
 })();
+

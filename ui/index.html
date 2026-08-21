@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="vendor/pc-command-kit/components/tool-chrome.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="theme-void-glow" data-tool-title="SoftTunes" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="1.7.0">
+<body class="theme-void-glow" data-tool-title="SoftTunes" data-tool-subtitle="Prépare Windows pour jouer" data-tool-version="2.0.0">
   <div id="honestyGate" class="honesty-gate" hidden aria-modal="true" role="dialog" aria-labelledby="honestyTitle">
     <div class="honesty-card">
       <h2 id="honestyTitle" data-i18n="honestyTitle">SoftTunes — à quoi ça sert</h2>
@@ -50,15 +50,11 @@
           <p data-i18n="tagline">Prépare · mesure · pas de promesse FPS</p>
         </div>
       </div>
-      <span id="adminBadge" class="badge warn" data-i18n="elevating">…</span>
-      <p class="privacy-note" id="privacyNote" data-i18n="privacy">—</p>
       <label class="mode-toggle">
         <input type="checkbox" id="chkAdvanced" />
         <span data-i18n="modeAdvanced">Réglages expert</span>
       </label>
-      <p class="mode-hint muted" data-i18n="modeAdvancedHint">Réseau · NVIDIA · fond Windows</p>
-      <button type="button" class="btn ghost" id="btnLang" style="width:100%;margin:0 0 10px" data-i18n="btnLang">English</button>
-      <button type="button" class="btn" id="btnElevate" data-i18n="btnElevate" style="width:100%;margin:6px 0 10px">Élever (admin)</button>
+      <p class="mode-hint muted" data-i18n="modeAdvancedHint">Réseau · NVIDIA · AMD · fond Windows</p>
 
       <nav class="nav" id="nav">
         <div class="nav-group">
@@ -73,11 +69,8 @@
           <div class="nav-label" data-i18n="navGroupExpert">Expert</div>
           <button type="button" class="nav-btn" data-page="net" data-i18n="navNet">Réseau</button>
           <button type="button" class="nav-btn" data-page="nvidia" id="navNvidia" data-i18n="navNvidia">NVIDIA</button>
+          <button type="button" class="nav-btn" data-page="amd" id="navAmd" data-i18n="navAmd">AMD</button>
           <button type="button" class="nav-btn" data-page="background" data-i18n="navBackground">Fond Windows</button>
-        </div>
-        <div class="nav-group">
-          <div class="nav-label" data-i18n="navGroupLegal">Légal</div>
-          <button type="button" class="nav-btn" data-page="about" data-i18n="navAbout">À propos</button>
         </div>
       </nav>
 
@@ -85,7 +78,30 @@
         <button type="button" class="btn accent" id="btnRestore" data-i18n="btnRestore">Point de restauration</button>
       </div>
       <div class="side-status" id="sideStatus" data-i18n="ready">Prêt</div>
-      <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X</p>
+
+      <div class="sidebar-foot">
+        <div
+          class="hub-lang-switch"
+          id="langSwitch"
+          role="group"
+          data-i18n-aria="langSwitchAria"
+          aria-label="Langue"
+        >
+          <button type="button" class="hub-lang-seg is-active" data-lang="fr" aria-pressed="true">FR</button>
+          <button type="button" class="hub-lang-seg" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <p class="privacy-note" id="privacyNote" data-i18n="privacy">—</p>
+        <div class="hub-support" aria-label="Soutien optionnel">
+          <p class="hub-support-note" data-i18n="supportNote">Si le boulot te plaît, un café — sinon profite.</p>
+          <div class="hub-support-links">
+            <button type="button" class="hub-support-btn" data-support="discord" title="Discord">Discord</button>
+            <button type="button" class="hub-support-btn" data-support="paypal" title="PayPal">PayPal</button>
+            <button type="button" class="hub-support-btn" data-support="revolut" title="Revolut">Revolut</button>
+          </div>
+        </div>
+        <button type="button" class="btn ghost" id="btnAbout" style="width:100%" data-i18n="navAbout">À propos</button>
+        <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X</p>
+      </div>
     </aside>
 
     <div class="main">
@@ -132,9 +148,10 @@
             <ul class="list" id="powerList"><li class="muted">—</li></ul>
             <div class="btn-row">
               <button type="button" class="btn" id="btnPowerBalanced" data-i18n="btnBalanced">Équilibré</button>
-              <button type="button" class="btn accent" id="btnPowerHigh" data-i18n="btnHigh">Hautes perfs</button>
+              <button type="button" class="btn" id="btnPowerHigh" data-i18n="btnHigh">Hautes perfs</button>
               <button type="button" class="btn" id="btnPowerUlt" data-i18n="btnUltimate">Ultimate</button>
             </div>
+            <p class="muted power-active-hint" id="powerActiveHint">—</p>
           </div>
           <div class="session-section panel">
             <h3 data-i18n="gmTitle">Mode jeu</h3>
@@ -209,15 +226,55 @@
             <div class="switch-row"><input type="checkbox" id="chkFpsOverlay" /><label for="chkFpsOverlay" data-i18n="chkFpsOverlay">Overlay HUD</label></div>
             <div id="overlayOptions" class="overlay-options">
               <p class="help-text" data-i18n="overlayHelp">—</p>
-              <select id="selOverlayPreset">
-                <option value="minimal">Minimal</option>
-                <option value="standard">Standard</option>
-                <option value="full">Complet</option>
-              </select>
-              <select id="selOverlayLayout">
-                <option value="line">Ligne</option>
-                <option value="card">Carte</option>
-              </select>
+              <div class="overlay-row">
+                <label class="field-label" for="selOverlayPreset" data-i18n="overlayPreset">Preset</label>
+                <select id="selOverlayPreset">
+                  <option value="minimal">Minimal</option>
+                  <option value="standard">Standard</option>
+                  <option value="full">Complet</option>
+                </select>
+                <label class="field-label" for="selOverlayLayout" data-i18n="overlayLayout">Layout</label>
+                <select id="selOverlayLayout">
+                  <option value="line">Ligne</option>
+                  <option value="card">Carte</option>
+                </select>
+              </div>
+              <div class="overlay-row overlay-scale-row">
+                <label class="field-label" for="rngOverlayScale" data-i18n="overlayScale">Taille</label>
+                <input type="range" id="rngOverlayScale" min="0.7" max="2" step="0.05" value="1" />
+                <span id="overlayScaleVal" class="muted">100%</span>
+              </div>
+              <div class="overlay-colors">
+                <label class="field-label" data-i18n="overlayColors">Couleurs</label>
+                <div class="overlay-color-presets" role="group" aria-label="Color presets">
+                  <button type="button" class="btn ghost" data-ov-color-preset="voidglow" data-i18n="ovColorPresetVoid">Void Glow</button>
+                  <button type="button" class="btn ghost" data-ov-color-preset="neonlime" data-i18n="ovColorPresetLime">Vert / jaune fluo</button>
+                  <button type="button" class="btn ghost" data-ov-color-preset="neoncold" data-i18n="ovColorPresetCold">Cyan / rose fluo</button>
+                  <button type="button" class="btn ghost" data-ov-color-preset="neonorange" data-i18n="ovColorPresetOrange">Orange / bleu fluo</button>
+                  <button type="button" class="btn ghost" data-ov-color-preset="neonviolet" data-i18n="ovColorPresetViolet">Violet / lime fluo</button>
+                  <button type="button" class="btn ghost" data-ov-color-preset="neonice" data-i18n="ovColorPresetIce">Blanc / ice fluo</button>
+                  <button type="button" class="btn ghost" data-ov-color-preset="neonfire" data-i18n="ovColorPresetFire">Rouge / jaune fluo</button>
+                </div>
+                <div class="overlay-color-grid">
+                  <label class="color-field"><span data-i18n="ovColorAccent">Accent</span><input type="color" id="colOvAccent" value="#e03545" data-ov-color="accent" /></label>
+                  <label class="color-field"><span data-i18n="ovColorText">Texte</span><input type="color" id="colOvText" value="#f0f2f5" data-ov-color="text" /></label>
+                  <label class="color-field"><span data-i18n="ovColorBrand">Marque</span><input type="color" id="colOvBrand" value="#e03545" data-ov-color="brand" /></label>
+                  <label class="color-field"><span>FPS</span><input type="color" id="colOvFps" value="#ff6b7a" data-ov-color="fps" /></label>
+                  <label class="color-field"><span data-i18n="ovColorMuted">Secondaire</span><input type="color" id="colOvMuted" value="#a8aab4" data-ov-color="muted" /></label>
+                </div>
+              </div>
+              <div class="check-grid overlay-show-grid">
+                <label class="switch-row"><input type="checkbox" data-ov="brand" checked /><span>SoftTunes</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="fps" checked /><span>FPS</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="frametime" checked /><span>Frametime</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="onePercentLow" checked /><span>1% low</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="app" checked /><span>App</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="cpu" checked /><span>CPU %</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="cpuTemp" checked /><span>CPU °C</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="gpu" checked /><span>GPU %</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="gpuTemp" checked /><span>GPU °C</span></label>
+                <label class="switch-row"><input type="checkbox" data-ov="ram" checked /><span>RAM</span></label>
+              </div>
             </div>
             <div class="btn-row">
               <button type="button" class="btn accent" id="btnMonRefresh" data-i18n="btnRefresh">Rafraîchir</button>
@@ -244,36 +301,85 @@
         </section>
 
         <section class="page" id="page-nvidia">
-          <p class="help-text" data-i18n="nvidiaHelp">—</p>
-          <div class="guard" data-i18n="guardNvidia">—</div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="softPerfTitle">OS soft + PL</h3></div>
-            <div id="softPerfStatus" class="muted">—</div>
-            <div class="btn-row">
-              <button type="button" class="btn accent" id="btnSoftPerfOs">OS soft</button>
-              <button type="button" class="btn" id="btnSoftPerfReset">Reset</button>
-              <button type="button" class="btn" id="btnPlEco">Eco</button>
-              <button type="button" class="btn" id="btnPlStock">Stock</button>
-              <button type="button" class="btn" id="btnPlPerf">Perf</button>
-            </div>
-            <div class="switch-row"><input type="checkbox" id="chkHags" /><label for="chkHags">HAGS</label></div>
-            <div class="switch-row"><input type="checkbox" id="chkApplyHags" /><label for="chkApplyHags">HAGS in OS soft</label></div>
+          <div class="gpu-page-empty panel" id="nvidiaEmpty" hidden>
+            <p class="gpu-empty-msg" id="nvidiaEmptyMsg" data-i18n="gpuEmptyNvidia">—</p>
           </div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="softOcTitle">Verrous horloge</h3></div>
-            <div id="softOcStatus" class="muted">—</div>
-            <div class="btn-row">
-              <button type="button" class="btn" id="btnOcStock">Reset</button>
-              <button type="button" class="btn" id="btnOc50">+50</button>
-              <button type="button" class="btn accent" id="btnOc100">+100</button>
+          <div class="gpu-page-body" id="nvidiaBody">
+            <p class="help-text" data-i18n="nvidiaHelp">—</p>
+            <div class="guard" data-i18n="guardNvidia">—</div>
+            <div class="gpu-cat-badge nvidia" data-i18n="gpuCatNvidia">Catégorie NVIDIA</div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="softPerfTitle">OS soft + PL</h3></div>
+              <div id="softPerfStatus" class="muted">—</div>
+              <div class="btn-row">
+                <button type="button" class="btn" id="btnSoftPerfOs">OS soft</button>
+                <button type="button" class="btn" id="btnSoftPerfReset">Reset</button>
+                <button type="button" class="btn" id="btnPlEco">Eco</button>
+                <button type="button" class="btn" id="btnPlStock">Stock</button>
+                <button type="button" class="btn" id="btnPlPerf">Perf</button>
+              </div>
+              <div class="switch-row"><input type="checkbox" id="chkHags" /><label for="chkHags">HAGS</label></div>
+              <div class="switch-row"><input type="checkbox" id="chkApplyHags" /><label for="chkApplyHags">HAGS in OS soft</label></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="softOcTitle">Verrous horloge</h3></div>
+              <div id="softOcStatus" class="muted">—</div>
+              <div class="btn-row">
+                <button type="button" class="btn" id="btnOcStock">Reset</button>
+                <button type="button" class="btn" id="btnOc50">+50</button>
+                <button type="button" class="btn" id="btnOc100">+100</button>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="afterburnerTitle">Afterburner</h3></div>
+              <div id="afterburnerStatus" class="muted">—</div>
+              <div class="btn-row">
+                <button type="button" class="btn accent" id="btnOpenAfterburner">Ouvrir</button>
+                <button type="button" class="btn" id="btnAfterburnerDl">Téléchargement</button>
+              </div>
             </div>
           </div>
-          <div class="panel">
-            <div class="panel-head"><h3 data-i18n="afterburnerTitle">Afterburner</h3></div>
-            <div id="afterburnerStatus" class="muted">—</div>
-            <div class="btn-row">
-              <button type="button" class="btn accent" id="btnOpenAfterburner">Ouvrir</button>
-              <button type="button" class="btn" id="btnAfterburnerDl">Téléchargement</button>
+        </section>
+
+        <section class="page" id="page-amd">
+          <div class="gpu-page-empty panel" id="amdEmpty" hidden>
+            <p class="gpu-empty-msg" id="amdEmptyMsg" data-i18n="gpuEmptyAmd">—</p>
+          </div>
+          <div class="gpu-page-body" id="amdBody">
+            <p class="help-text" data-i18n="amdHelp">—</p>
+            <div class="guard" data-i18n="guardAmd">—</div>
+            <div class="gpu-cat-badge amd" data-i18n="gpuCatAmd">Catégorie AMD</div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="amdStatusTitle">GPU AMD détecté</h3></div>
+              <div id="amdStatus" class="muted">—</div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="amdSoftPerfTitle">OS soft + HAGS</h3></div>
+              <p class="help-text" data-i18n="amdSoftPerfHint">—</p>
+              <div id="amdSoftPerfStatus" class="muted">—</div>
+              <div class="btn-row">
+                <button type="button" class="btn accent" id="btnAmdSoftPerfOs" data-i18n="btnAmdOsSoft">OS soft</button>
+                <button type="button" class="btn" id="btnAmdSoftPerfReset">Reset</button>
+              </div>
+              <div class="switch-row"><input type="checkbox" id="chkAmdHags" /><label for="chkAmdHags">HAGS</label></div>
+              <div class="switch-row"><input type="checkbox" id="chkAmdApplyHags" /><label for="chkAmdApplyHags">HAGS in OS soft</label></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="amdAdrenalinTitle">AMD Software (Adrenalin)</h3></div>
+              <p class="help-text" data-i18n="amdAdrenalinHint">—</p>
+              <div id="amdSoftwareStatus" class="muted">—</div>
+              <div class="btn-row">
+                <button type="button" class="btn accent" id="btnOpenAmdSoftware" data-i18n="btnOpenAmd">Ouvrir Adrenalin</button>
+                <button type="button" class="btn" id="btnAmdSoftwareDl" data-i18n="btnAmdDl">Téléchargement</button>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3 data-i18n="amdTipsTitle">Conseils AMD</h3></div>
+              <ul class="preset-summary" id="amdTipsList">
+                <li data-i18n="amdTipOverlays">Session → fermer overlays Radeon (opt-in)</li>
+                <li data-i18n="amdTipCaches">Caches → AMD DXCache / GLCache</li>
+                <li data-i18n="amdTipNoPl">Pas de Power Limit SoftTunes sur AMD (outil NVIDIA nvidia-smi)</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -318,34 +424,6 @@
             <ul class="list" id="undoList"><li class="muted">—</li></ul>
           </div>
         </section>
-
-        <section class="page" id="page-about">
-          <div class="about-hero">
-            <img class="about-logo" src="logo-opti.png" width="72" height="72" alt="SoftTunes" />
-            <div>
-              <h3>SoftTunes</h3>
-              <p data-i18n="tagline">—</p>
-              <p class="muted" id="aboutVersion">v1.7.0</p>
-            </div>
-          </div>
-          <div class="panel">
-            <p data-i18n="aboutDisclaimer">—</p>
-            <button type="button" class="btn ghost" id="btnHonestyReminder" data-i18n="honestyReminder">Rappel FPS</button>
-          </div>
-          <div class="panel">
-            <h3 data-i18n="smartTitle">SmartScreen</h3>
-            <p data-i18n="smartHelp">—</p>
-          </div>
-          <div class="panel">
-            <h3 data-i18n="legalTitle">Légal</h3>
-            <div class="legal-tabs">
-              <button type="button" class="legal-tab active" data-doc="terms" data-i18n="legalTerms">CGU</button>
-              <button type="button" class="legal-tab" data-doc="privacy" data-i18n="legalPrivacy">Privacy</button>
-              <button type="button" class="legal-tab" data-doc="disclaimer" data-i18n="legalDisclaimer">Disclaimer</button>
-            </div>
-            <iframe id="legalFrame" class="legal-frame" title="Legal"></iframe>
-          </div>
-        </section>
       </div>
     </div>
 
@@ -359,6 +437,60 @@
       <pre id="log"></pre>
     </div>
   </div>
+
+  <dialog class="about-dialog" id="aboutDialog">
+    <form method="dialog" class="about-card">
+      <h3 data-i18n="aboutTitle">À propos — SoftTunes</h3>
+      <p data-i18n="aboutIntro">Prépare Windows pour une session de jeu et mesure le FPS (PresentMon). Gratuit, local, sans compte. Aucune promesse de gain FPS.</p>
+      <ul class="legal-strip" id="aboutLegalList">
+        <li data-i18n="aboutLocalFirst">100 % local-first — pas de télémétrie</li>
+        <li data-i18n="aboutOnlyGh">Seule connexion hors machine : vérif. version GitHub (option ci-dessous)</li>
+        <li data-i18n="aboutNoNet">Si vérif. désactivée : zéro réseau hors actions utilisateur</li>
+      </ul>
+      <label class="about-toggle">
+        <input type="checkbox" id="chkGithubUpdates" checked />
+        <span data-i18n="aboutChkUpdates">Vérifier les nouvelles versions sur GitHub</span>
+      </label>
+      <p class="about-note" id="aboutUpdateHint" data-i18n="aboutUpdateHintOn">Quand activé : un appel API GitHub au démarrage (lecture seule, pas de téléchargement).</p>
+      <div class="about-repo" aria-label="Dépôt GitHub">
+        <label class="about-repo-label" for="aboutRepoUrl" data-i18n="aboutRepoLabel">Repo GitHub (releases)</label>
+        <div class="about-repo-row">
+          <input type="text" id="aboutRepoUrl" class="about-repo-input" readonly
+            value="https://github.com/Mr-Aurevo-X/SoftTunes" spellcheck="false" />
+          <button type="button" class="btn accent" id="btnCopyRepo" data-i18n="btnCopy" title="Copier l’URL">Copier</button>
+        </div>
+        <p class="about-note" id="aboutCopyHint" hidden>Lien copié.</p>
+      </div>
+      <div class="about-paths" id="aboutPaths" aria-label="Chemins locaux">
+        <p class="about-repo-label" data-i18n="aboutPathsLabel">Chemins locaux (désinstall / ménage)</p>
+        <p class="about-note" data-i18n="aboutPathsHint">Identifie clairement quoi supprimer. Les préférences Mr-Aurevo-X sont partagées entre apps.</p>
+        <div class="about-paths-list" id="aboutPathsList"></div>
+        <p class="about-note" id="aboutPathCopyHint" hidden>Chemin copié.</p>
+      </div>
+      <p class="muted" id="aboutVersion">v2.0.0</p>
+      <div class="about-legal-links" role="group" aria-label="Documents légaux">
+        <button type="button" class="btn ghost" data-doc="terms" data-i18n="legalTerms">CGU</button>
+        <button type="button" class="btn ghost" data-doc="privacy" data-i18n="legalPrivacy">Confidentialité</button>
+        <button type="button" class="btn ghost" data-doc="mentions" data-i18n="legalMentions">Mentions</button>
+        <button type="button" class="btn ghost" data-doc="notices" data-i18n="legalNotices">Notices</button>
+      </div>
+      <pre class="about-legal-body" id="aboutLegalBody" hidden></pre>
+      <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X</p>
+      <button type="submit" class="btn accent" data-i18n="tipsClose">Fermer</button>
+    </form>
+  </dialog>
+
+  <div class="confirm-overlay" id="confirmOverlay" hidden>
+    <div class="confirm-box" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h3 id="confirmTitle" data-i18n="confirmTitle">Confirmer</h3>
+      <p id="confirmMsg"></p>
+      <div class="btn-row">
+        <button type="button" class="btn" id="confirmCancel" data-i18n="confirmCancel">Annuler</button>
+        <button type="button" class="btn accent" id="confirmOk" data-i18n="confirmOk">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
   <script src="suite-boot.js"></script>
   <script src="vendor/pc-command-kit/components/tool-chrome.js"></script>
   <script src="i18n.js"></script>
@@ -366,3 +498,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+

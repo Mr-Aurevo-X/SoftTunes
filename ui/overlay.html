@@ -10,7 +10,8 @@
     html, body {
       width: 100%;
       height: 100%;
-      background: transparent;
+      /* Magenta chroma-key — punched out by WinForms TransparencyKey / LWA_COLORKEY */
+      background: #ff00ff !important;
       overflow: hidden;
       font-family: "Segoe UI", system-ui, sans-serif;
       -webkit-user-select: none;
@@ -20,65 +21,86 @@
       display: flex;
       align-items: stretch;
       justify-content: stretch;
+      background: #ff00ff !important;
     }
     .hud {
+      --ov-accent: #39ff14;
+      --ov-text: #f7ff00;
+      --ov-brand: #39ff14;
+      --ov-fps: #f7ff00;
+      --ov-muted: #b8ff66;
+      --ov-scale: 1;
       display: flex;
       width: 100%;
       height: 100%;
       min-width: 0;
       border-radius: 10px;
-      border: 1px solid rgba(224, 53, 69, 0.45);
-      background: rgba(10, 10, 12, 0.92);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(6px);
-      color: #f2f2f2;
+      border: 1px solid var(--ov-accent);
+      background: #ff00ff !important;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      color: var(--ov-text);
+      text-shadow:
+        0 0 4px color-mix(in srgb, var(--ov-accent) 55%, transparent),
+        0 0 10px color-mix(in srgb, var(--ov-accent) 30%, transparent);
+      font-size: calc(12px * var(--ov-scale));
     }
     .brand {
-      font-size: 9px;
-      font-weight: 600;
+      font-size: calc(9px * var(--ov-scale));
+      font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #e03545;
-      opacity: 0.9;
+      color: var(--ov-brand);
+      opacity: 0.95;
       cursor: move;
       flex-shrink: 0;
+      text-shadow:
+        0 0 8px color-mix(in srgb, var(--ov-brand) 80%, transparent),
+        0 0 18px color-mix(in srgb, var(--ov-brand) 40%, transparent);
     }
     .sep {
-      color: #4a5058;
+      color: color-mix(in srgb, var(--ov-muted) 55%, transparent);
       margin: 0 4px;
       flex-shrink: 0;
+      text-shadow: none;
     }
     .metric { white-space: nowrap; flex-shrink: 0; }
     .metric.hidden, .brand.hidden, .sep.hidden, .app.hidden { display: none !important; }
-    .fps { font-weight: 700; color: #f2f2f2; }
-    .fps.live { color: #e03545; }
-    .ft, .opl, .sys { color: #9aa0a8; }
+    .fps {
+      font-weight: 800;
+      color: var(--ov-fps);
+      font-size: calc(13px * var(--ov-scale));
+    }
+    .fps.live {
+      color: var(--ov-accent);
+      text-shadow:
+        0 0 8px color-mix(in srgb, var(--ov-accent) 90%, transparent),
+        0 0 20px color-mix(in srgb, var(--ov-accent) 45%, transparent);
+    }
+    .ft, .opl, .sys { color: var(--ov-muted); }
     .app {
-      color: #6d737b;
+      color: var(--ov-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0;
     }
 
-    /* LINE layout */
     .hud.layout-line {
       flex-direction: row;
       align-items: center;
       gap: 0;
-      padding: 0 10px;
-      font-size: 12px;
+      padding: 0 calc(10px * var(--ov-scale));
     }
     .hud.layout-line .brand { padding-right: 4px; }
-    .hud.layout-line .fps { font-size: 13px; }
-    .hud.layout-line .app { max-width: 140px; }
+    .hud.layout-line .app { max-width: calc(140px * var(--ov-scale)); }
 
-    /* CARD layout */
     .hud.layout-card {
       flex-direction: column;
       justify-content: center;
       gap: 2px;
-      padding: 8px 12px;
+      padding: calc(8px * var(--ov-scale)) calc(12px * var(--ov-scale));
     }
     .hud.layout-card .metrics-row {
       display: flex;
@@ -86,9 +108,11 @@
       align-items: baseline;
       gap: 6px 8px;
     }
-    .hud.layout-card .fps { font-size: 20px; }
-    .hud.layout-card .ft, .hud.layout-card .opl, .hud.layout-card .sys { font-size: 11px; }
-    .hud.layout-card .app { font-size: 10px; max-width: 160px; }
+    .hud.layout-card .fps { font-size: calc(20px * var(--ov-scale)); }
+    .hud.layout-card .ft,
+    .hud.layout-card .opl,
+    .hud.layout-card .sys { font-size: calc(11px * var(--ov-scale)); }
+    .hud.layout-card .app { font-size: calc(10px * var(--ov-scale)); max-width: calc(160px * var(--ov-scale)); }
     .hud.layout-card .sep { display: none; }
     .hud.layout-line .metrics-row {
       display: flex;
@@ -127,6 +151,14 @@
   <script>
     var CFG = {
       layout: "line",
+      scale: 1,
+      colors: {
+        accent: "#39ff14",
+        text: "#f7ff00",
+        brand: "#39ff14",
+        fps: "#f7ff00",
+        muted: "#b8ff66"
+      },
       show: {
         brand: true, fps: true, frametime: true, onePercentLow: true,
         app: true, cpu: true, cpuTemp: true, gpu: true, gpuTemp: true, ram: true
@@ -143,10 +175,29 @@
       else el.classList.add("hidden");
     }
 
+    function normalizeHex(v, fallback) {
+      var s = String(v || "").trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(s)) return s.toLowerCase();
+      if (/^[0-9a-fA-F]{6}$/.test(s)) return "#" + s.toLowerCase();
+      return fallback;
+    }
+
+    function applyTheme() {
+      var root = document.getElementById("hudRoot");
+      var c = CFG.colors || {};
+      var scale = Number(CFG.scale);
+      if (!(scale >= 0.7 && scale <= 2.2)) scale = 1;
+      root.style.setProperty("--ov-accent", normalizeHex(c.accent, "#39ff14"));
+      root.style.setProperty("--ov-text", normalizeHex(c.text, "#f7ff00"));
+      root.style.setProperty("--ov-brand", normalizeHex(c.brand, "#39ff14"));
+      root.style.setProperty("--ov-fps", normalizeHex(c.fps, "#f7ff00"));
+      root.style.setProperty("--ov-muted", normalizeHex(c.muted, "#b8ff66"));
+      root.style.setProperty("--ov-scale", String(scale));
+    }
+
     function refreshSeparators() {
       var seps = document.querySelectorAll(".sep[data-before]");
       var first = true;
-      /* brand handled separately */
       var brandOn = CFG.show.brand !== false;
       for (var i = 0; i < seps.length; i++) {
         var key = seps[i].getAttribute("data-before");
@@ -166,6 +217,16 @@
     function applyOverlayConfig(cfg) {
       cfg = cfg || {};
       if (cfg.layout === "line" || cfg.layout === "card") CFG.layout = cfg.layout;
+      if (typeof cfg.scale === "number" || typeof cfg.scale === "string") {
+        var s = Number(cfg.scale);
+        if (s >= 0.7 && s <= 2.2) CFG.scale = s;
+      }
+      if (cfg.colors && typeof cfg.colors === "object") {
+        CFG.colors = CFG.colors || {};
+        ["accent", "text", "brand", "fps", "muted"].forEach(function (k) {
+          if (cfg.colors[k]) CFG.colors[k] = normalizeHex(cfg.colors[k], CFG.colors[k]);
+        });
+      }
       if (cfg.show && typeof cfg.show === "object") {
         for (var k in cfg.show) {
           if (Object.prototype.hasOwnProperty.call(cfg.show, k)) CFG.show[k] = !!cfg.show[k];
@@ -174,6 +235,7 @@
       var root = document.getElementById("hudRoot");
       root.classList.remove("layout-line", "layout-card");
       root.classList.add("layout-" + CFG.layout);
+      applyTheme();
       setVisible(document.getElementById("mBrand"), CFG.show.brand !== false);
       ["fps", "frametime", "onePercentLow", "cpu", "cpuTemp", "gpu", "gpuTemp", "ram", "app"].forEach(function (key) {
         var el = document.querySelector('[data-key="' + key + '"]');
@@ -203,33 +265,25 @@
       }
       ftEl.textContent = d.frametimeMs != null ? (d.frametimeMs + " ms") : "";
       oplEl.textContent = d.onePercentLow != null ? ("1% " + d.onePercentLow) : "";
-      var cpuParts = [];
-      if (d.cpuPct != null) cpuParts.push(String(d.cpuPct) + "%");
-      if (d.cpuTempC != null) cpuParts.push(degC(d.cpuTempC));
-      cpuEl.textContent = cpuParts.length ? ("CPU " + cpuParts.join(" ")) : "";
-      cpuTEl.textContent = "";
-      var gpuParts = [];
-      if (d.gpuPct != null) gpuParts.push(String(d.gpuPct) + "%");
-      if (d.gpuTempC != null) gpuParts.push(degC(d.gpuTempC));
-      gpuEl.textContent = gpuParts.length ? ("GPU " + gpuParts.join(" ")) : "";
-      gpuTEl.textContent = "";
       ramEl.textContent = d.ramPct != null ? ("RAM " + d.ramPct + "%") : "";
       appEl.textContent = d.app || d.status || "Bureau";
 
-      /* hide empty optional metrics even if checkbox on */
-      setVisible(ftEl, CFG.show.frametime !== false && !!ftEl.textContent);
-      setVisible(oplEl, CFG.show.onePercentLow !== false && !!oplEl.textContent);
-      var showCpu = (CFG.show.cpu !== false && d.cpuPct != null) || (CFG.show.cpuTemp !== false && d.cpuTempC != null);
-      var showGpu = (CFG.show.gpu !== false && d.gpuPct != null) || (CFG.show.gpuTemp !== false && d.gpuTempC != null);
-      /* rebuild combined text according to checkboxes */
-      cpuParts = [];
+      var cpuParts = [];
       if (CFG.show.cpu !== false && d.cpuPct != null) cpuParts.push(String(d.cpuPct) + "%");
       if (CFG.show.cpuTemp !== false && d.cpuTempC != null) cpuParts.push(degC(d.cpuTempC));
       cpuEl.textContent = cpuParts.length ? ("CPU " + cpuParts.join(" ")) : "";
-      gpuParts = [];
+      cpuTEl.textContent = "";
+
+      var gpuParts = [];
       if (CFG.show.gpu !== false && d.gpuPct != null) gpuParts.push(String(d.gpuPct) + "%");
       if (CFG.show.gpuTemp !== false && d.gpuTempC != null) gpuParts.push(degC(d.gpuTempC));
       gpuEl.textContent = gpuParts.length ? ("GPU " + gpuParts.join(" ")) : "";
+      gpuTEl.textContent = "";
+
+      var showCpu = (CFG.show.cpu !== false && d.cpuPct != null) || (CFG.show.cpuTemp !== false && d.cpuTempC != null);
+      var showGpu = (CFG.show.gpu !== false && d.gpuPct != null) || (CFG.show.gpuTemp !== false && d.gpuTempC != null);
+      setVisible(ftEl, CFG.show.frametime !== false && !!ftEl.textContent);
+      setVisible(oplEl, CFG.show.onePercentLow !== false && !!oplEl.textContent);
       setVisible(cpuEl, showCpu && !!cpuEl.textContent);
       setVisible(cpuTEl, false);
       setVisible(gpuEl, showGpu && !!gpuEl.textContent);

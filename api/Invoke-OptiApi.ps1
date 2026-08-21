@@ -13,7 +13,7 @@ param(
     [Parameter(Mandatory)][string]$OutFile
 )
 
-$ErrorActionPreference = 'Continue'
+$ErrorActionPreference = 'Stop'
 try {
     [Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false)
     [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
@@ -46,10 +46,15 @@ foreach ($modName in @(
     )) {
     $modPath = Join-Path $modDir $modName
     if (-not (Test-Path -LiteralPath $modPath)) { throw "Module manquant: $modPath" }
-    $code = [System.IO.File]::ReadAllText($modPath, $utf8NoBom)
-    if ($code.Length -gt 0 -and [int][char]$code[0] -eq 0xFEFF) { $code = $code.Substring(1) }
-    . ([scriptblock]::Create($code))
+    try {
+        $code = [System.IO.File]::ReadAllText($modPath, $utf8NoBom)
+        if ($code.Length -gt 0 -and [int][char]$code[0] -eq 0xFEFF) { $code = $code.Substring(1) }
+        . ([scriptblock]::Create($code))
+    } catch {
+        throw ("Echec chargement module {0}: {1}" -f $modName, $_.Exception.Message)
+    }
 }
+$ErrorActionPreference = 'Continue'
 
 $logsDir = Join-Path $Global:OptiRoot 'logs'
 if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir -Force | Out-Null }
@@ -291,6 +296,10 @@ try {
         }
         'openAfterburner' {
             $r = Open-OptiAfterburner
+            Ok $r
+        }
+        'openAmdSoftware' {
+            $r = Open-OptiAmdSoftware
             Ok $r
         }
 

@@ -1,15 +1,15 @@
-﻿Mentions légales — PC Command / Suite Mr-Aurevo-X
+Mentions légales — SoftTunes
 Produit : SoftTunes
 Éditeur : Mr-Aurevo-X
 Copyright © 2026 Mr-Aurevo-X. Tous droits réservés.
 
-« PC Command » désigne le lanceur et les hubs. « Suite Mr-Aurevo-X » désigne l’ensemble des outils. « Mr-Aurevo-X » désigne l’éditeur.
+« SoftTunes » désigne cette application. « Mr-Aurevo-X » désigne l’éditeur.
 
-Chaque outil peut afficher : « © 2026 Mr-Aurevo-X ». Le détail (CGU, confidentialité, licences) est dans À propos.
+Chaque fenêtre peut afficher : « © 2026 Mr-Aurevo-X ». Le détail (CGU, confidentialité, licences) est dans À propos.
 
-Contact / dépôts : organisation GitHub Mr-Aurevo-X
+Contact / dépôt : https://github.com/Mr-Aurevo-X/SoftTunes
 Hébergement des releases : GitHub (Microsoft)
 
 Logiciel fourni 100 % gratuitement pour un usage non commercial (LICENSE), sans mise à jour automatique et sans engagement de versions futures.
 
-Soutien facultatif (un clic quitte l’app) : Discord, PayPal, Revolut — voir README.
+Soutien facultatif (un clic quitte l’app) : Discord, PayPal, Revolut.

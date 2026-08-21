@@ -1,30 +1,25 @@
-﻿Politique de confidentialité / RGPD — PC Command / Suite Mr-Aurevo-X
+Politique de confidentialité / RGPD — SoftTunes
 Éditeur : Mr-Aurevo-X · Produit : SoftTunes
 Copyright © 2026 Mr-Aurevo-X. Tous droits réservés.
 
 1. Collecte par l’éditeur : aucune
-Mr-Aurevo-X ne collecte pas de données personnelles sur ses serveurs. Pas de tracker analytics, pas de télémétrie crash, pas de compte utilisateur, pas de minage d’usage en arrière-plan.
+Mr-Aurevo-X ne collecte pas de données personnelles sur ses serveurs. Pas de tracker analytics, pas de télémétrie crash, pas de compte utilisateur.
 
-Sans collecte, traitement, stockage ni transmission vers un serveur Mr-Aurevo-X, les droits RGPD qui supposent un fichier côté éditeur (accès / effacement serveur) ne s’appliquent pas. Vous pouvez désinstaller le logiciel et supprimer les réglages locaux à tout moment.
+Sans collecte ni transmission vers un serveur Mr-Aurevo-X, les droits RGPD qui supposent un fichier côté éditeur ne s’appliquent pas. Vous pouvez désinstaller SoftTunes et supprimer les réglages locaux à tout moment.
 
 2. Architecture local-first
-Exécution locale (Python + WebView2). Préférences : dossier d’installation et/ou %LOCALAPPDATA%\Mr-Aurevo-X. Résultats : là où vous les enregistrez.
+Exécution locale (Python + WebView2). SoftTunes prépare la session Windows, gère des caches locaux, mesure le FPS via PresentMon (ETW local) et peut afficher un overlay HUD local.
 
-La Suite n’est pas « 100 % locale » dans son ensemble : certains modules utilisent le réseau quand vous les utilisez. Les apps vitrine sans appel réseau peuvent l’indiquer dans leur README.
+Préférences partagées possibles : %LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json (langue, accent, vérif. maj). Données app : %LOCALAPPDATA%\SoftTunes lorsque utilisées.
 
 3. Exceptions réseau (pas de télémétrie éditeur)
-- Notification de release hub : comparaison de version locale vs GitHub Latest (pas de téléchargement).
-- Trad-X : Google Translate via deep_translator — le texte quitte le PC.
-- RoadWay-X réputation (opt-in) : URLhaus / AbuseIPDB (+ liens VirusTotal / Talos).
-- Tests NetAdmin / NetMap : hôtes que vous saisissez.
-- Métriques Accueil : 127.0.0.1 uniquement.
-- Boutons Discord / PayPal / Revolut : sites de ces opérateurs.
-
-WifiKey affiche des clés déjà présentes sur le PC ; elles ne partent pas vers Mr-Aurevo-X. Presse-papiers / nettoyage / désinstall : chemins locaux que vous validez.
+- Vérif. optionnelle GitHub Latest (toggle dans À propos) — lecture seule, pas de téléchargement ni d’install in-app.
+- Boutons Discord / PayPal / Revolut (soutien) : sites de ces opérateurs — un clic quitte SoftTunes.
+- PresentMon et l’overlay HUD restent locaux (pas d’envoi de métriques à Mr-Aurevo-X).
 
 4. Liens de soutien
 Un clic Discord / PayPal / Revolut quitte l’app. Politiques de confidentialité de ces services.
 
 5. Contact
-GitHub : https://github.com/Mr-Aurevo-X
+GitHub : https://github.com/Mr-Aurevo-X/SoftTunes
 Discord (facultatif) : https://discord.com/users/406891052516114442

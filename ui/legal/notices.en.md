@@ -1,16 +1,16 @@
-﻿Licenses / notices — PC Command / Mr-Aurevo-X Suite (SoftTunes)
+Licenses / notices — SoftTunes
 
-Mr-Aurevo-X source: PolyForm Noncommercial License 1.0.0 (`LICENSE`). Marks: `TRADEMARK.md`.
+Mr-Aurevo-X code: PolyForm Noncommercial License 1.0.0 (`LICENSE`). Trademark: `TRADEMARK.md`.
 
-Possible third-party components (depending on the tool):
+Possible third-party components:
 - Python (PSF License)
 - pywebview
 - Microsoft Edge WebView2 Runtime
 - PyInstaller
-- psutil
-- deep_translator / Google Translate (Trad-X only)
-- Outfit / JetBrains Mono fonts
+- PresentMon (MIT) — FPS / ETW metering
+- psutil (when used)
+- UI fonts (respective font licenses)
 
 Upstream licenses apply to those components.
 
-No automatic updates and no commitment to future versions.
+SoftTunes provided without automatic updates and without a commitment to future versions.
