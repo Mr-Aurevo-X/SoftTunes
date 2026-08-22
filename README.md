@@ -2,7 +2,7 @@
 
 # SoftTunes
 
-Préparation de session Windows **indépendante** et **gratuite** (**v2.0.0**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+Préparation de session Windows **indépendante** et **gratuite** (**v2.0.1**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
 
 ![SoftTunes Accueil — Void Glow](docs/softtunes-v2-accueil.png)
 
@@ -19,7 +19,14 @@ Préparation de session Windows **indépendante** et **gratuite** (**v2.0.0**, n
 
 Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
 
-> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.0](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.0). Binaire : `SoftTunes.exe` / `Lancer.cmd`.
+> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.1](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.1). Binaire : `SoftTunes.exe` / `Lancer.cmd`.
+
+Le zip release est **portable** : `SoftTunes.exe`, `_internal`, `Lancer.cmd`, et les dossiers runtime (`ui`, `api`, `modules`, `lists`, `bin`). Ce n’est **pas** le dépôt source.
+
+### v2.0.1
+
+- Zip runtime only (plus de dump `host` / `tools` / `docs`)
+- Lancement depuis Downloads : plus de crash pythonnet (Mark of the Web)
 
 ### v2.0.0
 

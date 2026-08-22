@@ -4,9 +4,9 @@ VSVersionInfo(
 
   ffi=FixedFileInfo(
 
-    filevers=(1, 6, 0, 0),
+    filevers=(2, 0, 1, 0),
 
-    prodvers=(1, 6, 0, 0),
+    prodvers=(2, 0, 1, 0),
 
     mask=0x3f,
 
@@ -34,19 +34,19 @@ VSVersionInfo(
 
         [StringStruct(u'CompanyName', u'Mr-Aurevo-X'),
 
-        StringStruct(u'FileDescription', u'Opti - Optimiseur PC gaming'),
+        StringStruct(u'FileDescription', u'SoftTunes — session Windows + FPS meter'),
 
-        StringStruct(u'FileVersion', u'1.7.0.0'),
+        StringStruct(u'FileVersion', u'2.0.1.0'),
 
-        StringStruct(u'InternalName', u'Opti'),
+        StringStruct(u'InternalName', u'SoftTunes'),
 
         StringStruct(u'LegalCopyright', u'(c) 2026 Mr-Aurevo-X'),
 
         StringStruct(u'OriginalFilename', u'SoftTunes.exe'),
 
-        StringStruct(u'ProductName', u'Opti'),
+        StringStruct(u'ProductName', u'SoftTunes'),
 
-        StringStruct(u'ProductVersion', u'1.7.0.0')])
+        StringStruct(u'ProductVersion', u'2.0.1.0')])
 
       ]),
 
@@ -55,4 +55,3 @@ VSVersionInfo(
   ]
 
 )
-

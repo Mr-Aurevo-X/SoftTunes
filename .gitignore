@@ -2,6 +2,7 @@
 dist/
 build/
 Opti-dist/
+SoftTunes-dist/
 _internal/
 /bin/
 logs/

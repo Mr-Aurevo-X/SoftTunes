@@ -2,7 +2,7 @@
 
 # SoftTunes
 
-Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.0**, product name **SoftTunes**). Not a “+500 FPS booster”.
+Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.1**, product name **SoftTunes**). Not a “+500 FPS booster”.
 
 ![SoftTunes Home — Void Glow](docs/softtunes-v2-accueil.png)
 
@@ -19,7 +19,14 @@ Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.0**, pro
 
 Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 
-> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.0](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.0). Binary: `SoftTunes.exe` / `Lancer.cmd`.
+> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.1](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.1). Binary: `SoftTunes.exe` / `Lancer.cmd`.
+
+The release zip is **portable**: `SoftTunes.exe`, `_internal`, `Lancer.cmd`, and runtime folders (`ui`, `api`, `modules`, `lists`, `bin`). It is **not** the source tree.
+
+### v2.0.1
+
+- Runtime-only zip (no `host` / `tools` / `docs` dump)
+- Launch from Downloads: pythonnet Mark-of-the-Web crash fixed
 
 ### v2.0.0
 
