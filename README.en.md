@@ -2,7 +2,7 @@
 
 # SoftTunes
 
-Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.1**, product name **SoftTunes**). Not a “+500 FPS booster”.
+Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.2**, product name **SoftTunes**). Not a “+500 FPS booster”.
 
 ![SoftTunes Home — Void Glow](docs/softtunes-v2-accueil.png)
 
@@ -19,9 +19,13 @@ Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.1**, pro
 
 Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 
-> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.1](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.1). Binary: `SoftTunes.exe` / `Lancer.cmd`.
+> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.2](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.2). Binary: `SoftTunes.exe` (hub-style zip).
 
-The release zip is **portable**: `SoftTunes.exe`, `_internal`, `Lancer.cmd`, and runtime folders (`ui`, `api`, `modules`, `lists`, `bin`). It is **not** the source tree.
+Release zip = **`SoftTunes.exe`** (+ `version.json`) — same shape as `Launch-Hub-*.zip`. No `_internal`, no sources.
+
+### v2.0.2
+
+- **Onefile** zip like the hubs (one exe, no `_internal` / `host` / `api` folder)
 
 ### v2.0.1
 
@@ -47,8 +51,8 @@ Read-only public distribution: no PRs or issues (`CONTRIBUTING.md`). License: Po
 
 | Mode | Location |
 |------|----------|
-| **Installer** (`OptiSetup.exe` / setup) | `%LOCALAPPDATA%\Programs\SoftTunes` — binary + `_internal` |
-| **Portable** (`SoftTunes.zip`) | Folder **of your choice**: extract the zip, keep `_internal` next to the exe |
+| **Installer** (`OptiSetup.exe` / setup) | `%LOCALAPPDATA%\Programs\SoftTunes` — `SoftTunes.exe` |
+| **Portable** (`SoftTunes.zip`) | Extract `SoftTunes.exe` wherever you want (same as a hub) |
 | **Data** (sessions, undo, settings) | `%LOCALAPPDATA%\SoftTunes` |
 | **Dev (sources)** | Clone under `03_Standalones\Opti\` + `Lancer.cmd` |
 

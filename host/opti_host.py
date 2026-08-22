@@ -27,6 +27,7 @@ from about_support import (
     open_support_url as open_support_url_safe,
     set_github_update_check,
     set_suite_language as write_suite_language,
+    softtunes_data_dir,
 )
 from window_chrome import WindowChromeMixin, create_tool_window
 from confirm_gate import ConfirmGate
@@ -54,20 +55,33 @@ def _safe_open_path(path: str, *, deny_exec: bool = True) -> tuple[Path | None, 
 
 
 def app_dir() -> Path:
+    """Folder next to SoftTunes.exe (install / portable location)."""
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
     return Path(__file__).resolve().parent.parent
 
 
+def resource_dir() -> Path:
+    """Bundled runtime (api / modules / bin / ui). Onefile → _MEIPASS."""
+    if getattr(sys, "frozen", False):
+        return Path(getattr(sys, "_MEIPASS", app_dir()))
+    return Path(__file__).resolve().parent.parent
+
+
+def data_dir() -> Path:
+    """Writable user data — never the onefile temp extract."""
+    dest = softtunes_data_dir()
+    (dest / "logs").mkdir(parents=True, exist_ok=True)
+    return dest
+
+
 def ui_dir() -> Path:
-    # Prefer loose ui/ next to the exe (hotfix without full rebuild)
     external = app_dir() / "ui"
     if (external / "index.html").is_file():
         return external
-    if getattr(sys, "frozen", False):
-        base = Path(getattr(sys, "_MEIPASS", app_dir()))
-        nested = base / "ui"
-        return nested if nested.is_dir() else base
+    bundled = resource_dir() / "ui"
+    if (bundled / "index.html").is_file():
+        return bundled
     return Path(__file__).resolve().parent.parent / "ui"
 
 
@@ -229,10 +243,11 @@ def resolve_suite_language(default: str = "fr") -> str:
 
 
 class Api(WindowChromeMixin):
-    def __init__(self, root: Path) -> None:
+    def __init__(self, root: Path, data: Path | None = None) -> None:
         self.root = root
+        self.data = data or root
         self.api_ps1 = root / "api" / "Invoke-OptiApi.ps1"
-        self.progress_path = root / "logs" / "job-progress.json"
+        self.progress_path = self.data / "logs" / "job-progress.json"
         self._job_lock = threading.Lock()
         self._proc_lock = threading.Lock()
         self._job_thread: threading.Thread | None = None
@@ -241,7 +256,7 @@ class Api(WindowChromeMixin):
         self._job_result: dict[str, Any] | None = None
         self._current_proc: subprocess.Popen[str] | None = None
         self._fps = FpsWorkerManager(root)
-        self._overlay = FpsOverlay(self._fps, root)
+        self._overlay = FpsOverlay(self._fps, root, self.data)
         self._confirm = ConfirmGate(ttl_seconds=90.0)
 
     def prepare_action(self, action: str, payload: dict | None = None) -> dict:
@@ -381,6 +396,8 @@ class Api(WindowChromeMixin):
             creationflags = 0
             if sys.platform == "win32":
                 creationflags = subprocess.CREATE_NO_WINDOW  # type: ignore[attr-defined]
+            env = os.environ.copy()
+            env["OPTI_DATA_DIR"] = str(self.data)
 
             proc = subprocess.Popen(
                 [
@@ -396,6 +413,7 @@ class Api(WindowChromeMixin):
                     path_out,
                 ],
                 cwd=str(self.root),
+                env=env,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
@@ -682,13 +700,15 @@ def main() -> None:
         if elevate_self():
             sys.exit(0)
 
-    root = app_dir()
+    root = resource_dir()
+    data = data_dir()
+    os.environ["OPTI_DATA_DIR"] = str(data)
     index = ui_dir() / "index.html"
     if not index.is_file():
         raise SystemExit(f"UI introuvable: {index}")
 
-    api = Api(root)
-    ver = "2.0.0"
+    api = Api(root, data)
+    ver = "2.0.2"
     try:
         vf = root / "version.json"
         if vf.is_file():

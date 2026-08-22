@@ -5,6 +5,16 @@
 #Requires -Version 5.1
 # Core.ps1 — root, log, progress, list helpers
 
+function Get-OptiDataDir {
+    if ($env:OPTI_DATA_DIR -and (Test-Path -LiteralPath $env:OPTI_DATA_DIR)) {
+        return $env:OPTI_DATA_DIR
+    }
+    if ($Global:OptiDataDir -and (Test-Path -LiteralPath $Global:OptiDataDir)) {
+        return $Global:OptiDataDir
+    }
+    return Get-OptiBaseDir
+}
+
 function Get-OptiBaseDir {
     if ($Global:OptiRoot -and (Test-Path -LiteralPath $Global:OptiRoot)) {
         return $Global:OptiRoot
@@ -91,7 +101,7 @@ function Get-OptiDataDir {
 }
 
 function Get-OptiSessionLogPath {
-    param([string]$BaseDir = $(Get-OptiBaseDir))
+    param([string]$BaseDir = $(Get-OptiDataDir))
     $logsDir = Join-Path $BaseDir 'logs'
     if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir -Force | Out-Null }
     $marker = Join-Path $logsDir 'current-session.logpath'
@@ -106,7 +116,7 @@ function Get-OptiSessionLogPath {
 }
 
 function Get-OptiProgressPath {
-    param([string]$BaseDir = $(Get-OptiBaseDir))
+    param([string]$BaseDir = $(Get-OptiDataDir))
     $logsDir = Join-Path $BaseDir 'logs'
     if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir -Force | Out-Null }
     Join-Path $logsDir 'job-progress.json'

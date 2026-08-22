@@ -2,7 +2,7 @@
 
 # SoftTunes
 
-Préparation de session Windows **indépendante** et **gratuite** (**v2.0.1**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+Préparation de session Windows **indépendante** et **gratuite** (**v2.0.2**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
 
 ![SoftTunes Accueil — Void Glow](docs/softtunes-v2-accueil.png)
 
@@ -19,9 +19,13 @@ Préparation de session Windows **indépendante** et **gratuite** (**v2.0.1**, n
 
 Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
 
-> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.1](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.1). Binaire : `SoftTunes.exe` / `Lancer.cmd`.
+> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.2](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.2). Binaire : `SoftTunes.exe` (zip comme les hubs).
 
-Le zip release est **portable** : `SoftTunes.exe`, `_internal`, `Lancer.cmd`, et les dossiers runtime (`ui`, `api`, `modules`, `lists`, `bin`). Ce n’est **pas** le dépôt source.
+Le zip release = **`SoftTunes.exe`** (+ `version.json`) — même forme que `Launch-Hub-*.zip`. Pas de `_internal`, pas de sources.
+
+### v2.0.2
+
+- Zip **onefile** comme les hubs (un exe, plus de dossier `_internal` / `host` / `api`)
 
 ### v2.0.1
 
@@ -54,8 +58,8 @@ Le zip release est **portable** : `SoftTunes.exe`, `_internal`, `Lancer.cmd`, et
 
 | Mode | Emplacement |
 |------|-------------|
-| **Installer** (`OptiSetup.exe` / setup) | `%LOCALAPPDATA%\Programs\SoftTunes` — binaire + `_internal` |
-| **Portable** (`SoftTunes.zip`) | Dossier **au choix** : extraire le zip, garder `_internal` à côté de l’exe |
+| **Installer** (`OptiSetup.exe` / setup) | `%LOCALAPPDATA%\Programs\SoftTunes` — `SoftTunes.exe` |
+| **Portable** (`SoftTunes.zip`) | Extraire `SoftTunes.exe` où tu veux (comme un hub) |
 | **Données** (sessions, undo, réglages) | `%LOCALAPPDATA%\SoftTunes` |
 | **Dev (sources)** | Clone `03_Standalones\Opti\` + `Lancer.cmd` |
 

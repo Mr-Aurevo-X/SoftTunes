@@ -6,8 +6,20 @@ from PyInstaller.utils.hooks import collect_all
 spec_dir = Path(SPECPATH).resolve()
 root = spec_dir.parent
 ui_stage = root / "build" / "ui_stage"
+tools_bin = root / "tools" / "bin"
 
-datas = [(str(ui_stage), "ui")] if ui_stage.is_dir() else []
+datas = []
+if ui_stage.is_dir():
+    datas.append((str(ui_stage), "ui"))
+for folder, dest in (("api", "api"), ("modules", "modules"), ("lists", "lists")):
+    src = root / folder
+    if src.is_dir():
+        datas.append((str(src), dest))
+if tools_bin.is_dir():
+    datas.append((str(tools_bin), "bin"))
+if (root / "version.json").is_file():
+    datas.append((str(root / "version.json"), "."))
+
 binaries = []
 hiddenimports = [
     "clr",
@@ -44,28 +56,23 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
     name="SoftTunes",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=False,
+    upx_exclude=[],
+    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    uac_admin=True,
     version=str(root / "tools" / "file_version_info.txt"),
     icon=[str(root / "logo-opti.ico")],
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=False,
-    upx_exclude=[],
-    name="SoftTunes",
 )

@@ -21,6 +21,11 @@ try {
 } catch { }
 
 $Global:OptiRoot = Split-Path $PSScriptRoot -Parent
+if ($env:OPTI_DATA_DIR) {
+    $Global:OptiDataDir = $env:OPTI_DATA_DIR
+} else {
+    $Global:OptiDataDir = $Global:OptiRoot
+}
 $modDir = Join-Path $Global:OptiRoot 'modules'
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 foreach ($modName in @(
@@ -56,10 +61,10 @@ foreach ($modName in @(
 }
 $ErrorActionPreference = 'Continue'
 
-$logsDir = Join-Path $Global:OptiRoot 'logs'
+$logsDir = Join-Path $Global:OptiDataDir 'logs'
 if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir -Force | Out-Null }
-$Global:OptiCurrentLog = Get-OptiSessionLogPath -BaseDir $Global:OptiRoot
-$Global:OptiProgressPath = Get-OptiProgressPath -BaseDir $Global:OptiRoot
+$Global:OptiCurrentLog = Get-OptiSessionLogPath -BaseDir $Global:OptiDataDir
+$Global:OptiProgressPath = Get-OptiProgressPath -BaseDir $Global:OptiDataDir
 
 function Write-ApiResponse {
     param($Obj)

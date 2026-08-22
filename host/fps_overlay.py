@@ -103,12 +103,14 @@ def _key_color():
 
 
 class FpsOverlay:
-    def __init__(self, fps: FpsWorkerManager, root: Path) -> None:
+    def __init__(self, fps: FpsWorkerManager, root: Path, data_dir: Path | None = None) -> None:
         self._fps = fps
         self._root = root
-        self._pos_file = root / "overlay-pos.json"
-        self._cfg_file = root / "overlay-config.json"
-        self._log_file = root / "logs" / "overlay-hud.log"
+        writable = data_dir or root
+        (writable / "logs").mkdir(parents=True, exist_ok=True)
+        self._pos_file = writable / "overlay-pos.json"
+        self._cfg_file = writable / "overlay-config.json"
+        self._log_file = writable / "logs" / "overlay-hud.log"
         self._gui_host: Any = None
         self._form: Any = None
         self._enabled = False

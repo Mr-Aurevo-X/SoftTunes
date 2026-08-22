@@ -8,6 +8,7 @@ from __future__ import annotations
 import csv
 import ctypes
 import subprocess
+import sys
 import threading
 import time
 from collections import deque
@@ -62,11 +63,15 @@ def _empty(error: str | None, **extra: Any) -> dict[str, Any]:
 
 
 def find_presentmon(root: Path) -> Path | None:
-    for cand in (
+    candidates = [
         root / "bin" / "PresentMon-x64.exe",
         root.parent / "bin" / "PresentMon-x64.exe",
         root / "tools" / "bin" / "PresentMon-x64.exe",
-    ):
+    ]
+    if getattr(sys, "frozen", False):
+        meipass = Path(getattr(sys, "_MEIPASS", root))
+        candidates.insert(0, meipass / "bin" / "PresentMon-x64.exe")
+    for cand in candidates:
         if cand.is_file():
             return cand
     return None
