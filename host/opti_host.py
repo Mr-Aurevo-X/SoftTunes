@@ -25,6 +25,8 @@ from about_support import (
     get_update_check_pref,
     is_github_update_check_enabled,
     open_support_url as open_support_url_safe,
+    list_crypto_donations as list_crypto_donations_safe,
+    copy_crypto_address as copy_crypto_address_safe,
     set_github_update_check,
     set_suite_language as write_suite_language,
     softtunes_data_dir,
@@ -35,7 +37,6 @@ from confirm_gate import ConfirmGate
 _DENIED_OPEN_EXTS = {
     ".exe", ".cmd", ".bat", ".ps1", ".vbs", ".msi", ".com", ".scr", ".js", ".jse", ".wsf",
 }
-
 
 def _safe_open_path(path: str, *, deny_exec: bool = True) -> tuple[Path | None, str]:
     raw = str(path or "").strip()
@@ -53,13 +54,11 @@ def _safe_open_path(path: str, *, deny_exec: bool = True) -> tuple[Path | None, 
         return None, f"executable extension blocked: {p.suffix.lower()}"
     return p, ""
 
-
 def app_dir() -> Path:
     """Folder next to SoftTunes.exe (install / portable location)."""
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
     return Path(__file__).resolve().parent.parent
-
 
 def resource_dir() -> Path:
     """Bundled runtime (api / modules / bin / ui). Onefile → _MEIPASS."""
@@ -67,13 +66,11 @@ def resource_dir() -> Path:
         return Path(getattr(sys, "_MEIPASS", app_dir()))
     return Path(__file__).resolve().parent.parent
 
-
 def data_dir() -> Path:
     """Writable user data — never the onefile temp extract."""
     dest = softtunes_data_dir()
     (dest / "logs").mkdir(parents=True, exist_ok=True)
     return dest
-
 
 def ui_dir() -> Path:
     external = app_dir() / "ui"
@@ -84,13 +81,11 @@ def ui_dir() -> Path:
         return bundled
     return Path(__file__).resolve().parent.parent / "ui"
 
-
 def is_admin() -> bool:
     try:
         return bool(ctypes.windll.shell32.IsUserAnAdmin())
     except Exception:
         return False
-
 
 def elevate_self() -> bool:
     if is_admin():
@@ -109,7 +104,6 @@ def elevate_self() -> bool:
         return int(rc) > 32
     except Exception:
         return False
-
 
 DEFAULT_ACCENT = "#e03545"
 ENV_ACCENT = "MRAUREVOX_ACCENT"
@@ -176,7 +170,6 @@ URL_ALLOWLIST = frozenset({
     "https://www.amd.com/fr/support/download/drivers.html",
 })
 
-
 def action_needs_admin(action: str, payload: dict | None = None) -> bool:
     if action in ADMIN_ACTIONS:
         # Balanced/High power plans often work without admin; Ultimate usually needs it.
@@ -186,11 +179,9 @@ def action_needs_admin(action: str, payload: dict | None = None) -> bool:
         return True
     return False
 
-
 def _localappdata() -> Path:
     local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
     return Path(local)
-
 
 def _settings_paths() -> list[Path]:
     root = _localappdata()
@@ -205,7 +196,6 @@ def _settings_paths() -> list[Path]:
         paths.append(root / "Programs" / legacy / "user-settings.json")
         paths.append(root / legacy / "user-settings.json")
     return paths
-
 
 def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
     env = (os.environ.get(ENV_ACCENT) or "").strip()
@@ -223,7 +213,6 @@ def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
             continue
     return default
 
-
 def resolve_suite_language(default: str = "fr") -> str:
     env = (os.environ.get(ENV_LANG) or "").strip().lower()
     if env in ("fr", "en"):
@@ -239,8 +228,6 @@ def resolve_suite_language(default: str = "fr") -> str:
         except (OSError, json.JSONDecodeError, TypeError):
             continue
     return default if default in ("fr", "en") else "fr"
-
-
 
 class Api(WindowChromeMixin):
     def __init__(self, root: Path, data: Path | None = None) -> None:
@@ -330,6 +317,12 @@ class Api(WindowChromeMixin):
             target = str(info.get("releaseUrl") or "")
         return open_release_url(target)
 
+    def list_crypto_donations(self) -> dict:
+        return list_crypto_donations_safe()
+
+    def copy_crypto_address(self, asset_id: str = "") -> dict:
+        return copy_crypto_address_safe(asset_id)
+
     def open_support_url(self, kind: str = "") -> dict:
         return open_support_url_safe(kind)
 
@@ -341,7 +334,6 @@ class Api(WindowChromeMixin):
 
     def get_about_local_paths(self) -> dict:
         return about_local_paths(self.root)
-
 
     def _kill_current_proc(self) -> None:
         with self._proc_lock:
@@ -679,14 +671,12 @@ class Api(WindowChromeMixin):
         except OSError as exc:
             return {"ok": False, "error": str(exc)}
 
-
 def require_admin() -> None:
     """SoftTunes must run elevated (PresentMon ETW + system tweaks)."""
     if is_admin():
         return
     elevate_self()
     sys.exit(0)
-
 
 def main() -> None:
     if "--fps-worker" in sys.argv:
@@ -725,7 +715,6 @@ def main() -> None:
     )
     api.attach_overlay(main_win)
     webview.start(gui="edgechromium", debug=False)
-
 
 if __name__ == "__main__":
     main()

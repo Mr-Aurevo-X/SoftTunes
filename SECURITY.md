@@ -7,7 +7,7 @@ There is **no** Mr-Aurevo-X backend and **no** telemetry / publisher analytics.
 
 Outbound network (when it happens):
 - **Optional** read-only GitHub **Latest release** check (opt-out in About → `checkGithubUpdates`)
-- **Support links** (Discord / PayPal / Revolut) only when the user clicks
+- **Support links** (Discord / dons crypto) only when the user clicks
 - No other automatic phone-home
 
 SoftTunes prepares a Windows play session (power plan, Game Mode, overlays, bounded NVIDIA soft OC) and meters FPS via PresentMon. It does **not** promise FPS gains.

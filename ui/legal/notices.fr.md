@@ -1,16 +1,16 @@
-Licences / notices — SoftTunes
+Licences / notices — PC Command / Suite Mr-Aurevo-X (Opti)
 
 Code Mr-Aurevo-X : PolyForm Noncommercial License 1.0.0 (`LICENSE`). Marque : `TRADEMARK.md`.
 
-Composants tiers possibles :
+Composants tiers possibles (selon l’outil) :
 - Python (PSF License)
 - pywebview
 - Microsoft Edge WebView2 Runtime
 - PyInstaller
-- PresentMon (MIT) — mesure FPS / ETW
-- psutil (le cas échéant)
-- Polices UI (licences des familles utilisées)
+- psutil
+- deep_translator / Google Translate (Trad-X uniquement)
+- Outfit / JetBrains Mono (licences de polices)
 
 Les licences amont s’appliquent à ces composants.
 
-SoftTunes fourni sans mise à jour automatique et sans engagement de versions futures.
+Suite fournie sans mise à jour automatique et sans engagement de versions futures.
