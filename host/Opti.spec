@@ -19,6 +19,9 @@ if tools_bin.is_dir():
     datas.append((str(tools_bin), "bin"))
 if (root / "version.json").is_file():
     datas.append((str(root / "version.json"), "."))
+crypto_json = spec_dir / "crypto_donations.json"
+if crypto_json.is_file():
+    datas.append((str(crypto_json), "."))
 
 binaries = []
 hiddenimports = [
@@ -31,6 +34,7 @@ hiddenimports = [
     "window_chrome",
     "confirm_gate",
     "motw_unblock",
+    "hub_update",
 ]
 for pkg in ("webview", "pythonnet", "clr_loader"):
     pkg_datas, pkg_binaries, pkg_hidden = collect_all(pkg)
