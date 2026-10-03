@@ -1,8 +1,8 @@
-﻿[Français](README.md) · [English](README.en.md)
+[Français](README.md) · [English](README.en.md)
 
 # SoftTunes
 
-Préparation de session Windows **indépendante** et **gratuite** (**v2.0.3**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
+Préparation de session Windows **indépendante** et **gratuite** (**v2.0.4**, nom produit **SoftTunes**). Ce n’est **pas** un « booster FPS +500 ».
 
 ![SoftTunes Accueil — Void Glow](docs/softtunes-v2-accueil.png)
 
@@ -19,11 +19,11 @@ Préparation de session Windows **indépendante** et **gratuite** (**v2.0.3**, n
 
 Éditeur : Mr-Aurevo-X (copyright). SoftTunes **n’appartient pas** à la suite PC Command.
 
-> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.3](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.3). Binaire : `SoftTunes.exe` (zip comme les hubs).
+> Dépôt GitHub : **`Mr-Aurevo-X/SoftTunes`**. Latest : [v2.0.4](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.4). Binaire : `SoftTunes.exe` (zip comme les hubs).
 
 Le zip release = **`SoftTunes.exe`** (+ `version.json`) — même forme que `Launch-Hub-*.zip`. Pas de `_internal`, pas de sources.
 
-### v2.0.3
+### v2.0.4
 
 - Discord + modal dons crypto (copie d’adresses) — plus PayPal / Revolut
 
