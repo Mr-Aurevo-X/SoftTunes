@@ -2,7 +2,7 @@
 
 # SoftTunes
 
-Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.2**, product name **SoftTunes**). Not a “+500 FPS booster”.
+Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.3**, product name **SoftTunes**). Not a “+500 FPS booster”.
 
 ![SoftTunes Home — Void Glow](docs/softtunes-v2-accueil.png)
 
@@ -19,9 +19,13 @@ Independent **Windows session prep + FPS meter**, **100% free** (**v2.0.2**, pro
 
 Publisher: Mr-Aurevo-X. SoftTunes is **not** part of the PC Command hub catalog.
 
-> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.2](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.2). Binary: `SoftTunes.exe` (hub-style zip).
+> GitHub repo: **`Mr-Aurevo-X/SoftTunes`**. Latest: [v2.0.3](https://github.com/Mr-Aurevo-X/SoftTunes/releases/tag/v2.0.3). Binary: `SoftTunes.exe` (hub-style zip).
 
 Release zip = **`SoftTunes.exe`** (+ `version.json`) — same shape as `Launch-Hub-*.zip`. No `_internal`, no sources.
+
+### v2.0.3
+
+- Discord + crypto tip modal (copy addresses) — PayPal / Revolut removed
 
 ### v2.0.2
 
@@ -72,7 +76,7 @@ tools\build_setup.bat
 
 ## Support
 
-Optional tips (SoftTunes stays free): Discord · PayPal · Revolut — see French README badges.
+Optional tips (SoftTunes stays free): Discord · crypto tips — see French README badges.
 
 ---
 
